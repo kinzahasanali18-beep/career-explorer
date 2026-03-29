@@ -203,7 +203,7 @@ function IndustryPicker({onDone}) {
   );
 }
 
-function HomeScreen({selectedIndustries,onSelectMode,onReset}) {
+function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver}) {
   const modes=[
     {id:"abstract",icon:"◈",name:"The Abstract Quiz",desc:"Strange questions. Surprising results."},
     {id:"cinematic",icon:"◎",name:"The Cinematic Quiz",desc:"Pick movie scenes. Find where you fit."},
@@ -246,6 +246,10 @@ function HomeScreen({selectedIndustries,onSelectMode,onReset}) {
           <span style={{color:T.textDim,fontSize:16}}>›</span>
         </div>
       ))}
+      <div style={{height:16}}/>
+      <button onClick={onStartOver} style={{width:"100%",padding:"0.7rem",background:"none",border:`1px solid ${T.border}`,borderRadius:12,fontSize:12,color:T.textDim,cursor:"pointer"}}>
+        Start over
+      </button>
     </Screen>
   );
 }
@@ -355,15 +359,26 @@ function IndustryBrowse({industryId,onBack,onViewCareer}) {
 }
 
 
+// Screens that are safe to restore on reload (excludes mid-quiz and transient screens)
+const RESTORABLE = new Set(["industry","home","result","bubble","browse"]);
+
+function ls(key,fallback){try{const v=localStorage.getItem(key);return v!=null?JSON.parse(v):fallback;}catch{return fallback;}}
+function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch{}}
+function lsClear(){["ce_screen","ce_industries","ce_profile"].forEach(k=>localStorage.removeItem(k));}
+
 export default function App() {
-  const [screen,setScreen]=useState("industry");
-  const [selectedIndustries,setSelected]=useState([]);
+  const [screen,setScreen]=useState(()=>{ const s=ls("ce_screen","industry"); return RESTORABLE.has(s)?s:"industry"; });
+  const [selectedIndustries,setSelected]=useState(()=>ls("ce_industries",[]));
   const [activeQuiz,setActiveQuiz]=useState(null);
-  const [resultProfile,setResultProfile]=useState(null);
+  const [resultProfile,setResultProfile]=useState(()=>ls("ce_profile",null));
   const [activeCareer,setActiveCareer]=useState(null);
   const [activeCareerColor,setCareerColor]=useState(null);
   const [browseIndustry,setBrowseIndustry]=useState(null);
   const [prevScreen,setPrevScreen]=useState(null);
+
+  useEffect(()=>{ if(RESTORABLE.has(screen)) lsSet("ce_screen",screen); },[screen]);
+  useEffect(()=>{ lsSet("ce_industries",selectedIndustries); },[selectedIndustries]);
+  useEffect(()=>{ if(resultProfile!=null) lsSet("ce_profile",resultProfile); },[resultProfile]);
 
   function goTo(s){setPrevScreen(screen);setScreen(s);}
   function handleSelectMode(mode){
@@ -372,18 +387,23 @@ export default function App() {
     setActiveQuiz(mode);goTo("quiz");
   }
   function handleViewCareer(career,color){
-    // BubbleScreen.jsx uses abbreviated keys (t/s/sc/d); CareerDetail expects full keys
     const normalized = career.title ? career : {
       title:career.t, salary:career.s, school:career.sc,
       desc:career.d, day:career.day, growth:career.growth
     };
     setActiveCareer(normalized);setCareerColor(color);goTo("career");
   }
+  function handleStartOver(){
+    lsClear();
+    setSelected([]);setResultProfile(null);setActiveQuiz(null);
+    setActiveCareer(null);setCareerColor(null);setBrowseIndustry(null);
+    setPrevScreen(null);setScreen("industry");
+  }
 
   return (
     <div style={{maxWidth:520,margin:"0 auto",minHeight:"100vh",background:T.bg,fontFamily:"'Inter',system-ui,sans-serif"}}>
       {screen==="industry" && <IndustryPicker onDone={ids=>{setSelected(ids);setScreen("home");}}/>}
-      {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")}/>}
+      {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")} onStartOver={handleStartOver}/>}
       {screen==="quiz"     && <QuizScreen quizKey={activeQuiz} onBack={()=>setScreen("home")} onComplete={p=>{setResultProfile(p);goTo("result");}}/>}
       {screen==="result"   && <ResultScreen profileKey={resultProfile} selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onExploreBubble={()=>goTo("bubble")} onViewCareer={handleViewCareer}/>}
       {screen==="career"   && <CareerTimeline career={activeCareer} industryColor={activeCareerColor} onBack={()=>setScreen(prevScreen||"home")}/>}
