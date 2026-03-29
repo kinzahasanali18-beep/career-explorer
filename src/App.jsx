@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import BubbleScreen from "./BubbleScreen";
+import CareerTimeline from "./CareerTimeline";
 
 const T = {
   bg:"#1E2030", bgCard:"#272B40", bgDeep:"#1A1D2E",
@@ -323,43 +324,6 @@ function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onVi
   );
 }
 
-function CareerDetail({career,industryColor,onBack}) {
-  const color=industryColor||T.accent1;
-  return (
-    <Screen>
-      <button style={backStyle} onClick={onBack}>← Back</button>
-      <div style={{marginBottom:20}}>
-        <div style={{fontSize:22,fontWeight:800,color:T.text,marginBottom:4}}>{career.title}</div>
-        <div style={{fontSize:14,color:T.textMid,lineHeight:1.6,marginBottom:12}}>{career.desc}</div>
-        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-          <span style={pillStyle(T.accent1)}>{career.salary}</span>
-          <span style={pillStyle(T.accentPurple)}>{career.school}</span>
-        </div>
-      </div>
-      <div style={eyebrowStyle}>A day in the life</div>
-      <div style={{...cardStyle,marginBottom:16}}>
-        <div style={{fontSize:14,color:T.textMid,lineHeight:1.7}}>{career.day}</div>
-      </div>
-      <div style={eyebrowStyle}>Career roadmap</div>
-      <div style={{...cardStyle,marginBottom:20}}>
-        {career.growth.map((step,i)=>(
-          <div key={i}>
-            <div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
-              <div style={{width:30,height:30,borderRadius:"50%",background:i===0?color:T.bgDeep,border:`2px solid ${i===0?color:T.border}`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}>
-                <span style={{fontSize:i===0?7:9,color:i===0?"#fff":T.textDim,fontWeight:700}}>{i===0?"YOU":i+1}</span>
-              </div>
-              <div style={{flex:1,paddingTop:4,paddingBottom:i<career.growth.length-1?14:0}}>
-                <div style={{fontSize:13,fontWeight:700,color:T.text}}>{step.role}</div>
-                <div style={{fontSize:12,color:T.textDim}}>{step.years} · <span style={{color:T.accent1}}>{step.salary}</span></div>
-              </div>
-            </div>
-            {i<career.growth.length-1&&<div style={{width:2,height:10,background:T.border,marginLeft:14,marginBottom:4}}/>}
-          </div>
-        ))}
-      </div>
-    </Screen>
-  );
-}
 
 function IndustryBrowse({industryId,onBack,onViewCareer}) {
   const industry=industries.find(i=>i.id===industryId);
@@ -422,7 +386,7 @@ export default function App() {
       {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")}/>}
       {screen==="quiz"     && <QuizScreen quizKey={activeQuiz} onBack={()=>setScreen("home")} onComplete={p=>{setResultProfile(p);goTo("result");}}/>}
       {screen==="result"   && <ResultScreen profileKey={resultProfile} selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onExploreBubble={()=>goTo("bubble")} onViewCareer={handleViewCareer}/>}
-      {screen==="career"   && <CareerDetail career={activeCareer} industryColor={activeCareerColor} onBack={()=>setScreen(prevScreen||"home")}/>}
+      {screen==="career"   && <CareerTimeline career={activeCareer} industryColor={activeCareerColor} onBack={()=>setScreen(prevScreen||"home")}/>}
       {screen==="browse"   && <IndustryBrowse industryId={browseIndustry} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer}/>}
       {screen==="bubble"   && <BubbleScreen selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer}/>}
     </div>
