@@ -54,3 +54,197 @@ html, body {
   0%   { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
 }
+
+/* ─── RESPONSIVE APP LAYOUT ───────────────────────────────────────── */
+
+.app-shell {
+  min-height: 100vh;
+}
+
+/* Mobile: centered card layout */
+@media (max-width: 767px) {
+  .app-shell {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .desktop-sidebar {
+    display: none;
+  }
+}
+
+/* Desktop: full-width with sidebar */
+@media (min-width: 768px) {
+  .app-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .app-shell.has-sidebar {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  /* ── Sidebar ── */
+  .desktop-sidebar {
+    width: 230px;
+    min-width: 230px;
+    min-height: 100vh;
+    border-right: 1px solid #3D3F55;
+    padding: 2rem 1.25rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    box-sizing: border-box;
+  }
+
+  .sidebar-brand {
+    font-size: 16px;
+    font-weight: 800;
+    color: #E0E8FF;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #3D3F55;
+    letter-spacing: -0.01em;
+  }
+
+  .sidebar-section-label {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #4A4D66;
+    font-weight: 700;
+    margin: 14px 0 4px;
+    padding: 0 8px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: #8B8FA8;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .sidebar-item:hover {
+    background: #272B40;
+    color: #E0E8FF !important;
+  }
+
+  .sidebar-item.active {
+    background: rgba(6, 182, 212, 0.12);
+    color: #06B6D4 !important;
+    font-weight: 600;
+  }
+
+  .sidebar-divider {
+    height: 1px;
+    background: #3D3F55;
+    margin: 10px 0;
+    flex-shrink: 0;
+  }
+
+  .sidebar-start-over {
+    margin-top: auto;
+    padding: 8px 10px;
+    background: none;
+    border: 1px solid #3D3F55;
+    border-radius: 10px;
+    color: #4A4D66;
+    font-size: 12px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+
+  .sidebar-start-over:hover {
+    color: #8B8FA8;
+    border-color: #8B8FA8;
+  }
+
+  /* ── Main content area ── */
+  .main-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ── Screen padding (overrides inline style) ── */
+  .screen-content {
+    padding: 2.5rem 3rem !important;
+  }
+
+  /* ── Industry picker: hero layout (no sidebar) ── */
+  .app-shell:not(.has-sidebar) .screen-content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 4rem 3rem !important;
+  }
+
+  .industry-hero-header {
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto 2rem;
+  }
+
+  /* ── Industry grid: 4 cols on desktop ── */
+  .industry-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  /* ── Mode cards: 4 cols on desktop ── */
+  .mode-card-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  /* ── Result career cards: 2-col grid ── */
+  .career-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .career-grid > * {
+    margin-bottom: 0 !important;
+  }
+
+  /* ── Browse career cards: 2-col grid ── */
+  .browse-career-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .browse-career-grid > * {
+    margin-bottom: 0 !important;
+  }
+
+  /* ── Career timeline: wider and more spacious ── */
+  .career-timeline-wrapper {
+    padding: 2.5rem 3.5rem !important;
+  }
+
+  /* ── Bubble screen: fill content area ── */
+  .bubble-screen-wrapper {
+    padding: 2rem 2.5rem !important;
+  }
+
+  .bubble-canvas {
+    max-height: calc(100vh - 180px) !important;
+  }
+}

@@ -250,7 +250,7 @@ export default function BubbleScreen({ selectedIndustries, onBack, onViewCareer 
   }
 
   return (
-    <div style={{ padding: "1.25rem 1rem" }}>
+    <div className="bubble-screen-wrapper" style={{ padding: "1.25rem 1rem" }}>
       <style>{`
         @keyframes floatA { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
         @keyframes floatB { 0%,100%{transform:translateY(-4px)} 50%{transform:translateY(5px)} }
@@ -265,6 +265,7 @@ export default function BubbleScreen({ selectedIndustries, onBack, onViewCareer 
 
       <div
         ref={canvasRef}
+        className="bubble-canvas"
         style={{
           overflowY: "auto",
           overflowX: "hidden",

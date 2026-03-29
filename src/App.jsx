@@ -154,7 +154,48 @@ const backStyle = {background:"none", border:"none", color:T.textDim, fontSize:1
 const primaryStyle = {width:"100%", padding:"0.9rem", background:`linear-gradient(135deg,${T.accent1},${T.accent2})`, color:"#fff", border:"none", borderRadius:14, fontSize:15, fontWeight:700, cursor:"pointer"};
 const ghostStyle = {width:"100%", padding:"0.85rem", background:"transparent", color:T.textMid, border:`1px solid ${T.border}`, borderRadius:14, fontSize:14, cursor:"pointer"};
 
-function Screen({children}) { return <div style={{padding:"1.5rem 1.25rem"}}>{children}</div>; }
+function Screen({children}) { return <div className="screen-content" style={{padding:"1.5rem 1.25rem"}}>{children}</div>; }
+
+function DesktopSidebar({ screen, activeQuiz, selectedIndustries, onSelectMode, onStartOver }) {
+  const quizModes = [
+    { id: "abstract", icon: "◈", name: "Abstract Quiz" },
+    { id: "cinematic", icon: "◎", name: "Cinematic Quiz" },
+    { id: "moody",    icon: "◉", name: "Deep Dive" },
+  ];
+  const activeInds = selectedIndustries.length > 0
+    ? industries.filter(i => selectedIndustries.includes(i.id))
+    : industries;
+  return (
+    <div className="desktop-sidebar" style={{background:T.bg}}>
+      <div className="sidebar-brand">Career Explorer</div>
+      <div className="sidebar-section-label">Quizzes</div>
+      {quizModes.map(m => (
+        <button key={m.id}
+          className={`sidebar-item${screen === "quiz" && activeQuiz === m.id ? " active" : ""}`}
+          onClick={() => onSelectMode(m.id)}>
+          <span style={{fontSize:14}}>{m.icon}</span>{m.name}
+        </button>
+      ))}
+      <div className="sidebar-section-label">Explore</div>
+      <button
+        className={`sidebar-item${screen === "bubble" ? " active" : ""}`}
+        onClick={() => onSelectMode("bubble")}>
+        <span style={{fontSize:14}}>✦</span>Bubble Map
+      </button>
+      <div className="sidebar-divider" />
+      <div className="sidebar-section-label">Browse Industries</div>
+      {activeInds.map(ind => (
+        <button key={ind.id}
+          className="sidebar-item"
+          onClick={() => onSelectMode("industry:" + ind.id)}
+          style={{color: ind.color}}>
+          <span style={{fontSize:14}}>{ind.icon}</span>{ind.name}
+        </button>
+      ))}
+      <button className="sidebar-start-over" onClick={onStartOver}>↩ Start over</button>
+    </div>
+  );
+}
 
 // ─── SCREENS ──────────────────────────────────────────────────────────────────
 
@@ -170,11 +211,13 @@ function IndustryPicker({onDone}) {
   const intersections = getIntersections(selected);
   return (
     <Screen>
-      <div style={eyebrowStyle}>Step 1 of 2</div>
-      <div style={{...headlineStyle,fontSize:26}}>What world pulls you in?</div>
-      <div style={subStyle}>Pick anything that feels interesting. We'll show you careers at the edges — and the intersections nobody talks about.</div>
-      <div style={{fontSize:12,color:T.textDim,marginBottom:20,cursor:"pointer",textDecoration:"underline"}} onClick={()=>onDone([])}>Skip — show me everything</div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
+      <div className="industry-hero-header">
+        <div style={eyebrowStyle}>Step 1 of 2</div>
+        <div style={{...headlineStyle,fontSize:26}}>What world pulls you in?</div>
+        <div style={subStyle}>Pick anything that feels interesting. We'll show you careers at the edges — and the intersections nobody talks about.</div>
+        <div style={{fontSize:12,color:T.textDim,marginBottom:20,cursor:"pointer",textDecoration:"underline"}} onClick={()=>onDone([])}>Skip — show me everything</div>
+      </div>
+      <div className="industry-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
         {industries.map(ind=>{
           const sel=selected.has(ind.id);
           return (
@@ -222,7 +265,7 @@ function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver}) {
           <span onClick={onReset} style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:20,padding:"3px 10px",fontSize:11,color:T.textDim,cursor:"pointer"}}>Change ×</span>
         </div>
       )}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
+      <div className="mode-card-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
         {modes.map(m=>(
           <div key={m.id} onClick={()=>onSelectMode(m.id)} style={{...cardStyle,cursor:"pointer",marginBottom:0,transition:"all 0.15s"}}
             onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent1;e.currentTarget.style.background=T.bgDeep;}}
@@ -311,17 +354,19 @@ function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onVi
         <div style={{fontSize:14,color:T.textMid,lineHeight:1.6,maxWidth:320,margin:"0 auto"}}>{profile.desc}</div>
       </div>
       <div style={eyebrowStyle}>Careers that match you</div>
-      {suggestedCareers.map(c=>(
-        <div key={c.title} onClick={()=>onViewCareer(c)} style={{...cardStyle,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",transition:"all 0.15s"}}
-          onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent1;}}
-          onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;}}>
-          <div>
-            <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:2}}>{c.title}</div>
-            <div style={{fontSize:12,color:T.accent1}}>{c.salary}</div>
+      <div className="career-grid">
+        {suggestedCareers.map(c=>(
+          <div key={c.title} onClick={()=>onViewCareer(c)} style={{...cardStyle,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",transition:"all 0.15s"}}
+            onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent1;}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;}}>
+            <div>
+              <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:2}}>{c.title}</div>
+              <div style={{fontSize:12,color:T.accent1}}>{c.salary}</div>
+            </div>
+            <span style={{color:T.textDim,fontSize:18}}>›</span>
           </div>
-          <span style={{color:T.textDim,fontSize:18}}>›</span>
-        </div>
-      ))}
+        ))}
+      </div>
       <div style={{height:12}}/>
       <button style={primaryStyle} onClick={onExploreBubble}>Explore the career universe →</button>
     </Screen>
@@ -340,20 +385,22 @@ function IndustryBrowse({industryId,onBack,onViewCareer}) {
         <div style={{fontSize:24,fontWeight:800,color:T.text}}>{industry.name}</div>
       </div>
       <div style={{...subStyle,marginBottom:20}}>Careers inside this world</div>
-      {industry.careers.map(c=>(
-        <div key={c.title} onClick={()=>onViewCareer(c,industry.color)} style={{...cardStyle,cursor:"pointer",transition:"all 0.15s"}}
-          onMouseEnter={e=>{e.currentTarget.style.borderColor=industry.color;e.currentTarget.style.background=industry.bg;}}
-          onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;e.currentTarget.style.background=T.bgCard;}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-            <div style={{flex:1}}>
-              <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:3}}>{c.title}</div>
-              <div style={{fontSize:12,color:T.textMid,marginBottom:8,lineHeight:1.4}}>{c.desc}</div>
-              <span style={pillStyle(industry.color)}>{c.salary}</span>
+      <div className="browse-career-grid">
+        {industry.careers.map(c=>(
+          <div key={c.title} onClick={()=>onViewCareer(c,industry.color)} style={{...cardStyle,cursor:"pointer",transition:"all 0.15s"}}
+            onMouseEnter={e=>{e.currentTarget.style.borderColor=industry.color;e.currentTarget.style.background=industry.bg;}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;e.currentTarget.style.background=T.bgCard;}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+              <div style={{flex:1}}>
+                <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:3}}>{c.title}</div>
+                <div style={{fontSize:12,color:T.textMid,marginBottom:8,lineHeight:1.4}}>{c.desc}</div>
+                <span style={pillStyle(industry.color)}>{c.salary}</span>
+              </div>
+              <span style={{color:T.textDim,fontSize:18,marginLeft:8}}>›</span>
             </div>
-            <span style={{color:T.textDim,fontSize:18,marginLeft:8}}>›</span>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </Screen>
   );
 }
@@ -401,14 +448,26 @@ export default function App() {
   }
 
   return (
-    <div style={{maxWidth:520,margin:"0 auto",minHeight:"100vh",background:T.bg,fontFamily:"'Inter',system-ui,sans-serif"}}>
-      {screen==="industry" && <IndustryPicker onDone={ids=>{setSelected(ids);setScreen("home");}}/>}
-      {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")} onStartOver={handleStartOver}/>}
-      {screen==="quiz"     && <QuizScreen quizKey={activeQuiz} onBack={()=>setScreen("home")} onComplete={p=>{setResultProfile(p);goTo("result");}}/>}
-      {screen==="result"   && <ResultScreen profileKey={resultProfile} selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onExploreBubble={()=>goTo("bubble")} onViewCareer={handleViewCareer}/>}
-      {screen==="career"   && <CareerTimeline career={activeCareer} industryColor={activeCareerColor} onBack={()=>setScreen(prevScreen||"home")}/>}
-      {screen==="browse"   && <IndustryBrowse industryId={browseIndustry} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer}/>}
-      {screen==="bubble"   && <BubbleScreen selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer}/>}
+    <div className={screen !== "industry" ? "app-shell has-sidebar" : "app-shell"}
+         style={{minHeight:"100vh",background:T.bg,fontFamily:"'Inter',system-ui,sans-serif"}}>
+      {screen !== "industry" && (
+        <DesktopSidebar
+          screen={screen}
+          activeQuiz={activeQuiz}
+          selectedIndustries={selectedIndustries}
+          onSelectMode={handleSelectMode}
+          onStartOver={handleStartOver}
+        />
+      )}
+      <div className="main-content">
+        {screen==="industry" && <IndustryPicker onDone={ids=>{setSelected(ids);setScreen("home");}}/>}
+        {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")} onStartOver={handleStartOver}/>}
+        {screen==="quiz"     && <QuizScreen quizKey={activeQuiz} onBack={()=>setScreen("home")} onComplete={p=>{setResultProfile(p);goTo("result");}}/>}
+        {screen==="result"   && <ResultScreen profileKey={resultProfile} selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onExploreBubble={()=>goTo("bubble")} onViewCareer={handleViewCareer}/>}
+        {screen==="career"   && <CareerTimeline career={activeCareer} industryColor={activeCareerColor} onBack={()=>setScreen(prevScreen||"home")}/>}
+        {screen==="browse"   && <IndustryBrowse industryId={browseIndustry} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer}/>}
+        {screen==="bubble"   && <BubbleScreen selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer}/>}
+      </div>
     </div>
   );
 }
