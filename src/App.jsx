@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import BubbleScreen from "./BubbleScreen";
 
 const T = {
   bg:"#1E2030", bgCard:"#272B40", bgDeep:"#1A1D2E",
@@ -389,125 +390,6 @@ function IndustryBrowse({industryId,onBack,onViewCareer}) {
   );
 }
 
-function SoapBubble({id,size,color,label,icon,selected,dimmed,onClick,animDelay=0}) {
-  const r=size/2;
-  const gid=id;
-  const floatDur=(3.2+(animDelay*0.4)%1.8).toFixed(1);
-  return (
-    <div style={{flexShrink:0,opacity:dimmed?0.18:1,transform:selected?"scale(1.18)":"scale(1)",transition:"opacity 0.8s ease,transform 0.8s cubic-bezier(0.34,1.56,0.64,1),filter 0.8s ease",filter:dimmed?"saturate(0.3) blur(0.5px)":"none"}}>
-      <div onClick={onClick} style={{position:"relative",width:size,height:size,cursor:"pointer",animation:`bubbleFloat ${floatDur}s ease-in-out ${animDelay}s infinite alternate`}}>
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{display:"block",position:"absolute",top:0,left:0,right:0,bottom:0}}>
-          <defs>
-            <radialGradient id={`${gid}-b`} cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor={color} stopOpacity="0.2"/>
-              <stop offset="100%" stopColor={color} stopOpacity="0.03"/>
-            </radialGradient>
-            <radialGradient id={`${gid}-i`} cx="65%" cy="72%" r="65%">
-              <stop offset="0%" stopColor="#FF8EC7" stopOpacity="0.3"/>
-              <stop offset="35%" stopColor="#A78BFA" stopOpacity="0.22"/>
-              <stop offset="70%" stopColor="#60A5FA" stopOpacity="0.14"/>
-              <stop offset="100%" stopColor={color} stopOpacity="0.04"/>
-            </radialGradient>
-            <radialGradient id={`${gid}-g`} cx="50%" cy="88%" r="38%">
-              <stop offset="0%" stopColor={color} stopOpacity="0.65"/>
-              <stop offset="100%" stopColor={color} stopOpacity="0"/>
-            </radialGradient>
-            <radialGradient id={`${gid}-s`} cx="30%" cy="22%" r="42%">
-              <stop offset="0%" stopColor="#fff" stopOpacity="0.88"/>
-              <stop offset="50%" stopColor="#fff" stopOpacity="0.18"/>
-              <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
-            </radialGradient>
-          </defs>
-          <circle cx={r} cy={r} r={r-1} fill="none" stroke={color} strokeWidth="1.8" strokeOpacity="0.55"/>
-          <circle cx={r} cy={r} r={r-4.5} fill="none" stroke="#fff" strokeWidth="0.7" strokeOpacity="0.22"/>
-          <circle cx={r} cy={r} r={r-2} fill={`url(#${gid}-b)`}/>
-          <circle cx={r} cy={r} r={r-2} fill={`url(#${gid}-i)`}/>
-          <circle cx={r} cy={r} r={r-2} fill={`url(#${gid}-g)`}/>
-          <circle cx={r} cy={r} r={r-2} fill={`url(#${gid}-s)`}/>
-        </svg>
-        <div style={{position:"absolute",top:0,left:0,right:0,bottom:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:8,pointerEvents:"none"}}>
-          {icon&&<div style={{fontSize:size>75?15:12,marginBottom:2,lineHeight:1}}>{icon}</div>}
-          <div style={{fontSize:size>75?10:8.5,fontWeight:700,color:"rgba(255,255,255,0.93)",textAlign:"center",lineHeight:1.25,textShadow:`0 0 10px ${color},0 1px 3px rgba(0,0,0,0.6)`}}>{label}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BubbleScreen({selectedIndustries,onBack,onViewCareer}) {
-  const [selectedInd,setSelectedInd]=useState(null);
-  const [selectedCareer,setSelectedCareer]=useState(null);
-  const careerRef=useRef(null);
-  const detailRef=useRef(null);
-  const activeInds=selectedIndustries.length>0?industries.filter(i=>selectedIndustries.includes(i.id)):industries;
-
-  function pickIndustry(ind){
-    if(selectedInd?.id===ind.id){setSelectedInd(null);setSelectedCareer(null);}
-    else{setSelectedInd(ind);setSelectedCareer(null);setTimeout(()=>careerRef.current?.scrollIntoView({behavior:"smooth",block:"nearest"}),500);}
-  }
-  function pickCareer(career){
-    if(selectedCareer?.title===career.title){setSelectedCareer(null);}
-    else{setSelectedCareer(career);setTimeout(()=>detailRef.current?.scrollIntoView({behavior:"smooth",block:"nearest"}),500);}
-  }
-  const connLine=(color)=>({width:2,height:52,background:`linear-gradient(to bottom,${color}99,${color}22)`,margin:"0 auto",borderRadius:1});
-
-  return (
-    <>
-      <style>{`
-        @keyframes bubbleFloat{from{transform:translateY(0px) rotate(-0.5deg);}to{transform:translateY(-10px) rotate(0.5deg);}}
-        @keyframes bsFadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-      `}</style>
-      <div style={{padding:"1.5rem 1rem 4rem"}}>
-        <button style={backStyle} onClick={onBack}>← Back</button>
-        <div style={eyebrowStyle}>Career universe</div>
-        <div style={{fontSize:12,color:T.textDim,marginBottom:20,lineHeight:1.5}}>Tap an industry bubble to explore its careers</div>
-
-        {/* Industry bubbles */}
-        <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:14,padding:"8px 0"}}>
-          {activeInds.map((ind,i)=>(
-            <SoapBubble key={ind.id} id={`ind-${ind.id}`} size={84} color={ind.color} label={ind.name} icon={ind.icon}
-              selected={selectedInd?.id===ind.id} dimmed={selectedInd!=null&&selectedInd.id!==ind.id}
-              onClick={()=>pickIndustry(ind)} animDelay={i*0.45}/>
-          ))}
-        </div>
-
-        {selectedInd&&(
-          <div style={{animation:"bsFadeUp 0.65s ease both"}}>
-            <div style={connLine(selectedInd.color)}/>
-            <div ref={careerRef}>
-              <div style={{textAlign:"center",fontSize:10,color:selectedInd.color,letterSpacing:"0.12em",textTransform:"uppercase",fontWeight:700,marginBottom:14,marginTop:2}}>{selectedInd.name}</div>
-              <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:14,padding:"4px 0"}}>
-                {selectedInd.careers.map((career,i)=>(
-                  <SoapBubble key={career.title} id={`career-${selectedInd.id}-${i}`} size={94} color={selectedInd.color} label={career.title}
-                    selected={selectedCareer?.title===career.title} dimmed={selectedCareer!=null&&selectedCareer.title!==career.title}
-                    onClick={()=>pickCareer(career)} animDelay={i*0.6+0.3}/>
-                ))}
-              </div>
-            </div>
-
-            {selectedCareer&&(
-              <div style={{animation:"bsFadeUp 0.65s ease both"}}>
-                <div style={{...connLine(selectedInd.color),marginTop:6}}/>
-                <div ref={detailRef} style={{background:selectedInd.bg,border:`1px solid ${selectedInd.color}44`,borderRadius:18,padding:"1.1rem 1.15rem",marginTop:2}}>
-                  <div style={{fontSize:16,fontWeight:800,color:T.text,marginBottom:6}}>{selectedCareer.title}</div>
-                  <div style={{fontSize:13,color:T.textMid,lineHeight:1.6,marginBottom:12}}>{selectedCareer.desc}</div>
-                  <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:10}}>
-                    <span style={pillStyle(T.accent1)}>{selectedCareer.salary}</span>
-                    <span style={pillStyle(T.accentPurple)}>{selectedCareer.school}</span>
-                  </div>
-                  <div style={{fontSize:12,color:T.textDim,fontStyle:"italic",lineHeight:1.6,marginBottom:14}}>{selectedCareer.day}</div>
-                  <button onClick={()=>onViewCareer(selectedCareer,selectedInd.color)} style={{...primaryStyle,fontSize:13,padding:"0.7rem"}}>See full career roadmap →</button>
-                </div>
-              </div>
-            )}
-
-            <div style={{textAlign:"center",color:T.textDim,fontSize:11,marginTop:28,opacity:0.6}}>↑ Scroll up to explore other industries</div>
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
 
 export default function App() {
   const [screen,setScreen]=useState("industry");
@@ -525,7 +407,14 @@ export default function App() {
     if(mode==="bubble"){goTo("bubble");return;}
     setActiveQuiz(mode);goTo("quiz");
   }
-  function handleViewCareer(career,color){setActiveCareer(career);setCareerColor(color);goTo("career");}
+  function handleViewCareer(career,color){
+    // BubbleScreen.jsx uses abbreviated keys (t/s/sc/d); CareerDetail expects full keys
+    const normalized = career.title ? career : {
+      title:career.t, salary:career.s, school:career.sc,
+      desc:career.d, day:career.day, growth:career.growth
+    };
+    setActiveCareer(normalized);setCareerColor(color);goTo("career");
+  }
 
   return (
     <div style={{maxWidth:520,margin:"0 auto",minHeight:"100vh",background:T.bg,fontFamily:"'Inter',system-ui,sans-serif"}}>
