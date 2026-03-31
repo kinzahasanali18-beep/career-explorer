@@ -202,10 +202,12 @@ function DesktopSidebar({ screen, activeQuiz, selectedIndustries, onSelectMode, 
 function IndustryPicker({onDone}) {
   const [selected, setSelected] = useState(new Set());
   const [hintIdx, setHintIdx] = useState({});
+  const [showPulse, setShowPulse] = useState(true);
   useEffect(()=>{
     const init={}; industries.forEach(i=>{init[i.id]=0;}); setHintIdx(init);
     const iv=setInterval(()=>setHintIdx(p=>{const n={...p};industries.forEach(i=>{n[i.id]=(p[i.id]+1)%i.hints.length;});return n;}),2400);
-    return ()=>clearInterval(iv);
+    const pt=setTimeout(()=>setShowPulse(false),3200);
+    return ()=>{clearInterval(iv);clearTimeout(pt);};
   },[]);
   function toggle(id){setSelected(p=>{const n=new Set(p);n.has(id)?n.delete(id):n.add(id);return n;});}
   const intersections = getIntersections(selected);
@@ -214,15 +216,16 @@ function IndustryPicker({onDone}) {
       <div className="industry-hero-header">
         <div style={eyebrowStyle}>Step 1 of 2</div>
         <div style={{...headlineStyle,fontSize:26}}>What world pulls you in?</div>
+        <div style={{fontSize:14,color:T.accent1,fontWeight:600,marginBottom:8,lineHeight:1.5}}>Pick as many as you like — the more you choose, the more personalized your results.</div>
         <div style={subStyle}>Pick anything that feels interesting. We'll show you careers at the edges — and the intersections nobody talks about.</div>
         <div style={{fontSize:12,color:T.textDim,marginBottom:20,cursor:"pointer",textDecoration:"underline"}} onClick={()=>onDone([])}>Skip — show me everything</div>
       </div>
       <div className="industry-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
-        {industries.map(ind=>{
+        {industries.map((ind,idx)=>{
           const sel=selected.has(ind.id);
           return (
-            <div key={ind.id} onClick={()=>toggle(ind.id)} style={{background:sel?ind.bg:T.bgCard,border:`${sel?2:1}px solid ${sel?ind.color:T.border}`,borderRadius:16,padding:"1rem",cursor:"pointer",transition:"all 0.15s",position:"relative"}}>
-              {sel&&<div style={{position:"absolute",top:8,right:8,width:16,height:16,borderRadius:"50%",background:ind.color,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:"#fff",fontSize:9,fontWeight:700}}>✓</span></div>}
+            <div key={ind.id} onClick={()=>toggle(ind.id)} style={{background:sel?ind.bg:T.bgCard,border:`${sel?2:1}px solid ${sel?ind.color:T.border}`,borderRadius:16,padding:"1rem",cursor:"pointer",transition:"all 0.15s",position:"relative",animation:!sel&&idx===0&&showPulse?"tilePulse 1s ease-in-out 2":"none"}}>
+              {sel&&<div style={{position:"absolute",top:8,right:8,width:22,height:22,borderRadius:"50%",background:ind.color,border:"2px solid rgba(255,255,255,0.3)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 0 8px ${ind.color}99`}}><span style={{color:"#fff",fontSize:12,fontWeight:900,lineHeight:1}}>✓</span></div>}
               <div style={{fontSize:20,marginBottom:6}}>{ind.icon}</div>
               <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:3}}>{ind.name}</div>
               <div style={{fontSize:11,color:ind.color,fontWeight:500,minHeight:14}}>{ind.hints[hintIdx[ind.id]||0]}</div>
@@ -243,6 +246,36 @@ function IndustryPicker({onDone}) {
       <div style={{height:8}}/>
       <button style={ghostStyle} onClick={()=>onDone([])}>Explore freely without filters</button>
     </Screen>
+  );
+}
+
+function LandingScreen({onStart,onBrowse}) {
+  const steps=[{num:"1",label:"Answer questions"},{num:"2",label:"Get your matches"},{num:"3",label:"Explore your future"}];
+  return (
+    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",padding:"2rem 1.5rem"}}>
+      <div style={{textAlign:"center",maxWidth:480,width:"100%"}}>
+        <div style={{fontSize:64,fontWeight:900,color:"#F0EEFF",letterSpacing:"-0.03em",lineHeight:1,marginBottom:28}}>⚡ Sparq</div>
+        <div style={{fontSize:24,fontWeight:800,color:"#F0EEFF",lineHeight:1.35,marginBottom:16}}>
+          You don't know what you want to do yet.<br/>That's exactly why you're here.
+        </div>
+        <div style={{fontSize:15,color:T.textMid,lineHeight:1.75,marginBottom:44}}>
+          Answer a few questions. Discover careers you never knew existed. Find your Sparq.
+        </div>
+        <div style={{display:"flex",justifyContent:"center",alignItems:"flex-start",gap:0,marginBottom:48}}>
+          {steps.map((step,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center"}}>
+              <div style={{textAlign:"center",padding:"0 16px"}}>
+                <div style={{width:36,height:36,borderRadius:"50%",background:`linear-gradient(135deg,${T.accent1},${T.accentPurple})`,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 10px",fontSize:15,fontWeight:800,color:"#fff"}}>{step.num}</div>
+                <div style={{fontSize:12,color:T.textMid,fontWeight:600,maxWidth:80,lineHeight:1.4}}>{step.label}</div>
+              </div>
+              {i<2&&<div style={{width:32,height:1,background:T.border,flexShrink:0,marginTop:18}}/>}
+            </div>
+          ))}
+        </div>
+        <button style={{...primaryStyle,maxWidth:380,margin:"0 auto 18px",display:"block",fontSize:16,padding:"1rem"}} onClick={onStart}>Find my Sparq →</button>
+        <button onClick={onBrowse} style={{background:"none",border:"none",color:T.textDim,fontSize:13,cursor:"pointer",textDecoration:"underline",textUnderlineOffset:3}}>Just want to explore? Browse careers</button>
+      </div>
+    </div>
   );
 }
 
@@ -338,13 +371,14 @@ function QuizScreen({quizKey,onBack,onComplete}) {
   );
 }
 
-function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onViewCareer}) {
+function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onViewCareer,onRetake}) {
   const fallback=["analytical","creative","social","investigative","builder","adventurous","visionary"];
   const profile=profiles[profileKey]||profiles[fallback[0]];
   const relevantInds=selectedIndustries.length>0
     ?industries.filter(i=>selectedIndustries.includes(i.id)||profile.industryFit.includes(i.id))
     :industries.filter(i=>profile.industryFit.includes(i.id));
   const suggestedCareers=relevantInds.flatMap(i=>i.careers).slice(0,6);
+  const intersections=selectedIndustries.length>=2?getIntersections(new Set(selectedIndustries)):[];
   return (
     <Screen>
       <button style={backStyle} onClick={onBack}>← Back</button>
@@ -353,6 +387,19 @@ function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onVi
         <div style={{fontSize:26,fontWeight:800,color:T.text,marginBottom:8}}>{profile.title}</div>
         <div style={{fontSize:14,color:T.textMid,lineHeight:1.6,maxWidth:320,margin:"0 auto"}}>{profile.desc}</div>
       </div>
+      {intersections.length>0&&(
+        <>
+          <div style={{...eyebrowStyle,background:`linear-gradient(90deg,${T.accentPurple},${T.accent1})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Careers at your intersection</div>
+          <div className="career-grid" style={{marginBottom:20}}>
+            {intersections.slice(0,4).map(name=>(
+              <div key={name} style={{...cardStyle,marginBottom:0,border:`1px solid ${T.accentPurple}44`,background:`linear-gradient(135deg,${T.bgCard},${T.accentPurple}11)`}}>
+                <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:2}}>{name}</div>
+                <div style={{fontSize:11,color:T.accentPurple,fontWeight:500}}>Intersection career</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
       <div style={eyebrowStyle}>Careers that match you</div>
       <div className="career-grid">
         {suggestedCareers.map(c=>(
@@ -369,6 +416,11 @@ function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onVi
       </div>
       <div style={{height:12}}/>
       <button style={primaryStyle} onClick={onExploreBubble}>Explore the career universe →</button>
+      <div style={{height:20}}/>
+      <div style={{textAlign:"center",display:"flex",flexDirection:"column",gap:10}}>
+        <button onClick={onRetake} style={{background:"none",border:"none",color:T.accent1,fontSize:13,cursor:"pointer",textDecoration:"underline",textUnderlineOffset:3}}>↺ Retake quiz</button>
+        <button onClick={onBack} style={{background:"none",border:"none",color:T.textDim,fontSize:13,cursor:"pointer",textDecoration:"underline",textUnderlineOffset:3}}>Try a different quiz</button>
+      </div>
     </Screen>
   );
 }
@@ -414,7 +466,11 @@ function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch
 function lsClear(){["ce_screen","ce_industries","ce_profile"].forEach(k=>localStorage.removeItem(k));}
 
 export default function App() {
-  const [screen,setScreen]=useState(()=>{ const s=ls("ce_screen","industry"); return RESTORABLE.has(s)?s:"industry"; });
+  const [screen,setScreen]=useState(()=>{
+    const seenLanding=localStorage.getItem("ce_landing_seen")!==null;
+    if(!seenLanding) return "landing";
+    const s=ls("ce_screen","industry"); return RESTORABLE.has(s)?s:"industry";
+  });
   const [selectedIndustries,setSelected]=useState(()=>ls("ce_industries",[]));
   const [activeQuiz,setActiveQuiz]=useState(null);
   const [resultProfile,setResultProfile]=useState(()=>ls("ce_profile",null));
@@ -448,9 +504,9 @@ export default function App() {
   }
 
   return (
-    <div className={screen !== "industry" ? "app-shell has-sidebar" : "app-shell"}
+    <div className={screen!=="industry"&&screen!=="landing" ? "app-shell has-sidebar" : "app-shell"}
          style={{minHeight:"100vh",background:T.bg,fontFamily:"'Inter',system-ui,sans-serif"}}>
-      {screen !== "industry" && (
+      {screen!=="industry"&&screen!=="landing" && (
         <DesktopSidebar
           screen={screen}
           activeQuiz={activeQuiz}
@@ -460,10 +516,11 @@ export default function App() {
         />
       )}
       <div className="main-content">
+        {screen==="landing"  && <LandingScreen onStart={()=>{localStorage.setItem("ce_landing_seen","1");setScreen("industry");}} onBrowse={()=>{localStorage.setItem("ce_landing_seen","1");setSelected([]);setScreen("home");}}/>}
         {screen==="industry" && <IndustryPicker onDone={ids=>{setSelected(ids);setScreen("home");}}/>}
         {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")} onStartOver={handleStartOver}/>}
         {screen==="quiz"     && <QuizScreen quizKey={activeQuiz} onBack={()=>setScreen("home")} onComplete={p=>{setResultProfile(p);goTo("result");}}/>}
-        {screen==="result"   && <ResultScreen profileKey={resultProfile} selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onExploreBubble={()=>goTo("bubble")} onViewCareer={handleViewCareer}/>}
+        {screen==="result"   && <ResultScreen profileKey={resultProfile} selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onExploreBubble={()=>goTo("bubble")} onViewCareer={handleViewCareer} onRetake={()=>setScreen("industry")}/>}
         {screen==="career"   && <CareerTimeline career={activeCareer} industryColor={activeCareerColor} onBack={()=>setScreen(prevScreen||"home")}/>}
         {screen==="browse"   && <IndustryBrowse industryId={browseIndustry} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer}/>}
         {screen==="bubble"   && <BubbleScreen selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer}/>}
