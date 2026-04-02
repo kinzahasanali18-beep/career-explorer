@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import BubbleScreen from "./BubbleScreen";
 import CareerTimeline from "./CareerTimeline";
+import { fetchCareers } from "./airtable";
 
 const T = {
   bg:"#1E2030", bgCard:"#272B40", bgDeep:"#1A1D2E",
@@ -9,8 +10,25 @@ const T = {
   accent1:"#06B6D4", accent2:"#3B82F6", accentPurple:"#7F77DD", white:"#FFFFFF",
 };
 
-const industries = [
-  { id:"tech", name:"Tech & AI", icon:"◈", color:"#7F77DD", bg:"#1E1B3A",
+const INDUSTRY_ID_MAP = {
+  "tech & engineering": "tech",
+  "healthcare & medicine": "health",
+  "business & finance": "biz",
+  "design & creative": "creative",
+  "law & government": "law",
+  "sports & fitness": "sports",
+  "education & coaching": "edu",
+  "hospitality & events": "travel",
+};
+
+function normalizeIndustryId(val) {
+  if (!val) return "";
+  const lower = val.toLowerCase().trim();
+  return INDUSTRY_ID_MAP[lower] || lower;
+}
+
+const STATIC_INDUSTRIES = [
+  { id:"tech", name:"Tech & Engineering", icon:"◈", color:"#7F77DD", bg:"#1E1B3A",
     hints:["...for storytellers","...for activists","...for athletes","...for artists","...for healers"],
     careers:[
       { title:"Machine Learning Engineer", salary:"$140–200k", school:"CS/Math degree or bootcamp", desc:"Train AI systems that learn from data. You sit at the center of the AI revolution.", day:"Running experiments, reviewing model performance, collaborating with product teams.", growth:[{role:"Junior ML Engineer",salary:"$95k",years:"Now"},{role:"ML Engineer",salary:"$140k",years:"2 yrs"},{role:"Senior ML Engineer",salary:"$175k",years:"5 yrs"},{role:"Staff / AI Lead",salary:"$230k+",years:"10 yrs"}]},
@@ -18,7 +36,7 @@ const industries = [
       { title:"AI Ethics Researcher", salary:"$90–150k", school:"Philosophy, Law, or CS", desc:"One of the most important jobs of the next 50 years. Ensure AI is fair and safe.", day:"Auditing models for bias, writing policy briefs, collaborating with legal and engineering.", growth:[{role:"Research Assistant",salary:"$70k",years:"Now"},{role:"Ethics Researcher",salary:"$110k",years:"2 yrs"},{role:"Senior Researcher",salary:"$145k",years:"5 yrs"},{role:"Head of AI Ethics",salary:"$200k+",years:"10 yrs"}]},
       { title:"Creative Technologist", salary:"$85–140k", school:"Design, CS, or Fine Arts", desc:"Sit at the intersection of art and code. Build experiences that feel like magic.", day:"Prototyping interactive installations, pitching to creative directors, coding in unusual environments.", growth:[{role:"Jr Creative Tech",salary:"$65k",years:"Now"},{role:"Creative Technologist",salary:"$95k",years:"2 yrs"},{role:"Senior Creative Tech",salary:"$130k",years:"5 yrs"},{role:"Creative Tech Director",salary:"$180k+",years:"10 yrs"}]},
     ]},
-  { id:"health", name:"Healthcare & Science", icon:"◎", color:"#1D9E75", bg:"#0F2620",
+  { id:"health", name:"Healthcare & Medicine", icon:"◎", color:"#1D9E75", bg:"#0F2620",
     hints:["...without med school","...for tech people","...for the curious","...at the frontier","...for policy nerds"],
     careers:[
       { title:"Health Informatics Manager", salary:"$95–145k", school:"Health Informatics or CS", desc:"Manage how hospitals use data to save lives.", day:"Meeting with clinical staff, overseeing EHR systems, analyzing patient outcome data.", growth:[{role:"Data Analyst",salary:"$65k",years:"Now"},{role:"Informatics Specialist",salary:"$90k",years:"2 yrs"},{role:"Informatics Manager",salary:"$120k",years:"5 yrs"},{role:"Chief Informatics Officer",salary:"$180k+",years:"10 yrs"}]},
@@ -34,7 +52,7 @@ const industries = [
       { title:"Startup CFO", salary:"$160–280k", school:"Accounting, Finance, or MBA", desc:"The financial brain of a startup. Help founders not run out of money.", day:"Building financial models, leading fundraising rounds, managing investor relations.", growth:[{role:"Financial Analyst",salary:"$75k",years:"Now"},{role:"Finance Manager",salary:"$110k",years:"2 yrs"},{role:"VP Finance",salary:"$160k",years:"5 yrs"},{role:"CFO",salary:"$280k+",years:"10 yrs"}]},
       { title:"Revenue Manager", salary:"$75–130k", school:"Business, Math, or Hospitality", desc:"Use data and algorithms to price products in real time.", day:"Analyzing demand patterns, adjusting pricing strategies, presenting forecasts to leadership.", growth:[{role:"Revenue Analyst",salary:"$55k",years:"Now"},{role:"Revenue Manager",salary:"$85k",years:"2 yrs"},{role:"Senior Revenue Manager",salary:"$110k",years:"5 yrs"},{role:"VP Revenue",salary:"$160k+",years:"10 yrs"}]},
     ]},
-  { id:"creative", name:"Creative & Culture", icon:"✦", color:"#D4537E", bg:"#1E0F16",
+  { id:"creative", name:"Design & Creative", icon:"✦", color:"#D4537E", bg:"#1E0F16",
     hints:["...that pays well","...at tech companies","...with global reach","...that shapes society","...for systems thinkers"],
     careers:[
       { title:"Creative Director", salary:"$110–200k", school:"Design, Fine Arts, or self-taught", desc:"Set the visual and emotional direction for brands, campaigns, and products.", day:"Running creative reviews, briefing designers and writers, presenting concepts to clients.", growth:[{role:"Junior Designer",salary:"$55k",years:"Now"},{role:"Mid Designer",salary:"$85k",years:"2 yrs"},{role:"Senior Designer",salary:"$120k",years:"5 yrs"},{role:"Creative Director",salary:"$180k+",years:"10 yrs"}]},
@@ -42,7 +60,7 @@ const industries = [
       { title:"Brand Strategist", salary:"$80–150k", school:"Marketing, Business, or Design", desc:"Figure out what a brand stands for and how it should show up in the world.", day:"Running brand workshops, analyzing cultural trends, writing strategy decks.", growth:[{role:"Brand Analyst",salary:"$55k",years:"Now"},{role:"Brand Strategist",salary:"$85k",years:"2 yrs"},{role:"Sr Brand Strategist",salary:"$120k",years:"5 yrs"},{role:"Chief Brand Officer",salary:"$200k+",years:"10 yrs"}]},
       { title:"Experience Designer", salary:"$90–155k", school:"Design, Architecture, or Theater", desc:"Design physical and digital experiences — pop-ups, retail, events, museums.", day:"Sketching spatial concepts, coordinating with architects, managing vendor builds.", growth:[{role:"Jr Experience Designer",salary:"$60k",years:"Now"},{role:"Experience Designer",salary:"$95k",years:"2 yrs"},{role:"Sr Experience Designer",salary:"$130k",years:"5 yrs"},{role:"Experience Director",salary:"$190k+",years:"10 yrs"}]},
     ]},
-  { id:"law", name:"Law & Policy", icon:"▣", color:"#378ADD", bg:"#0A1628",
+  { id:"law", name:"Law & Government", icon:"▣", color:"#378ADD", bg:"#0A1628",
     hints:["...without being a lawyer","...for tech people","...that moves fast","...that shapes history","...at the UN"],
     careers:[
       { title:"Tech Policy Analyst", salary:"$80–140k", school:"Law, Poli Sci, or Economics", desc:"Write the laws and frameworks that govern AI and big tech.", day:"Researching legislation, briefing senators, writing policy white papers.", growth:[{role:"Policy Coordinator",salary:"$55k",years:"Now"},{role:"Policy Analyst",salary:"$80k",years:"2 yrs"},{role:"Senior Analyst",salary:"$110k",years:"5 yrs"},{role:"Policy Director",salary:"$160k+",years:"10 yrs"}]},
@@ -50,7 +68,7 @@ const industries = [
       { title:"Human Rights Investigator", salary:"$55–100k", school:"Law, International Relations, or Journalism", desc:"Document atrocities and build legal cases for international courts.", day:"Conducting field interviews, analyzing evidence, writing investigative reports.", growth:[{role:"Research Assistant",salary:"$45k",years:"Now"},{role:"Investigator",salary:"$65k",years:"2 yrs"},{role:"Senior Investigator",salary:"$90k",years:"5 yrs"},{role:"Director of Investigations",salary:"$130k+",years:"10 yrs"}]},
       { title:"Privacy Engineer", salary:"$130–190k", school:"CS + Law or Policy background", desc:"Build the technical systems that protect user data and keep companies compliant.", day:"Auditing data flows, implementing privacy-by-design features, advising engineering teams.", growth:[{role:"Privacy Analyst",salary:"$85k",years:"Now"},{role:"Privacy Engineer",salary:"$130k",years:"2 yrs"},{role:"Senior Privacy Eng",salary:"$165k",years:"5 yrs"},{role:"Head of Privacy",salary:"$220k+",years:"10 yrs"}]},
     ]},
-  { id:"sports", name:"Sports & Entertainment", icon:"▤", color:"#D85A30", bg:"#1E1008",
+  { id:"sports", name:"Sports & Fitness", icon:"▤", color:"#D85A30", bg:"#1E1008",
     hints:["...off the field","...for data lovers","...behind the scenes","...for strategists","...that travel the world"],
     careers:[
       { title:"Sports Analytics Lead", salary:"$90–160k", school:"Statistics, CS, or Sports Science", desc:"Help teams win using data. Every major league team now has an analytics department.", day:"Building player performance models, presenting insights to coaching staff.", growth:[{role:"Data Analyst",salary:"$60k",years:"Now"},{role:"Sports Analyst",salary:"$90k",years:"2 yrs"},{role:"Senior Analyst",salary:"$120k",years:"5 yrs"},{role:"Head of Analytics",salary:"$180k+",years:"10 yrs"}]},
@@ -58,7 +76,7 @@ const industries = [
       { title:"Fan Experience Director", salary:"$80–140k", school:"Business, Marketing, or Hospitality", desc:"Design what it feels like to be at a game, concert, or live event.", day:"Overseeing in-venue activations, managing sponsor integrations, analyzing fan feedback.", growth:[{role:"Events Coordinator",salary:"$45k",years:"Now"},{role:"Fan Experience Manager",salary:"$75k",years:"2 yrs"},{role:"Director",salary:"$110k",years:"5 yrs"},{role:"VP Fan Experience",salary:"$175k+",years:"10 yrs"}]},
       { title:"Esports Strategist", salary:"$70–130k", school:"Business, Marketing, or Game Design", desc:"One of the fastest growing industries in the world. Build teams, leagues, and brand partnerships.", day:"Scouting players, negotiating sponsorship deals, managing tournament logistics.", growth:[{role:"Esports Coordinator",salary:"$50k",years:"Now"},{role:"Esports Manager",salary:"$75k",years:"2 yrs"},{role:"Sr Strategist",salary:"$105k",years:"5 yrs"},{role:"Esports Director",salary:"$160k+",years:"10 yrs"}]},
     ]},
-  { id:"edu", name:"Education", icon:"▥", color:"#639922", bg:"#0E1A08",
+  { id:"edu", name:"Education & Coaching", icon:"▥", color:"#639922", bg:"#0E1A08",
     hints:["...that disrupts school","...at tech companies","...for entrepreneurs","...that scales globally","...for content creators"],
     careers:[
       { title:"EdTech Product Manager", salary:"$110–170k", school:"Education, CS, or Business", desc:"Build tools that change how millions of kids learn.", day:"Running teacher focus groups, writing product specs, analyzing learning outcome data.", growth:[{role:"Associate PM",salary:"$80k",years:"Now"},{role:"Product Manager",salary:"$115k",years:"2 yrs"},{role:"Senior PM",salary:"$150k",years:"5 yrs"},{role:"VP Product",salary:"$210k+",years:"10 yrs"}]},
@@ -66,7 +84,7 @@ const industries = [
       { title:"Education Policy Analyst", salary:"$65–110k", school:"Education, Public Policy, or Economics", desc:"Shape national education policy. Work with governments to fix broken systems.", day:"Analyzing test score data, writing policy briefs, presenting to school boards.", growth:[{role:"Policy Researcher",salary:"$50k",years:"Now"},{role:"Policy Analyst",salary:"$70k",years:"2 yrs"},{role:"Senior Analyst",salary:"$95k",years:"5 yrs"},{role:"Policy Director",salary:"$140k+",years:"10 yrs"}]},
       { title:"AI Curriculum Developer", salary:"$80–130k", school:"Education + CS background", desc:"Build the courses that teach the next generation how to think about AI.", day:"Researching AI trends, writing curriculum, collaborating with teachers and engineers.", growth:[{role:"Curriculum Writer",salary:"$55k",years:"Now"},{role:"Curriculum Developer",salary:"$80k",years:"2 yrs"},{role:"Sr Curriculum Dev",salary:"$110k",years:"5 yrs"},{role:"Head of Curriculum",salary:"$155k+",years:"10 yrs"}]},
     ]},
-  { id:"travel", name:"Travel & Hospitality", icon:"▦", color:"#534AB7", bg:"#12102A",
+  { id:"travel", name:"Hospitality & Events", icon:"▦", color:"#534AB7", bg:"#12102A",
     hints:["...that pays six figures","...for tech people","...for culture lovers","...at luxury brands","...that never stops growing"],
     careers:[
       { title:"Luxury Travel Advisor", salary:"$80–200k", school:"Hospitality, Business, or self-built client base", desc:"Curate extraordinary trips for high-net-worth clients.", day:"Consulting with clients on dream trips, booking exclusive experiences, managing itineraries.", growth:[{role:"Travel Coordinator",salary:"$45k",years:"Now"},{role:"Travel Advisor",salary:"$80k",years:"2 yrs"},{role:"Senior Advisor",salary:"$130k",years:"5 yrs"},{role:"Agency Owner / Director",salary:"$200k+",years:"10 yrs"}]},
@@ -156,7 +174,7 @@ const ghostStyle = {width:"100%", padding:"0.85rem", background:"transparent", c
 
 function Screen({children}) { return <div className="screen-content" style={{padding:"1.5rem 1.25rem"}}>{children}</div>; }
 
-function DesktopSidebar({ screen, activeQuiz, selectedIndustries, onSelectMode, onStartOver }) {
+function DesktopSidebar({ screen, activeQuiz, selectedIndustries, onSelectMode, onStartOver, industries }) {
   const quizModes = [
     { id: "abstract", icon: "◈", name: "Abstract Quiz" },
     { id: "cinematic", icon: "◎", name: "Cinematic Quiz" },
@@ -167,7 +185,7 @@ function DesktopSidebar({ screen, activeQuiz, selectedIndustries, onSelectMode, 
     : industries;
   return (
     <div className="desktop-sidebar" style={{background:T.bg}}>
-      <div className="sidebar-brand">Career Explorer</div>
+      <div className="sidebar-brand">Sparq</div>
       <div className="sidebar-section-label">Quizzes</div>
       {quizModes.map(m => (
         <button key={m.id}
@@ -199,7 +217,7 @@ function DesktopSidebar({ screen, activeQuiz, selectedIndustries, onSelectMode, 
 
 // ─── SCREENS ──────────────────────────────────────────────────────────────────
 
-function IndustryPicker({onDone}) {
+function IndustryPicker({onDone, industries}) {
   const [selected, setSelected] = useState(new Set());
   const [hintIdx, setHintIdx] = useState({});
   const [showPulse, setShowPulse] = useState(true);
@@ -279,7 +297,7 @@ function LandingScreen({onStart,onBrowse}) {
   );
 }
 
-function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver}) {
+function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver,industries}) {
   const modes=[
     {id:"abstract",icon:"◈",name:"The Abstract Quiz",desc:"Strange questions. Surprising results."},
     {id:"cinematic",icon:"◎",name:"The Cinematic Quiz",desc:"Pick movie scenes. Find where you fit."},
@@ -289,7 +307,7 @@ function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver}) {
   const activeInds = selectedIndustries.length>0?industries.filter(i=>selectedIndustries.includes(i.id)):industries;
   return (
     <Screen>
-      <div style={eyebrowStyle}>Career Explorer</div>
+      <div style={eyebrowStyle}>Sparq</div>
       <div style={{...headlineStyle,fontSize:30,marginBottom:4}}>What will you<br/>become?</div>
       <div style={{...subStyle,marginBottom:16}}>Explore careers you've never heard of.</div>
       {selectedIndustries.length>0&&(
@@ -371,7 +389,7 @@ function QuizScreen({quizKey,onBack,onComplete}) {
   );
 }
 
-function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onViewCareer,onRetake}) {
+function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onViewCareer,onRetake,industries}) {
   const fallback=["analytical","creative","social","investigative","builder","adventurous","visionary"];
   const profile=profiles[profileKey]||profiles[fallback[0]];
   const relevantInds=selectedIndustries.length>0
@@ -426,7 +444,7 @@ function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onVi
 }
 
 
-function IndustryBrowse({industryId,onBack,onViewCareer}) {
+function IndustryBrowse({industryId,onBack,onViewCareer,industries}) {
   const industry=industries.find(i=>i.id===industryId);
   if(!industry)return null;
   return (
@@ -478,6 +496,25 @@ export default function App() {
   const [activeCareerColor,setCareerColor]=useState(null);
   const [browseIndustry,setBrowseIndustry]=useState(null);
   const [prevScreen,setPrevScreen]=useState(null);
+  const [industries,setIndustries]=useState(STATIC_INDUSTRIES);
+
+  useEffect(()=>{
+    fetchCareers().then(careers=>{
+      setIndustries(STATIC_INDUSTRIES.map(ind=>({
+        ...ind,
+        careers: careers
+          .filter(c=>normalizeIndustryId(c.primary_industry)===ind.id)
+          .map(c=>({
+            title: c.name,
+            salary: c.salary_range,
+            desc: c.description,
+            school: "",
+            day: "",
+            growth: [],
+          })),
+      })));
+    }).catch(err=>console.error("Airtable fetch failed:",err));
+  },[]);
 
   useEffect(()=>{ if(RESTORABLE.has(screen)) lsSet("ce_screen",screen); },[screen]);
   useEffect(()=>{ lsSet("ce_industries",selectedIndustries); },[selectedIndustries]);
@@ -513,17 +550,18 @@ export default function App() {
           selectedIndustries={selectedIndustries}
           onSelectMode={handleSelectMode}
           onStartOver={handleStartOver}
+          industries={industries}
         />
       )}
       <div className="main-content">
         {screen==="landing"  && <LandingScreen onStart={()=>{localStorage.setItem("ce_landing_seen","1");setScreen("industry");}} onBrowse={()=>{localStorage.setItem("ce_landing_seen","1");setSelected([]);setScreen("home");}}/>}
-        {screen==="industry" && <IndustryPicker onDone={ids=>{setSelected(ids);setScreen("home");}}/>}
-        {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")} onStartOver={handleStartOver}/>}
+        {screen==="industry" && <IndustryPicker onDone={ids=>{setSelected(ids);setScreen("home");}} industries={industries}/>}
+        {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")} onStartOver={handleStartOver} industries={industries}/>}
         {screen==="quiz"     && <QuizScreen quizKey={activeQuiz} onBack={()=>setScreen("home")} onComplete={p=>{setResultProfile(p);goTo("result");}}/>}
-        {screen==="result"   && <ResultScreen profileKey={resultProfile} selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onExploreBubble={()=>goTo("bubble")} onViewCareer={handleViewCareer} onRetake={()=>setScreen("industry")}/>}
+        {screen==="result"   && <ResultScreen profileKey={resultProfile} selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onExploreBubble={()=>goTo("bubble")} onViewCareer={handleViewCareer} onRetake={()=>setScreen("industry")} industries={industries}/>}
         {screen==="career"   && <CareerTimeline career={activeCareer} industryColor={activeCareerColor} onBack={()=>setScreen(prevScreen||"home")}/>}
-        {screen==="browse"   && <IndustryBrowse industryId={browseIndustry} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer}/>}
-        {screen==="bubble"   && <BubbleScreen selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer}/>}
+        {screen==="browse"   && <IndustryBrowse industryId={browseIndustry} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer} industries={industries}/>}
+        {screen==="bubble"   && <BubbleScreen selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer} industries={industries}/>}
       </div>
     </div>
   );
