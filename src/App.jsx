@@ -395,6 +395,14 @@ function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onVi
   const allCareers=industries.flatMap(i=>i.careers);
   const suggestedCareers=relevantInds.flatMap(i=>i.careers).slice(0,6);
   const intersections=selectedIndustries.length>=2?getIntersections(new Set(selectedIndustries)):[];
+  // Map each intersection career name → the two source industry IDs that generated it
+  const intersectionSourceMap={};
+  for(let i=0;i<selectedIndustries.length;i++) for(let j=i+1;j<selectedIndustries.length;j++){
+    const a=selectedIndustries[i],b=selectedIndustries[j];
+    const careers=intersectionCareers[`${a},${b}`]||intersectionCareers[`${b},${a}`];
+    const ids=intersectionCareers[`${a},${b}`]?[a,b]:[b,a];
+    if(careers) careers.forEach(name=>{ if(!intersectionSourceMap[name]) intersectionSourceMap[name]=ids; });
+  }
   return (
     <Screen>
       <button style={backStyle} onClick={onBack}>← Back</button>
@@ -409,26 +417,22 @@ function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onVi
           <div className="career-grid" style={{marginBottom:20}}>
             {intersections.slice(0,4).map(name=>{
               const careerObj=allCareers.find(c=>c.title===name)||{title:name};
-              const tags=[
-                ...(careerObj.primary_industry?[careerObj.primary_industry]:[]),
-                ...(careerObj.secondary_industries?careerObj.secondary_industries.split(",").map(s=>s.trim()).filter(Boolean):[]),
-              ];
+              const sourceInds=(intersectionSourceMap[name]||[]).map(id=>industries.find(i=>i.id===id)).filter(Boolean);
               return (
                 <div key={name} onClick={()=>onViewCareer(careerObj)} style={{...cardStyle,marginBottom:0,border:`1px solid ${T.accentPurple}44`,background:`linear-gradient(135deg,${T.bgCard},${T.accentPurple}11)`,cursor:"pointer",transition:"all 0.15s"}}
                   onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accentPurple;}}
                   onMouseLeave={e=>{e.currentTarget.style.borderColor=`${T.accentPurple}44`;}}>
-                  <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:4}}>{name}</div>
-                  {tags.length>0?(
-                    <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
-                      {tags.map(tag=>{
-                        const ind=industries.find(i=>i.id===normalizeIndustryId(tag));
-                        const color=ind?ind.color:T.textDim;
-                        return <span key={tag} style={{background:`${color}18`,border:`1px solid ${color}40`,borderRadius:20,padding:"2px 8px",fontSize:10,fontWeight:600,color}}>{tag}</span>;
-                      })}
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+                    <div style={{flex:1}}>
+                      <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:4}}>{name}</div>
+                      <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
+                        {sourceInds.map(ind=>(
+                          <span key={ind.id} style={{background:`${ind.color}18`,border:`1px solid ${ind.color}40`,borderRadius:20,padding:"2px 8px",fontSize:10,fontWeight:600,color:ind.color}}>{ind.name}</span>
+                        ))}
+                      </div>
                     </div>
-                  ):(
-                    <div style={{fontSize:11,color:T.accentPurple,fontWeight:500}}>Intersection career</div>
-                  )}
+                    <span style={{color:T.textDim,fontSize:18,marginLeft:8,flexShrink:0}}>›</span>
+                  </div>
                 </div>
               );
             })}
