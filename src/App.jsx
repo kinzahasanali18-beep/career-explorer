@@ -392,6 +392,7 @@ function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onVi
   const relevantInds=selectedIndustries.length>0
     ?industries.filter(i=>selectedIndustries.includes(i.id)||profile.industryFit.includes(i.id))
     :industries.filter(i=>profile.industryFit.includes(i.id));
+  const allCareers=industries.flatMap(i=>i.careers);
   const suggestedCareers=relevantInds.flatMap(i=>i.careers).slice(0,6);
   const intersections=selectedIndustries.length>=2?getIntersections(new Set(selectedIndustries)):[];
   return (
@@ -406,28 +407,62 @@ function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onVi
         <>
           <div style={{...eyebrowStyle,background:`linear-gradient(90deg,${T.accentPurple},${T.accent1})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Careers at your intersection</div>
           <div className="career-grid" style={{marginBottom:20}}>
-            {intersections.slice(0,4).map(name=>(
-              <div key={name} style={{...cardStyle,marginBottom:0,border:`1px solid ${T.accentPurple}44`,background:`linear-gradient(135deg,${T.bgCard},${T.accentPurple}11)`}}>
-                <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:2}}>{name}</div>
-                <div style={{fontSize:11,color:T.accentPurple,fontWeight:500}}>Intersection career</div>
-              </div>
-            ))}
+            {intersections.slice(0,4).map(name=>{
+              const careerObj=allCareers.find(c=>c.title===name)||{title:name};
+              const tags=[
+                ...(careerObj.primary_industry?[careerObj.primary_industry]:[]),
+                ...(careerObj.secondary_industries?careerObj.secondary_industries.split(",").map(s=>s.trim()).filter(Boolean):[]),
+              ];
+              return (
+                <div key={name} onClick={()=>onViewCareer(careerObj)} style={{...cardStyle,marginBottom:0,border:`1px solid ${T.accentPurple}44`,background:`linear-gradient(135deg,${T.bgCard},${T.accentPurple}11)`,cursor:"pointer",transition:"all 0.15s"}}
+                  onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accentPurple;}}
+                  onMouseLeave={e=>{e.currentTarget.style.borderColor=`${T.accentPurple}44`;}}>
+                  <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:4}}>{name}</div>
+                  {tags.length>0?(
+                    <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
+                      {tags.map(tag=>{
+                        const ind=industries.find(i=>i.id===normalizeIndustryId(tag));
+                        const color=ind?ind.color:T.textDim;
+                        return <span key={tag} style={{background:`${color}18`,border:`1px solid ${color}40`,borderRadius:20,padding:"2px 8px",fontSize:10,fontWeight:600,color}}>{tag}</span>;
+                      })}
+                    </div>
+                  ):(
+                    <div style={{fontSize:11,color:T.accentPurple,fontWeight:500}}>Intersection career</div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </>
       )}
       <div style={eyebrowStyle}>Careers that match you</div>
       <div className="career-grid">
-        {suggestedCareers.map(c=>(
-          <div key={c.title} onClick={()=>onViewCareer(c)} style={{...cardStyle,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",transition:"all 0.15s"}}
-            onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent1;}}
-            onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;}}>
-            <div>
-              <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:2}}>{c.title}</div>
-              <div style={{fontSize:12,color:T.accent1}}>{c.salary}</div>
+        {suggestedCareers.map(c=>{
+          const tags=[
+            ...(c.primary_industry?[c.primary_industry]:[]),
+            ...(c.secondary_industries?c.secondary_industries.split(",").map(s=>s.trim()).filter(Boolean):[]),
+          ];
+          return (
+            <div key={c.title} onClick={()=>onViewCareer(c)} style={{...cardStyle,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center",transition:"all 0.15s"}}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent1;}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;}}>
+              <div style={{flex:1}}>
+                <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:4}}>{c.title}</div>
+                {tags.length>0&&(
+                  <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:5}}>
+                    {tags.map(tag=>{
+                      const ind=industries.find(i=>i.id===normalizeIndustryId(tag));
+                      const color=ind?ind.color:T.textDim;
+                      return <span key={tag} style={{background:`${color}18`,border:`1px solid ${color}40`,borderRadius:20,padding:"2px 8px",fontSize:10,fontWeight:600,color}}>{tag}</span>;
+                    })}
+                  </div>
+                )}
+                <div style={{fontSize:12,color:T.accent1}}>{c.salary}</div>
+              </div>
+              <span style={{color:T.textDim,fontSize:18,marginLeft:8}}>›</span>
             </div>
-            <span style={{color:T.textDim,fontSize:18}}>›</span>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <div style={{height:12}}/>
       <button style={primaryStyle} onClick={onExploreBubble}>Explore the career universe →</button>
