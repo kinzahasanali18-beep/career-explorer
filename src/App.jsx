@@ -168,9 +168,9 @@ const pillStyle = (color) => ({background:`${color}22`, border:`1px solid ${colo
 const eyebrowStyle = {fontSize:10, color:T.accent1, letterSpacing:"0.12em", textTransform:"uppercase", fontWeight:700, marginBottom:5};
 const headlineStyle = {fontSize:28, fontWeight:800, color:T.text, lineHeight:1.2, marginBottom:8};
 const subStyle = {fontSize:14, color:T.textMid, lineHeight:1.6, marginBottom:6};
-const backStyle = {background:"none", border:"none", color:T.textDim, fontSize:13, cursor:"pointer", padding:0, marginBottom:20};
+const backStyle = {background:T.bgCard, border:`1px solid ${T.border}`, borderRadius:20, padding:"5px 14px", fontSize:12, fontWeight:600, color:T.textMid, cursor:"pointer", marginBottom:20};
 const primaryStyle = {width:"100%", padding:"0.9rem", background:`linear-gradient(135deg,${T.accent1},${T.accent2})`, color:"#fff", border:"none", borderRadius:14, fontSize:15, fontWeight:700, cursor:"pointer"};
-const ghostStyle = {width:"100%", padding:"0.85rem", background:"transparent", color:T.textMid, border:`1px solid ${T.border}`, borderRadius:14, fontSize:14, cursor:"pointer"};
+const ghostStyle = {width:"100%", padding:"0.85rem", background:"transparent", color:T.textMid, border:`1px solid ${T.border}`, borderRadius:14, fontSize:13, fontWeight:600, cursor:"pointer"};
 
 function Screen({children}) { return <div className="screen-content" style={{padding:"1.5rem 1.25rem"}}>{children}</div>; }
 
@@ -236,7 +236,6 @@ function IndustryPicker({onDone, industries}) {
         <div style={{...headlineStyle,fontSize:26}}>What world pulls you in?</div>
         <div style={{fontSize:14,color:T.accent1,fontWeight:600,marginBottom:8,lineHeight:1.5}}>Pick as many as you like — the more you choose, the more personalized your results.</div>
         <div style={subStyle}>Pick anything that feels interesting. We'll show you careers at the edges — and the intersections nobody talks about.</div>
-        <div style={{fontSize:12,color:T.textDim,marginBottom:20,cursor:"pointer",textDecoration:"underline"}} onClick={()=>onDone([])}>Skip — show me everything</div>
       </div>
       <div className="industry-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
         {industries.map((ind,idx)=>{
@@ -262,7 +261,7 @@ function IndustryPicker({onDone, industries}) {
       {selected.size>0&&<div style={{fontSize:12,color:T.textDim,marginBottom:14}}>{selected.size} {selected.size===1?"world":"worlds"} selected</div>}
       <button style={primaryStyle} onClick={()=>onDone(Array.from(selected))}>Find my careers →</button>
       <div style={{height:8}}/>
-      <button style={ghostStyle} onClick={()=>onDone([])}>Explore freely without filters</button>
+      <button style={ghostStyle} onClick={()=>onDone([])}>Skip — explore everything</button>
     </Screen>
   );
 }
@@ -313,7 +312,7 @@ function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver,industr
       {selectedIndustries.length>0&&(
         <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:16}}>
           {activeInds.map(ind=><span key={ind.id} style={pillStyle(ind.color)}>{ind.icon} {ind.name}</span>)}
-          <span onClick={onReset} style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:20,padding:"3px 10px",fontSize:11,color:T.textDim,cursor:"pointer"}}>Change ×</span>
+          <button onClick={onReset} style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:20,padding:"3px 12px",fontSize:11,fontWeight:600,color:T.textMid,cursor:"pointer"}}>Change ×</button>
         </div>
       )}
       <div className="mode-card-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
@@ -341,9 +340,7 @@ function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver,industr
         </div>
       ))}
       <div style={{height:16}}/>
-      <button onClick={onStartOver} style={{width:"100%",padding:"0.7rem",background:"none",border:`1px solid ${T.border}`,borderRadius:12,fontSize:12,color:T.textDim,cursor:"pointer"}}>
-        Start over
-      </button>
+      <button onClick={onStartOver} style={ghostStyle}>↩ Start over</button>
     </Screen>
   );
 }
@@ -435,9 +432,9 @@ function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onVi
       <div style={{height:12}}/>
       <button style={primaryStyle} onClick={onExploreBubble}>Explore the career universe →</button>
       <div style={{height:20}}/>
-      <div style={{textAlign:"center",display:"flex",flexDirection:"column",gap:10}}>
-        <button onClick={onRetake} style={{background:"none",border:"none",color:T.accent1,fontSize:13,cursor:"pointer",textDecoration:"underline",textUnderlineOffset:3}}>↺ Retake quiz</button>
-        <button onClick={onBack} style={{background:"none",border:"none",color:T.textDim,fontSize:13,cursor:"pointer",textDecoration:"underline",textUnderlineOffset:3}}>Try a different quiz</button>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        <button onClick={onRetake} style={ghostStyle}>↺ Retake quiz</button>
+        <button onClick={onBack} style={ghostStyle}>← Try a different quiz</button>
       </div>
     </Screen>
   );

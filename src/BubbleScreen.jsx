@@ -167,7 +167,7 @@ export default function BubbleScreen({ selectedIndustries, onBack, onViewCareer,
         @keyframes cardIn { from{opacity:0;transform:scale(0.96) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)} }
       `}</style>
 
-      <button onClick={onBack} style={{ background: "none", border: "none", color: "#4A4D66", fontSize: 13, cursor: "pointer", padding: 0, marginBottom: 16 }}>← Back</button>
+      <button onClick={onBack} style={{ background: "#272B40", border: "1px solid #3D3F55", borderRadius: 20, padding: "5px 14px", fontSize: 12, fontWeight: 600, color: "#8B8FA8", cursor: "pointer", marginBottom: 20 }}>← Back</button>
       <div style={{ fontSize: 10, color: "#06B6D4", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, marginBottom: 4 }}>Career Universe</div>
       <div style={{ fontSize: 12, color: "#4A4D66", marginBottom: 14 }}>Tap an industry bubble to explore its careers</div>
 

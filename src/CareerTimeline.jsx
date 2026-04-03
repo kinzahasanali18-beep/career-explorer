@@ -106,8 +106,9 @@ export default function CareerTimeline({ career, industryColor, onBack }) {
 
       {/* Back button */}
       <button onClick={onBack} style={{
-        background: "none", border: "none", color: "#4A4D66",
-        fontSize: 13, cursor: "pointer", padding: 0, marginBottom: 16,
+        background: "#272B40", border: "1px solid #3D3F55", borderRadius: 20,
+        padding: "5px 14px", fontSize: 12, fontWeight: 600, color: "#8B8FA8",
+        cursor: "pointer", marginBottom: 20,
       }}>← Back</button>
 
       {/* Header */}
