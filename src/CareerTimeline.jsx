@@ -80,6 +80,14 @@ export default function CareerTimeline({ career, industryColor, onBack }) {
   const school = career.school || career.sc || "";
   const day = career.day || "";
   const growth = career.growth || [];
+  const primaryIndustry = career.primary_industry || "";
+  const secondaryIndustries = career.secondary_industries
+    ? career.secondary_industries.split(",").map(s => s.trim()).filter(Boolean)
+    : [];
+  const allTags = [
+    ...(primaryIndustry ? [{ label: primaryIndustry, isPrimary: true }] : []),
+    ...secondaryIndustries.map(s => ({ label: s, isPrimary: false })),
+  ];
 
   const anim = (delay) => ({
     opacity: 0,
@@ -107,7 +115,23 @@ export default function CareerTimeline({ career, industryColor, onBack }) {
         <div style={{ fontSize: 10, color: "#F472B6", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, marginBottom: 4 }}>
           Career Roadmap
         </div>
-        <div style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB", marginBottom: 6 }}>{title}</div>
+        <div style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB", marginBottom: 8 }}>{title}</div>
+        {allTags.length > 0 && (
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}>
+            {allTags.map(({ label, isPrimary }) => (
+              <span key={label} style={{
+                background: isPrimary ? "#7F77DD22" : "#3D3F5588",
+                border: `1px solid ${isPrimary ? "#7F77DD66" : "#3D3F55"}`,
+                borderRadius: 20,
+                padding: "3px 10px",
+                fontSize: 11,
+                fontWeight: isPrimary ? 700 : 500,
+                color: isPrimary ? "#A89FEE" : "#8B8FA8",
+                letterSpacing: "0.02em",
+              }}>{label}</span>
+            ))}
+          </div>
+        )}
         <div style={{ fontSize: 13, color: "#8B8FA8", lineHeight: 1.6, marginBottom: 14 }}>{desc}</div>
       </div>
 

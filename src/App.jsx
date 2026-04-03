@@ -511,6 +511,8 @@ export default function App() {
             school: "",
             day: "",
             growth: [],
+            primary_industry: c.primary_industry,
+            secondary_industries: c.secondary_industries,
           })),
       })));
     }).catch(err=>console.error("Airtable fetch failed:",err));
