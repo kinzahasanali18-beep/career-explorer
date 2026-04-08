@@ -1,0 +1,35 @@
+name: Daily Career Generator
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # Every day at midnight UTC
+  workflow_dispatch: # Allow manual runs from the GitHub Actions UI
+
+jobs:
+  generate:
+    name: Generate & Enrich 100 Careers
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20" # Node 20 has native fetch built in
+
+      - name: Generate and push careers
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          ANTHROPIC_KEY: ${{ secrets.ANTHROPIC_KEY }}
+        run: node scripts/daily_add_careers.cjs
+
+      - name: Report result
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Daily career generation completed successfully."
+          else
+            echo "❌ Daily career generation encountered failures — check logs above."
+          fi
