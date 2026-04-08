@@ -1,0 +1,1 @@
+fetch('https://api.airtable.com/v0/app7CzdOBdcdWpqj4/tblIM2gYIkk8Xt6KT?pageSize=1',{headers:{Authorization:'Bearer ${process.env.AIRTABLE_TOKEN}'}}).then(r=>r.json()).then(d=>console.log(JSON.stringify(d).slice(0,300)));
