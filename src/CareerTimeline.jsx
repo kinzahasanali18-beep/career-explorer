@@ -191,7 +191,7 @@ function generateTimeline(career) {
       role:   eduRole,
       salary: fmtK(lo * 0.45),
       years:  "Training",
-      desc:   `${eduReq}. Internships and real portfolio work count far more than grades.`,
+      desc:   `${eduReq}. Strong academic performance, internships, and portfolio work all contribute to your success.`,
     },
     {
       role:   deriveEntryRole(title),
