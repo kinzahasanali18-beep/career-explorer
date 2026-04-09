@@ -7,7 +7,7 @@ on:
 
 jobs:
   generate:
-    name: Generate & Enrich 300 Careers
+    name: Generate & Enrich 100 Careers
     runs-on: ubuntu-latest
 
     steps:
