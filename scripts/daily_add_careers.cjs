@@ -16,7 +16,7 @@ if (!AT || !AK) {
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const TARGET = 300; // careers to add per run
+const TARGET = 100; // careers to add per run
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
