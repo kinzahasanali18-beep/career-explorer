@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import BubbleScreen from "./BubbleScreen";
 import CareerTimeline from "./CareerTimeline";
 import { fetchCareers } from "./airtable";
+import { useAuth } from "./AuthContext";
+import LoginScreen from "./LoginScreen";
 
 const T = {
   bg:"#1E2030", bgCard:"#272B40", bgDeep:"#1A1D2E",
@@ -519,7 +521,7 @@ function ls(key,fallback){try{const v=localStorage.getItem(key);return v!=null?J
 function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch{}}
 function lsClear(){["ce_screen","ce_industries","ce_profile"].forEach(k=>localStorage.removeItem(k));}
 
-export default function App() {
+function AppContent({ signOut }) {
   const [screen,setScreen]=useState(()=>{
     const seenLanding=localStorage.getItem("ce_landing_seen")!==null;
     if(!seenLanding) return "landing";
@@ -580,7 +582,15 @@ export default function App() {
 
   return (
     <div className={screen!=="industry"&&screen!=="landing" ? "app-shell has-sidebar" : "app-shell"}
-         style={{minHeight:"100vh",background:T.bg,fontFamily:"'Inter',system-ui,sans-serif"}}>
+         style={{minHeight:"100vh",background:T.bg,fontFamily:"'Inter',system-ui,sans-serif",position:"relative"}}>
+      {/* Sign-out button — always accessible */}
+      <button
+        onClick={signOut}
+        style={{position:"fixed",top:14,right:16,zIndex:9999,padding:"6px 14px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,color:T.textMid,fontSize:12,cursor:"pointer"}}
+      >
+        Sign out
+      </button>
+
       {screen!=="industry"&&screen!=="landing" && (
         <DesktopSidebar
           screen={screen}
@@ -603,4 +613,18 @@ export default function App() {
       </div>
     </div>
   );
+}
+
+export default function App() {
+  const { user, loading: authLoading, signOut } = useAuth();
+
+  if (authLoading) return (
+    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Inter',system-ui,sans-serif"}}>
+      <div style={{color:T.textMid,fontSize:15}}>Loading…</div>
+    </div>
+  );
+
+  if (!user) return <LoginScreen />;
+
+  return <AppContent signOut={signOut} />;
 }
