@@ -8,7 +8,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Restore existing session on load (handles magic link redirect too)
+    // Restore existing session on load
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
@@ -22,10 +22,12 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function signInWithEmail(email) {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin },
-    });
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) throw error;
+  }
+
+  async function verifyEmailOtp(email, token) {
+    const { error } = await supabase.auth.verifyOtp({ email, token, type: 'email' });
     if (error) throw error;
   }
 
@@ -45,7 +47,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithEmail, signInWithPhone, verifyOtp, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signInWithEmail, verifyEmailOtp, signInWithPhone, verifyOtp, signOut }}>
       {children}
     </AuthContext.Provider>
   );

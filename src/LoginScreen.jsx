@@ -68,7 +68,7 @@ function GhostBtn({ children, ...props }) {
 }
 
 export default function LoginScreen() {
-  const { signInWithEmail, signInWithPhone, verifyOtp } = useAuth();
+  const { signInWithEmail, verifyEmailOtp, signInWithPhone, verifyOtp } = useAuth();
   const [tab, setTab] = useState('email');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -92,10 +92,23 @@ export default function LoginScreen() {
     setSubmitting(true);
     try {
       await signInWithEmail(email);
-      setStep('sent');
+      setStep('otp');
     } catch (err) {
       setError(err.message);
     } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleEmailOtpSubmit(e) {
+    e.preventDefault();
+    setError('');
+    setSubmitting(true);
+    try {
+      await verifyEmailOtp(email, otp);
+      // onAuthStateChange in AuthContext will update user → App re-renders automatically
+    } catch (err) {
+      setError(err.message);
       setSubmitting(false);
     }
   }
@@ -211,26 +224,40 @@ export default function LoginScreen() {
             />
             {error && <div style={{ color: '#F87171', fontSize: 13, marginBottom: 14 }}>{error}</div>}
             <PrimaryBtn type="submit" loading={submitting}>
-              {submitting ? 'Sending…' : 'Send Magic Link'}
+              {submitting ? 'Sending…' : 'Send Code'}
             </PrimaryBtn>
           </form>
         )}
 
-        {tab === 'email' && step === 'sent' && (
-          <div style={{ textAlign: 'center', padding: '8px 0' }}>
-            <div style={{ fontSize: 44, marginBottom: 16 }}>📬</div>
-            <div style={{ color: T.text, fontWeight: 700, fontSize: 17, marginBottom: 10 }}>
-              Check your inbox
+        {tab === 'email' && step === 'otp' && (
+          <form onSubmit={handleEmailOtpSubmit}>
+            <div style={{ textAlign: 'center', marginBottom: 24 }}>
+              <div style={{ fontSize: 40, marginBottom: 12 }}>📬</div>
+              <div style={{ color: T.textMid, fontSize: 14, lineHeight: 1.6 }}>
+                Enter the 6-digit code sent to{' '}
+                <span style={{ color: T.accent1, fontWeight: 600 }}>{email}</span>
+              </div>
             </div>
-            <div style={{ color: T.textMid, fontSize: 14, lineHeight: 1.6 }}>
-              We sent a magic link to{' '}
-              <span style={{ color: T.accent1, fontWeight: 600 }}>{email}</span>.
-              Click it to sign in — no password needed.
-            </div>
-            <GhostBtn onClick={() => { setStep('input'); setError(''); }}>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="\d{6}"
+              maxLength={6}
+              required
+              autoFocus
+              placeholder="000000"
+              value={otp}
+              onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
+              style={{ ...inputStyle, textAlign: 'center', fontSize: 28, letterSpacing: 12, marginBottom: 20 }}
+            />
+            {error && <div style={{ color: '#F87171', fontSize: 13, marginBottom: 14 }}>{error}</div>}
+            <PrimaryBtn type="submit" loading={submitting}>
+              {submitting ? 'Verifying…' : 'Verify Code'}
+            </PrimaryBtn>
+            <GhostBtn type="button" onClick={() => { setStep('input'); setOtp(''); setError(''); }}>
               Use a different email
             </GhostBtn>
-          </div>
+          </form>
         )}
 
         {/* ── Phone flow ── */}
