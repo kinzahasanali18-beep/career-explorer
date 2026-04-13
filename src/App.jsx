@@ -4,6 +4,7 @@ import CareerTimeline from "./CareerTimeline";
 import { fetchCareers } from "./airtable";
 import { useAuth } from "./AuthContext";
 import LoginScreen from "./LoginScreen";
+import ProfilePage from "./ProfilePage";
 
 const T = {
   bg:"#1E2030", bgCard:"#272B40", bgDeep:"#1A1D2E",
@@ -522,6 +523,7 @@ function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch
 function lsClear(){["ce_screen","ce_industries","ce_profile"].forEach(k=>localStorage.removeItem(k));}
 
 function AppContent({ signOut }) {
+  const [showProfile, setShowProfile] = useState(false);
   const [screen,setScreen]=useState(()=>{
     const seenLanding=localStorage.getItem("ce_landing_seen")!==null;
     if(!seenLanding) return "landing";
@@ -583,13 +585,27 @@ function AppContent({ signOut }) {
   return (
     <div className={screen!=="industry"&&screen!=="landing" ? "app-shell has-sidebar" : "app-shell"}
          style={{minHeight:"100vh",background:T.bg,fontFamily:"'Inter',system-ui,sans-serif",position:"relative"}}>
-      {/* Sign-out button — always accessible */}
-      <button
-        onClick={signOut}
-        style={{position:"fixed",top:14,right:16,zIndex:9999,padding:"6px 14px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,color:T.textMid,fontSize:12,cursor:"pointer"}}
-      >
-        Sign out
-      </button>
+      {/* Top-right nav buttons */}
+      <div style={{position:"fixed",top:14,right:16,zIndex:9999,display:"flex",gap:8,alignItems:"center"}}>
+        <button
+          onClick={() => setShowProfile(true)}
+          title="Profile"
+          style={{padding:"6px 10px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,color:T.textMid,fontSize:14,cursor:"pointer",lineHeight:1,display:"flex",alignItems:"center",justifyContent:"center"}}
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+        </button>
+        <button
+          onClick={signOut}
+          style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,color:T.textMid,fontSize:12,cursor:"pointer"}}
+        >
+          Sign out
+        </button>
+      </div>
+
+      {showProfile && <ProfilePage onClose={() => setShowProfile(false)} />}
 
       {screen!=="industry"&&screen!=="landing" && (
         <DesktopSidebar
