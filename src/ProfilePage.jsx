@@ -88,7 +88,7 @@ function IndustryTile({ industry, selected, onToggle }) {
   );
 }
 
-export default function ProfilePage({ onClose }) {
+export default function ProfilePage({ onClose, onRetakeQuiz }) {
   const { user } = useAuth();
   const [form, setForm] = useState({ name: '', avatar: '🦁' });
   const [selectedIndustries, setSelectedIndustries] = useState([]);
@@ -235,6 +235,19 @@ export default function ProfilePage({ onClose }) {
             </div>
 
             {error && <div style={{ color: '#F87171', fontSize: 13, marginBottom: 14 }}>{error}</div>}
+
+            <button type="button" onClick={onRetakeQuiz} style={{
+              width: '100%', padding: '13px', marginBottom: 10,
+              background: 'transparent',
+              border: `1px solid ${T.accentPurple}`, borderRadius: 10,
+              color: T.accentPurple, fontSize: 15, fontWeight: 700, cursor: 'pointer',
+              transition: 'background 0.2s',
+            }}
+              onMouseEnter={e => { e.target.style.background = `${T.accentPurple}18`; }}
+              onMouseLeave={e => { e.target.style.background = 'transparent'; }}
+            >
+              Retake quiz
+            </button>
 
             <button type="submit" disabled={saving} style={{
               width: '100%', padding: '13px',

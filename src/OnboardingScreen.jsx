@@ -69,7 +69,7 @@ function StarField() {
   );
 }
 
-export default function OnboardingScreen({ onComplete }) {
+export default function OnboardingScreen({ onComplete, onStartQuiz }) {
   const [step, setStep] = useState(0);
   const [animKey, setAnimKey] = useState(0);
 
@@ -78,7 +78,7 @@ export default function OnboardingScreen({ onComplete }) {
       setStep(s => s + 1);
       setAnimKey(k => k + 1);
     } else {
-      onComplete();
+      onStartQuiz();
     }
   }
 

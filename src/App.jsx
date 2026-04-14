@@ -6,6 +6,7 @@ import { useAuth } from "./AuthContext";
 import LoginScreen from "./LoginScreen";
 import ProfilePage from "./ProfilePage";
 import OnboardingScreen from "./OnboardingScreen";
+import OnboardingQuiz from "./OnboardingQuiz";
 import { supabase } from "./supabaseClient";
 
 const T = {
@@ -528,6 +529,7 @@ function AppContent({ signOut }) {
   const { user } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
   useEffect(() => {
     if (!user) return;
     supabase.from('profiles').select('name').eq('id', user.id).single().then(({ data }) => {
@@ -615,9 +617,23 @@ function AppContent({ signOut }) {
         </button>
       </div>
 
-      {showOnboarding && <OnboardingScreen onComplete={() => setShowOnboarding(false)} />}
+      {showOnboarding && (
+        <OnboardingScreen
+          onComplete={() => setShowOnboarding(false)}
+          onStartQuiz={() => { setShowOnboarding(false); setShowQuiz(true); }}
+        />
+      )}
 
-      {showProfile && <ProfilePage onClose={() => setShowProfile(false)} />}
+      {showQuiz && (
+        <OnboardingQuiz
+          onComplete={(industries) => {
+            supabase.from('profiles').upsert({ id: user.id, industries });
+            setShowQuiz(false);
+          }}
+        />
+      )}
+
+      {showProfile && <ProfilePage onClose={() => setShowProfile(false)} onRetakeQuiz={() => { setShowProfile(false); setShowQuiz(true); }}}
 
       {screen!=="industry"&&screen!=="landing" && (
         <DesktopSidebar
