@@ -525,6 +525,7 @@ function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch
 function lsClear(){["ce_screen","ce_industries","ce_profile"].forEach(k=>localStorage.removeItem(k));}
 
 function AppContent({ signOut }) {
+  const { user } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   useEffect(() => {
