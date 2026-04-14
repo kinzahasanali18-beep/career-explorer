@@ -11,19 +11,33 @@ const T = {
 
 const AVATARS = ['🦁', '🐺', '🦊', '🐉', '🦅', '🌊', '⚡', '🔥', '🎯', '🚀'];
 
-const WORLD_OPTIONS = [
-  'Tech & Engineering', 'Healthcare & Medicine', 'Business & Finance',
-  'Design & Creative', 'Law & Government', 'Sports & Fitness',
-  'Education & Coaching', 'Hospitality & Events',
-];
-
-const DISCIPLINE_OPTIONS = [
-  'Building & Engineering', 'Research & Analysis', 'Strategy & Leadership',
-  'Design & Creativity', 'People & Culture', 'Operations & Systems',
-];
-
 const WORK_STYLE_OPTIONS = [
   'Remote', 'Hybrid', 'In-Person', 'Solo Deep Work', 'Collaborative', 'Always Moving',
+];
+
+const INDUSTRIES = [
+  { id: 'tech', name: 'Tech & Engineering', color: '#7F77DD', tags: ['software', 'AI', 'robotics', 'hardware', 'data', 'networks', 'crypto'] },
+  { id: 'design', name: 'Design & Creative', color: '#D4537E', tags: ['graphic design', 'UX/UI', 'branding', 'illustration', 'motion graphics', 'product design'] },
+  { id: 'biz', name: 'Business & Finance', color: '#BA7517', tags: ['startups', 'investing', 'accounting', 'consulting', 'real estate', 'banking', 'crypto'] },
+  { id: 'health', name: 'Healthcare & Medicine', color: '#1D9E75', tags: ['doctors', 'nursing', 'mental health', 'research', 'nutrition', 'public health'] },
+  { id: 'arts', name: 'Arts & Performance', color: '#D4537E', tags: ['music', 'dance', 'theater', 'film', 'visual arts', 'production', 'photography'] },
+  { id: 'edu', name: 'Education & Coaching', color: '#639922', tags: ['teaching', 'tutoring', 'curriculum', 'coaching', 'higher ed', 'special ed'] },
+  { id: 'media', name: 'Media & Journalism', color: '#378ADD', tags: ['reporting', 'podcasting', 'social media', 'broadcasting', 'writing', 'publishing'] },
+  { id: 'law', name: 'Law & Government', color: '#378ADD', tags: ['criminal law', 'policy', 'politics', 'human rights', 'corporate law', 'public service'] },
+  { id: 'science', name: 'Science & Research', color: '#1D9E75', tags: ['biology', 'chemistry', 'physics', 'environmental', 'neuroscience', 'space', 'lab work'] },
+  { id: 'hospitality', name: 'Hospitality & Events', color: '#534AB7', tags: ['hotels', 'events planning', 'travel', 'food & beverage', 'tourism', 'entertainment'] },
+  { id: 'sports', name: 'Sports & Fitness', color: '#D85A30', tags: ['athletics', 'coaching', 'sports medicine', 'sports business', 'fitness', 'sports media'] },
+  { id: 'fashion', name: 'Fashion & Beauty', color: '#D4537E', tags: ['styling', 'design', 'makeup', 'modeling', 'retail', 'beauty tech', 'sustainability'] },
+  { id: 'entrepreneur', name: 'Entrepreneurship', color: '#BA7517', tags: ['startups', 'product', 'fundraising', 'side hustles', 'e-commerce', 'social enterprise'] },
+  { id: 'environment', name: 'Environment & Sustainability', color: '#639922', tags: ['climate', 'conservation', 'renewable energy', 'policy', 'green tech', 'wildlife'] },
+  { id: 'nonprofit', name: 'Social Impact & Nonprofit', color: '#1D9E75', tags: ['community organizing', 'advocacy', 'fundraising', 'international dev', 'public health'] },
+  { id: 'marketing', name: 'Marketing & Communications', color: '#D85A30', tags: ['brand strategy', 'social media', 'PR', 'content', 'advertising', 'growth', 'influencer'] },
+  { id: 'cyber', name: 'Cybersecurity', color: '#7F77DD', tags: ['ethical hacking', 'threat analysis', 'network security', 'forensics', 'compliance', 'encryption'] },
+  { id: 'architecture', name: 'Architecture & Urban Planning', color: '#534AB7', tags: ['building design', 'urban planning', 'interior design', 'landscape', 'real estate dev'] },
+  { id: 'gaming', name: 'Gaming & Esports', color: '#7F77DD', tags: ['game design', 'esports', 'streaming', 'game dev', 'community management', 'VR/AR'] },
+  { id: 'supplychain', name: 'Supply Chain & Operations', color: '#BA7517', tags: ['logistics', 'manufacturing', 'procurement', 'warehousing', 'e-commerce ops', 'global trade'] },
+  { id: 'food', name: 'Food & Culinary', color: '#D85A30', tags: ['cooking', 'restaurant business', 'nutrition', 'food science', 'catering', 'food media'] },
+  { id: 'aviation', name: 'Aviation & Transportation', color: '#378ADD', tags: ['piloting', 'aerospace', 'logistics', 'air traffic control', 'urban mobility', 'drone tech'] },
 ];
 
 const labelStyle = {
@@ -57,12 +71,54 @@ function Field({ label, children }) {
   );
 }
 
+function IndustryTile({ industry, selected, onToggle }) {
+  return (
+    <div
+      onClick={() => onToggle(industry.id)}
+      style={{
+        padding: '12px 14px',
+        borderRadius: 12,
+        border: selected ? `2px solid ${industry.color}` : `1px solid ${T.border}`,
+        background: selected ? `${industry.color}18` : T.bgDeep,
+        cursor: 'pointer',
+        transition: 'all 0.15s ease',
+        boxShadow: selected ? `0 0 12px ${industry.color}30` : 'none',
+      }}
+    >
+      <div style={{
+        fontSize: 13,
+        fontWeight: 700,
+        color: selected ? industry.color : T.text,
+        marginBottom: 6,
+        transition: 'color 0.15s',
+      }}>
+        {industry.name}
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+        {industry.tags.map(tag => (
+          <span key={tag} style={{
+            fontSize: 10,
+            padding: '2px 7px',
+            borderRadius: 20,
+            background: selected ? `${industry.color}22` : '#ffffff0a',
+            color: selected ? industry.color : T.textMid,
+            border: `1px solid ${selected ? industry.color + '44' : T.border}`,
+            transition: 'all 0.15s',
+          }}>
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function ProfilePage({ onClose }) {
   const { user } = useAuth();
   const [form, setForm] = useState({
-    name: '', sparq_title: '', avatar: '🦁',
-    world: '', discipline: '', work_style: '',
+    name: '', sparq_title: '', avatar: '🦁', work_style: '',
   });
+  const [selectedIndustries, setSelectedIndustries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -80,10 +136,9 @@ export default function ProfilePage({ onClose }) {
             name: data.name || '',
             sparq_title: data.sparq_title || '',
             avatar: data.avatar || '🦁',
-            world: data.world || '',
-            discipline: data.discipline || '',
             work_style: data.work_style || '',
           });
+          setSelectedIndustries(data.industries || []);
         }
         setLoading(false);
       });
@@ -91,13 +146,19 @@ export default function ProfilePage({ onClose }) {
 
   function set(field, val) { setForm(f => ({ ...f, [field]: val })); }
 
+  function toggleIndustry(id) {
+    setSelectedIndustries(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  }
+
   async function handleSave(e) {
     e.preventDefault();
     setSaving(true);
     setError('');
     const { error: err } = await supabase
       .from('profiles')
-      .upsert({ id: user.id, ...form });
+      .upsert({ id: user.id, ...form, industries: selectedIndustries });
     setSaving(false);
     if (err) {
       setError(err.message);
@@ -119,7 +180,7 @@ export default function ProfilePage({ onClose }) {
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div style={{
-        width: '100%', maxWidth: 460,
+        width: '100%', maxWidth: 520,
         background: T.bgCard,
         borderRadius: 20,
         border: `1px solid ${T.border}`,
@@ -142,7 +203,7 @@ export default function ProfilePage({ onClose }) {
           <div style={{ textAlign: 'center', color: T.textMid, padding: '40px 0' }}>Loading…</div>
         ) : (
           <form onSubmit={handleSave}>
-            {/* Avatar display */}
+            {/* Avatar */}
             <div style={{ textAlign: 'center', marginBottom: 24 }}>
               <div style={{
                 width: 72, height: 72, borderRadius: '50%',
@@ -162,9 +223,7 @@ export default function ProfilePage({ onClose }) {
                     style={{
                       width: 40, height: 40, borderRadius: 10,
                       background: form.avatar === a ? T.bgDeep : 'transparent',
-                      border: form.avatar === a
-                        ? `2px solid ${T.accent1}`
-                        : `1px solid ${T.border}`,
+                      border: form.avatar === a ? `2px solid ${T.accent1}` : `1px solid ${T.border}`,
                       fontSize: 20, cursor: 'pointer',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       transition: 'border-color 0.15s',
@@ -196,32 +255,6 @@ export default function ProfilePage({ onClose }) {
               />
             </Field>
 
-            <Field label="World">
-              <select
-                value={form.world}
-                onChange={e => set('world', e.target.value)}
-                style={{ ...inputStyle, cursor: 'pointer' }}
-              >
-                <option value="">Select a world…</option>
-                {WORLD_OPTIONS.map(w => (
-                  <option key={w} value={w}>{w}</option>
-                ))}
-              </select>
-            </Field>
-
-            <Field label="Discipline">
-              <select
-                value={form.discipline}
-                onChange={e => set('discipline', e.target.value)}
-                style={{ ...inputStyle, cursor: 'pointer' }}
-              >
-                <option value="">Select a discipline…</option>
-                {DISCIPLINE_OPTIONS.map(d => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
-              </select>
-            </Field>
-
             <Field label="Work Style">
               <select
                 value={form.work_style}
@@ -234,6 +267,35 @@ export default function ProfilePage({ onClose }) {
                 ))}
               </select>
             </Field>
+
+            {/* Industry tiles */}
+            <div style={{ marginBottom: 18 }}>
+              <label style={labelStyle}>
+                Your Worlds
+                <span style={{ color: T.textDim, fontWeight: 400, marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>
+                  — pick everything that pulls you in
+                </span>
+              </label>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                gap: 10,
+              }}>
+                {INDUSTRIES.map(industry => (
+                  <IndustryTile
+                    key={industry.id}
+                    industry={industry}
+                    selected={selectedIndustries.includes(industry.id)}
+                    onToggle={toggleIndustry}
+                  />
+                ))}
+              </div>
+              {selectedIndustries.length > 0 && (
+                <div style={{ marginTop: 10, fontSize: 12, color: T.textMid }}>
+                  {selectedIndustries.length} selected
+                </div>
+              )}
+            </div>
 
             {error && (
               <div style={{ color: '#F87171', fontSize: 13, marginBottom: 14 }}>{error}</div>
