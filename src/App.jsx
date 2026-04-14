@@ -532,8 +532,8 @@ function AppContent({ signOut }) {
   const [showQuiz, setShowQuiz] = useState(false);
   useEffect(() => {
     if (!user) return;
-    supabase.from('profiles').select('name').eq('id', user.id).single().then(({ data }) => {
-      if (!data || !data.name) setShowOnboarding(true);
+    supabase.from('profiles').select('name').eq('id', user.id).single().then(({ data, error }) => {
+      if (error || !data || !data.name) setShowOnboarding(true);
     });
   }, [user?.id]);
   const [screen,setScreen]=useState(()=>{
