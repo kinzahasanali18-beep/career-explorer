@@ -11,9 +11,7 @@ const T = {
 
 const AVATARS = ['🦁', '🐺', '🦊', '🐉', '🦅', '🌊', '⚡', '🔥', '🎯', '🚀'];
 
-const WORK_STYLE_OPTIONS = [
-  'Remote', 'Hybrid', 'In-Person', 'Solo Deep Work', 'Collaborative', 'Always Moving',
-];
+
 
 const INDUSTRIES = [
   { id: 'tech', name: 'Tech & Engineering', color: '#7F77DD', tags: ['software', 'AI', 'robotics', 'hardware', 'data', 'networks', 'crypto'] },
@@ -116,7 +114,7 @@ function IndustryTile({ industry, selected, onToggle }) {
 export default function ProfilePage({ onClose }) {
   const { user } = useAuth();
   const [form, setForm] = useState({
-    name: '', sparq_title: '', avatar: '🦁', work_style: '',
+    name: '', sparq_title: '', avatar: '🦁',
   });
   const [selectedIndustries, setSelectedIndustries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -136,7 +134,6 @@ export default function ProfilePage({ onClose }) {
             name: data.name || '',
             sparq_title: data.sparq_title || '',
             avatar: data.avatar || '🦁',
-            work_style: data.work_style || '',
           });
           setSelectedIndustries(data.industries || []);
         }
@@ -245,28 +242,7 @@ export default function ProfilePage({ onClose }) {
               />
             </Field>
 
-            <Field label="Sparq Title">
-              <input
-                type="text"
-                placeholder="e.g. The Architect, The Maker…"
-                value={form.sparq_title}
-                onChange={e => set('sparq_title', e.target.value)}
-                style={inputStyle}
-              />
-            </Field>
 
-            <Field label="Work Style">
-              <select
-                value={form.work_style}
-                onChange={e => set('work_style', e.target.value)}
-                style={{ ...inputStyle, cursor: 'pointer' }}
-              >
-                <option value="">Select a work style…</option>
-                {WORK_STYLE_OPTIONS.map(ws => (
-                  <option key={ws} value={ws}>{ws}</option>
-                ))}
-              </select>
-            </Field>
 
             {/* Industry tiles */}
             <div style={{ marginBottom: 18 }}>
