@@ -5,6 +5,8 @@ import { fetchCareers } from "./airtable";
 import { useAuth } from "./AuthContext";
 import LoginScreen from "./LoginScreen";
 import ProfilePage from "./ProfilePage";
+import OnboardingScreen from "./OnboardingScreen";
+import { supabase } from "./supabaseClient";
 
 const T = {
   bg:"#1E2030", bgCard:"#272B40", bgDeep:"#1A1D2E",
@@ -524,6 +526,12 @@ function lsClear(){["ce_screen","ce_industries","ce_profile"].forEach(k=>localSt
 
 function AppContent({ signOut }) {
   const [showProfile, setShowProfile] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  useEffect(() => {
+    supabase.from('profiles').select('name').eq('id', user.id).single().then(({ data }) => {
+      if (!data || !data.name) setShowOnboarding(true);
+    });
+  }, [user.id]);
   const [screen,setScreen]=useState(()=>{
     const seenLanding=localStorage.getItem("ce_landing_seen")!==null;
     if(!seenLanding) return "landing";
@@ -604,6 +612,8 @@ function AppContent({ signOut }) {
           Sign out
         </button>
       </div>
+
+      {showOnboarding && <OnboardingScreen onComplete={() => setShowOnboarding(false)} />}
 
       {showProfile && <ProfilePage onClose={() => setShowProfile(false)} />}
 
