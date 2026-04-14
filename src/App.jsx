@@ -633,7 +633,7 @@ function AppContent({ signOut }) {
         />
       )}
 
-      {showProfile && <ProfilePage onClose={() => setShowProfile(false)} onRetakeQuiz={() => { setShowProfile(false); setShowQuiz(true); }}}
+      {showProfile && <ProfilePage onClose={() => setShowProfile(false)} onRetakeQuiz={() => { setShowProfile(false); setShowQuiz(true); }} />}
 
       {screen!=="industry"&&screen!=="landing" && (
         <DesktopSidebar
