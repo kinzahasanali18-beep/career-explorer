@@ -11,8 +11,6 @@ const T = {
 
 const AVATARS = ['🦁', '🐺', '🦊', '🐉', '🦅', '🌊', '⚡', '🔥', '🎯', '🚀'];
 
-
-
 const INDUSTRIES = [
   { id: 'tech', name: 'Tech & Engineering', color: '#7F77DD', tags: ['software', 'AI', 'robotics', 'hardware', 'data', 'networks', 'crypto'] },
   { id: 'design', name: 'Design & Creative', color: '#D4537E', tags: ['graphic design', 'UX/UI', 'branding', 'illustration', 'motion graphics', 'product design'] },
@@ -39,25 +37,14 @@ const INDUSTRIES = [
 ];
 
 const labelStyle = {
-  display: 'block',
-  color: T.textMid,
-  fontSize: 11,
-  fontWeight: 600,
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase',
-  marginBottom: 6,
+  display: 'block', color: T.textMid, fontSize: 11, fontWeight: 600,
+  letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 6,
 };
 
 const inputStyle = {
-  width: '100%',
-  padding: '11px 14px',
-  background: T.bgDeep,
-  border: `1px solid ${T.border}`,
-  borderRadius: 8,
-  color: T.text,
-  fontSize: 14,
-  outline: 'none',
-  boxSizing: 'border-box',
+  width: '100%', padding: '11px 14px', background: T.bgDeep,
+  border: `1px solid ${T.border}`, borderRadius: 8, color: T.text,
+  fontSize: 14, outline: 'none', boxSizing: 'border-box',
 };
 
 function Field({ label, children }) {
@@ -74,30 +61,20 @@ function IndustryTile({ industry, selected, onToggle }) {
     <div
       onClick={() => onToggle(industry.id)}
       style={{
-        padding: '12px 14px',
-        borderRadius: 12,
+        padding: '12px 14px', borderRadius: 12,
         border: selected ? `2px solid ${industry.color}` : `1px solid ${T.border}`,
         background: selected ? `${industry.color}18` : T.bgDeep,
-        cursor: 'pointer',
-        transition: 'all 0.15s ease',
+        cursor: 'pointer', transition: 'all 0.15s ease',
         boxShadow: selected ? `0 0 12px ${industry.color}30` : 'none',
       }}
     >
-      <div style={{
-        fontSize: 13,
-        fontWeight: 700,
-        color: selected ? industry.color : T.text,
-        marginBottom: 6,
-        transition: 'color 0.15s',
-      }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: selected ? industry.color : T.text, marginBottom: 6, transition: 'color 0.15s' }}>
         {industry.name}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
         {industry.tags.map(tag => (
           <span key={tag} style={{
-            fontSize: 10,
-            padding: '2px 7px',
-            borderRadius: 20,
+            fontSize: 10, padding: '2px 7px', borderRadius: 20,
             background: selected ? `${industry.color}22` : '#ffffff0a',
             color: selected ? industry.color : T.textMid,
             border: `1px solid ${selected ? industry.color + '44' : T.border}`,
@@ -113,28 +90,22 @@ function IndustryTile({ industry, selected, onToggle }) {
 
 export default function ProfilePage({ onClose }) {
   const { user } = useAuth();
-  const [form, setForm] = useState({
-    name: '', sparq_title: '', avatar: '🦁',
-  });
+  const [form, setForm] = useState({ name: '', avatar: '🦁' });
   const [selectedIndustries, setSelectedIndustries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const userIdentifier = user?.email || user?.phone || '';
 
   useEffect(() => {
-    supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single()
+    supabase.from('profiles').select('*').eq('id', user.id).single()
       .then(({ data }) => {
         if (data) {
-          setForm({
-            name: data.name || '',
-            sparq_title: data.sparq_title || '',
-            avatar: data.avatar || '🦁',
-          });
+          setForm({ name: data.name || '', avatar: data.avatar || '🦁' });
           setSelectedIndustries(data.industries || []);
         }
         setLoading(false);
@@ -151,18 +122,18 @@ export default function ProfilePage({ onClose }) {
 
   async function handleSave(e) {
     e.preventDefault();
-    setSaving(true);
-    setError('');
-    const { error: err } = await supabase
-      .from('profiles')
+    setSaving(true); setError('');
+    const { error: err } = await supabase.from('profiles')
       .upsert({ id: user.id, ...form, industries: selectedIndustries });
     setSaving(false);
-    if (err) {
-      setError(err.message);
-    } else {
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
-    }
+    if (err) { setError(err.message); }
+    else { setSaved(true); setTimeout(() => setSaved(false), 2500); }
+  }
+
+  async function handleDeleteAccount() {
+    setDeleting(true);
+    await supabase.from('profiles').delete().eq('id', user.id);
+    await supabase.auth.signOut();
   }
 
   return (
@@ -171,61 +142,63 @@ export default function ProfilePage({ onClose }) {
         position: 'fixed', inset: 0, zIndex: 10000,
         background: 'rgba(15, 17, 30, 0.85)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 20,
-        backdropFilter: 'blur(4px)',
+        padding: 20, backdropFilter: 'blur(4px)',
       }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div style={{
-        width: '100%', maxWidth: 520,
-        background: T.bgCard,
-        borderRadius: 20,
-        border: `1px solid ${T.border}`,
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        padding: '32px 32px 28px',
+        width: '100%', maxWidth: 520, background: T.bgCard,
+        borderRadius: 20, border: `1px solid ${T.border}`,
+        maxHeight: '90vh', overflowY: 'auto', padding: '32px 32px 28px',
       }}>
+
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <div style={{ fontSize: 18, fontWeight: 800, color: T.text }}>Your Profile</div>
-          <button
-            onClick={onClose}
-            style={{ background: 'none', border: 'none', color: T.textMid, fontSize: 20, cursor: 'pointer', lineHeight: 1, padding: '0 4px' }}
-          >
-            ✕
-          </button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: T.textMid, fontSize: 20, cursor: 'pointer', lineHeight: 1, padding: '0 4px' }}>✕</button>
         </div>
+
+        {/* Account identifier */}
+        {userIdentifier && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            background: T.bgDeep, border: `1px solid ${T.border}`,
+            borderRadius: 10, padding: '10px 14px', marginBottom: 24,
+          }}>
+            <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', flexShrink: 0 }} />
+            <div>
+              <div style={{ fontSize: 10, color: T.textDim, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>
+                Logged in as
+              </div>
+              <div style={{ fontSize: 13, color: T.textMid }}>{userIdentifier}</div>
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div style={{ textAlign: 'center', color: T.textMid, padding: '40px 0' }}>Loading…</div>
         ) : (
           <form onSubmit={handleSave}>
+
             {/* Avatar */}
             <div style={{ textAlign: 'center', marginBottom: 24 }}>
               <div style={{
-                width: 72, height: 72, borderRadius: '50%',
-                background: T.bgDeep,
-                border: `2px solid ${T.accent1}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 36, margin: '0 auto 16px',
+                width: 72, height: 72, borderRadius: '50%', background: T.bgDeep,
+                border: `2px solid ${T.accent1}`, display: 'flex', alignItems: 'center',
+                justifyContent: 'center', fontSize: 36, margin: '0 auto 16px',
               }}>
                 {form.avatar}
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
                 {AVATARS.map(a => (
-                  <button
-                    key={a}
-                    type="button"
-                    onClick={() => set('avatar', a)}
-                    style={{
-                      width: 40, height: 40, borderRadius: 10,
-                      background: form.avatar === a ? T.bgDeep : 'transparent',
-                      border: form.avatar === a ? `2px solid ${T.accent1}` : `1px solid ${T.border}`,
-                      fontSize: 20, cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      transition: 'border-color 0.15s',
-                    }}
-                  >
+                  <button key={a} type="button" onClick={() => set('avatar', a)} style={{
+                    width: 40, height: 40, borderRadius: 10,
+                    background: form.avatar === a ? T.bgDeep : 'transparent',
+                    border: form.avatar === a ? `2px solid ${T.accent1}` : `1px solid ${T.border}`,
+                    fontSize: 20, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'border-color 0.15s',
+                  }}>
                     {a}
                   </button>
                 ))}
@@ -234,15 +207,10 @@ export default function ProfilePage({ onClose }) {
 
             <Field label="Display Name">
               <input
-                type="text"
-                placeholder="Your name"
-                value={form.name}
-                onChange={e => set('name', e.target.value)}
-                style={inputStyle}
+                type="text" placeholder="Your name" value={form.name}
+                onChange={e => set('name', e.target.value)} style={inputStyle}
               />
             </Field>
-
-
 
             {/* Industry tiles */}
             <div style={{ marginBottom: 18 }}>
@@ -252,55 +220,84 @@ export default function ProfilePage({ onClose }) {
                   — pick everything that pulls you in
                 </span>
               </label>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-                gap: 10,
-              }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
                 {INDUSTRIES.map(industry => (
                   <IndustryTile
-                    key={industry.id}
-                    industry={industry}
+                    key={industry.id} industry={industry}
                     selected={selectedIndustries.includes(industry.id)}
                     onToggle={toggleIndustry}
                   />
                 ))}
               </div>
               {selectedIndustries.length > 0 && (
-                <div style={{ marginTop: 10, fontSize: 12, color: T.textMid }}>
-                  {selectedIndustries.length} selected
-                </div>
+                <div style={{ marginTop: 10, fontSize: 12, color: T.textMid }}>{selectedIndustries.length} selected</div>
               )}
             </div>
 
-            {error && (
-              <div style={{ color: '#F87171', fontSize: 13, marginBottom: 14 }}>{error}</div>
-            )}
+            {error && <div style={{ color: '#F87171', fontSize: 13, marginBottom: 14 }}>{error}</div>}
 
-            <button
-              type="submit"
-              disabled={saving}
-              style={{
-                width: '100%',
-                padding: '13px',
-                background: saved
-                  ? 'linear-gradient(135deg, #10B981, #059669)'
-                  : `linear-gradient(135deg, ${T.accent1}, ${T.accent2})`,
-                border: 'none',
-                borderRadius: 10,
-                color: T.white,
-                fontSize: 15,
-                fontWeight: 700,
-                cursor: saving ? 'not-allowed' : 'pointer',
-                opacity: saving ? 0.7 : 1,
-                transition: 'background 0.3s',
-                marginTop: 4,
-              }}
-            >
+            <button type="submit" disabled={saving} style={{
+              width: '100%', padding: '13px',
+              background: saved ? 'linear-gradient(135deg, #10B981, #059669)' : `linear-gradient(135deg, ${T.accent1}, ${T.accent2})`,
+              border: 'none', borderRadius: 10, color: T.white, fontSize: 15,
+              fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer',
+              opacity: saving ? 0.7 : 1, transition: 'background 0.3s', marginTop: 4,
+            }}>
               {saving ? 'Saving…' : saved ? '✓ Saved' : 'Save Changes'}
             </button>
           </form>
         )}
+
+        {/* Danger zone */}
+        <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}` }}>
+          {!showDeleteConfirm ? (
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              style={{
+                width: '100%', padding: '11px', background: 'transparent',
+                border: '1px solid #F8717144', borderRadius: 10,
+                color: '#F87171', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { e.target.style.background = '#F8717111'; }}
+              onMouseLeave={e => { e.target.style.background = 'transparent'; }}
+            >
+              Delete my account
+            </button>
+          ) : (
+            <div style={{ background: '#F8717110', border: '1px solid #F8717144', borderRadius: 12, padding: 16 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#F87171', marginBottom: 6 }}>Are you sure?</div>
+              <div style={{ fontSize: 12, color: T.textMid, marginBottom: 16, lineHeight: 1.5 }}>
+                This will permanently delete your account and all your data. This cannot be undone.
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleting}
+                  style={{
+                    flex: 1, padding: '10px', background: '#F87171',
+                    border: 'none', borderRadius: 8, color: '#fff',
+                    fontSize: 13, fontWeight: 700, cursor: deleting ? 'not-allowed' : 'pointer',
+                    opacity: deleting ? 0.7 : 1,
+                  }}
+                >
+                  {deleting ? 'Deleting…' : 'Yes, delete everything'}
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  style={{
+                    flex: 1, padding: '10px', background: 'transparent',
+                    border: `1px solid ${T.border}`, borderRadius: 8,
+                    color: T.textMid, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );
