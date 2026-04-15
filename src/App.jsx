@@ -311,9 +311,31 @@ function CareerSearch({ industries, onViewCareer }) {
     ind.careers.map(c => ({ ...c, industryName: ind.name, industryColor: ind.color, industryId: ind.id }))
   );
 
-  const results = query.trim().length > 0
-    ? allCareers.filter(c => c.title && c.title.toLowerCase().includes(query.toLowerCase())).slice(0, 8)
-    : [];
+  const results = (() => {
+    const q = query.trim();
+    if (!q) return [];
+    const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+    return allCareers
+      .map(c => {
+        const title = (c.title || '').toLowerCase();
+        const desc = (c.desc || '').toLowerCase();
+        const kw = (c.keywords || []).join(' ').toLowerCase();
+        const secondary = (c.secondary_industries || '').toLowerCase();
+        const industryName = (c.industryName || '').toLowerCase();
+        let score = 0;
+        words.forEach(w => {
+          if (title.includes(w))      score += 4;
+          if (kw.includes(w))         score += 3;
+          if (industryName.includes(w)) score += 2;
+          if (secondary.includes(w))  score += 2;
+          if (desc.includes(w))       score += 1;
+        });
+        return { ...c, _score: score };
+      })
+      .filter(c => c._score > 0)
+      .sort((a, b) => b._score - a._score)
+      .slice(0, 10);
+  })();
 
   useEffect(() => {
     function handleClick(e) {
@@ -648,6 +670,7 @@ function AppContent({ signOut }) {
             title: c.name,
             salary: c.salary_range,
             desc: c.description,
+            keywords: c.keywords || [],
             school: "",
             day: "",
             growth: [],
