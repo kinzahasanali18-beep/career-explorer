@@ -626,8 +626,8 @@ function AppContent({ signOut }) {
 
       {showQuiz && (
         <OnboardingQuiz
-          onComplete={(industries) => {
-            supabase.from('profiles').upsert({ id: user.id, industries });
+          onComplete={async (industries) => {
+            await supabase.from('profiles').upsert({ id: user.id, industries });
             setShowQuiz(false);
             setShowProfile(true);
           }}
