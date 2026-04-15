@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import BubbleScreen from "./BubbleScreen";
 import CareerTimeline from "./CareerTimeline";
 import { fetchCareers } from "./airtable";
@@ -302,7 +302,94 @@ function LandingScreen({onStart,onBrowse}) {
   );
 }
 
-function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver,industries}) {
+function CareerSearch({ industries, onViewCareer }) {
+  const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  const allCareers = industries.flatMap(ind =>
+    ind.careers.map(c => ({ ...c, industryName: ind.name, industryColor: ind.color, industryId: ind.id }))
+  );
+
+  const results = query.trim().length > 0
+    ? allCareers.filter(c => c.title && c.title.toLowerCase().includes(query.toLowerCase())).slice(0, 8)
+    : [];
+
+  useEffect(() => {
+    function handleClick(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  function handleKey(e) {
+    if (e.key === 'Escape') { setOpen(false); setQuery(''); }
+  }
+
+  return (
+    <div ref={ref} style={{ position: 'relative', marginBottom: 16 }}>
+      <div style={{ position: 'relative' }}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8B8FA8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="text"
+          placeholder="Search all careers…"
+          value={query}
+          onChange={e => { setQuery(e.target.value); setOpen(true); }}
+          onFocus={() => { if (query.trim()) setOpen(true); }}
+          onKeyDown={handleKey}
+          style={{
+            width: '100%', padding: '10px 14px 10px 36px',
+            background: '#1A1D2E', border: `1px solid ${T.border}`,
+            borderRadius: 10, color: '#E0E8FF', fontSize: 14,
+            outline: 'none', boxSizing: 'border-box',
+            fontFamily: "'Inter',system-ui,sans-serif",
+          }}
+        />
+      </div>
+
+      {open && query.trim().length > 0 && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, zIndex: 1000,
+          background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 10,
+          overflow: 'hidden', maxHeight: 320, overflowY: 'auto',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+        }}>
+          {results.length === 0 ? (
+            <div style={{ padding: '14px 16px', color: T.textMid, fontSize: 13 }}>No careers found</div>
+          ) : results.map((c, i) => (
+            <div
+              key={c.title + c.industryId}
+              onClick={() => { onViewCareer(c, c.industryColor); setOpen(false); setQuery(''); }}
+              style={{
+                padding: '11px 16px', cursor: 'pointer',
+                borderBottom: i < results.length - 1 ? `1px solid ${T.border}` : 'none',
+                transition: 'background 0.1s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = T.bgDeep; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+            >
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#E0E8FF', marginBottom: 4 }}>{c.title}</div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                {c.salary && <span style={{ fontSize: 11, color: T.accent1 }}>{c.salary}</span>}
+                <span style={{
+                  fontSize: 11, fontWeight: 600, color: c.industryColor,
+                  background: `${c.industryColor}18`, border: `1px solid ${c.industryColor}40`,
+                  borderRadius: 20, padding: '1px 7px',
+                }}>{c.industryName}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver,industries,onViewCareer}) {
   const modes=[
     {id:"abstract",icon:"◈",name:"The Abstract Quiz",desc:"Strange questions. Surprising results."},
     {id:"cinematic",icon:"◎",name:"The Cinematic Quiz",desc:"Pick movie scenes. Find where you fit."},
@@ -321,6 +408,7 @@ function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver,industr
           <button onClick={onReset} style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:20,padding:"3px 12px",fontSize:11,fontWeight:600,color:T.textMid,cursor:"pointer"}}>Change ×</button>
         </div>
       )}
+      <CareerSearch industries={industries} onViewCareer={onViewCareer} />
       <div className="mode-card-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
         {modes.map(m=>(
           <div key={m.id} onClick={()=>onSelectMode(m.id)} style={{...cardStyle,cursor:"pointer",marginBottom:0,transition:"all 0.15s"}}
@@ -649,7 +737,7 @@ function AppContent({ signOut }) {
       <div className="main-content">
         {screen==="landing"  && <LandingScreen onStart={()=>{localStorage.setItem("ce_landing_seen","1");setScreen("industry");}} onBrowse={()=>{localStorage.setItem("ce_landing_seen","1");setSelected([]);setScreen("home");}}/>}
         {screen==="industry" && <IndustryPicker onDone={ids=>{setSelected(ids);setScreen("home");}} industries={industries}/>}
-        {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")} onStartOver={handleStartOver} industries={industries}/>}
+        {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")} onStartOver={handleStartOver} industries={industries} onViewCareer={handleViewCareer}/>}
         {screen==="quiz"     && <QuizScreen quizKey={activeQuiz} onBack={()=>setScreen("home")} onComplete={p=>{setResultProfile(p);goTo("result");}}/>}
         {screen==="result"   && <ResultScreen profileKey={resultProfile} selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onExploreBubble={()=>goTo("bubble")} onViewCareer={handleViewCareer} onRetake={()=>setScreen("industry")} industries={industries}/>}
         {screen==="career"   && <CareerTimeline career={activeCareer} industryColor={activeCareerColor} onBack={()=>setScreen(prevScreen||"home")}/>}
