@@ -385,7 +385,7 @@ function CareerSearch({ industries, onViewCareer }) {
           ) : results.map((c, i) => (
             <div
               key={c.title + c.industryId}
-              onClick={() => { onViewCareer(c, c.industryColor); setOpen(false); setQuery(''); }}
+              onMouseDown={(e) => { e.preventDefault(); onViewCareer(c, c.industryColor); setOpen(false); setQuery(''); }}
               style={{
                 padding: '11px 16px', cursor: 'pointer',
                 borderBottom: i < results.length - 1 ? `1px solid ${T.border}` : 'none',
