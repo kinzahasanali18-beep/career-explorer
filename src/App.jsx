@@ -302,7 +302,7 @@ function LandingScreen({onStart,onBrowse}) {
   );
 }
 
-function CareerSearch({ industries, onViewCareer }) {
+function CareerSearch({ industries, onViewCareer, onSearch }) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -347,6 +347,7 @@ function CareerSearch({ industries, onViewCareer }) {
 
   function handleKey(e) {
     if (e.key === 'Escape') { setOpen(false); setQuery(''); }
+    if (e.key === 'Enter' && query.trim()) { setOpen(false); onSearch(query.trim(), results); }
   }
 
   return (
@@ -411,7 +412,7 @@ function CareerSearch({ industries, onViewCareer }) {
   );
 }
 
-function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver,industries,onViewCareer}) {
+function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver,industries,onViewCareer,onSearch}) {
   const modes=[
     {id:"abstract",icon:"◈",name:"The Abstract Quiz",desc:"Strange questions. Surprising results."},
     {id:"cinematic",icon:"◎",name:"The Cinematic Quiz",desc:"Pick movie scenes. Find where you fit."},
@@ -430,7 +431,7 @@ function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver,industr
           <button onClick={onReset} style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:20,padding:"3px 12px",fontSize:11,fontWeight:600,color:T.textMid,cursor:"pointer"}}>Change ×</button>
         </div>
       )}
-      <CareerSearch industries={industries} onViewCareer={onViewCareer} />
+      <CareerSearch industries={industries} onViewCareer={onViewCareer} onSearch={onSearch} />
       <div className="mode-card-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
         {modes.map(m=>(
           <div key={m.id} onClick={()=>onSelectMode(m.id)} style={{...cardStyle,cursor:"pointer",marginBottom:0,transition:"all 0.15s"}}
@@ -596,6 +597,50 @@ function ResultScreen({profileKey,selectedIndustries,onBack,onExploreBubble,onVi
 }
 
 
+function SearchResults({ query, results, onBack, onViewCareer, industries }) {
+  return (
+    <Screen>
+      <button style={backStyle} onClick={onBack}>← Back</button>
+      <div style={{ fontSize: 24, fontWeight: 800, color: T.text, marginBottom: 4 }}>
+        Results for <span style={{ color: T.accentPurple }}>'{query}'</span>
+      </div>
+      <div style={{ ...subStyle, marginBottom: 20 }}>
+        {results.length} career{results.length !== 1 ? 's' : ''} found
+      </div>
+      {results.length === 0 ? (
+        <div style={{ color: T.textMid, fontSize: 14, padding: '20px 0' }}>No careers found for "{query}"</div>
+      ) : (
+        <div className="browse-career-grid">
+          {results.map(c => {
+            const ind = industries.find(i => i.id === c.industryId);
+            const color = ind ? ind.color : T.accentPurple;
+            const bg = ind ? ind.bg : T.bgCard;
+            return (
+              <div key={c.title + c.industryId}
+                onClick={() => onViewCareer(c, color)}
+                style={{ ...cardStyle, cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.background = bg || T.bgDeep; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bgCard; }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 3 }}>{c.title}</div>
+                    {c.desc && <div style={{ fontSize: 12, color: T.textMid, marginBottom: 8, lineHeight: 1.4 }}>{c.desc}</div>}
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                      {c.salary && <span style={pillStyle(color)}>{c.salary}</span>}
+                      {c.industryName && <span style={{ fontSize: 10, fontWeight: 600, color, background: `${color}18`, border: `1px solid ${color}40`, borderRadius: 20, padding: '2px 8px' }}>{c.industryName}</span>}
+                    </div>
+                  </div>
+                  <span style={{ color: T.textDim, fontSize: 18, marginLeft: 8 }}>›</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </Screen>
+  );
+}
+
 function IndustryBrowse({industryId,onBack,onViewCareer,industries}) {
   const industry=industries.find(i=>i.id===industryId);
   if(!industry)return null;
@@ -657,6 +702,8 @@ function AppContent({ signOut }) {
   const [activeCareer,setActiveCareer]=useState(null);
   const [activeCareerColor,setCareerColor]=useState(null);
   const [browseIndustry,setBrowseIndustry]=useState(null);
+  const [searchQuery,setSearchQuery]=useState('');
+  const [searchResults,setSearchResults]=useState([]);
   const [prevScreen,setPrevScreen]=useState(null);
   const [industries,setIndustries]=useState(STATIC_INDUSTRIES);
 
@@ -697,6 +744,11 @@ function AppContent({ signOut }) {
       desc:career.d, day:career.day, growth:career.growth
     };
     setActiveCareer(normalized);setCareerColor(color);goTo("career");
+  }
+  function handleSearch(query, results) {
+    setSearchQuery(query);
+    setSearchResults(results);
+    goTo("search");
   }
   function handleStartOver(){
     lsClear();
@@ -760,7 +812,8 @@ function AppContent({ signOut }) {
       <div className="main-content">
         {screen==="landing"  && <LandingScreen onStart={()=>{localStorage.setItem("ce_landing_seen","1");setScreen("industry");}} onBrowse={()=>{localStorage.setItem("ce_landing_seen","1");setSelected([]);setScreen("home");}}/>}
         {screen==="industry" && <IndustryPicker onDone={ids=>{setSelected(ids);setScreen("home");}} industries={industries}/>}
-        {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")} onStartOver={handleStartOver} industries={industries} onViewCareer={handleViewCareer}/>}
+        {screen==="home"     && <HomeScreen selectedIndustries={selectedIndustries} onSelectMode={handleSelectMode} onReset={()=>setScreen("industry")} onStartOver={handleStartOver} industries={industries} onViewCareer={handleViewCareer} onSearch={handleSearch}/>}
+        {screen==="search"   && <SearchResults query={searchQuery} results={searchResults} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer} industries={industries}/>}
         {screen==="quiz"     && <QuizScreen quizKey={activeQuiz} onBack={()=>setScreen("home")} onComplete={p=>{setResultProfile(p);goTo("result");}}/>}
         {screen==="result"   && <ResultScreen profileKey={resultProfile} selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onExploreBubble={()=>goTo("bubble")} onViewCareer={handleViewCareer} onRetake={()=>setScreen("industry")} industries={industries}/>}
         {screen==="career"   && <CareerTimeline career={activeCareer} industryColor={activeCareerColor} onBack={()=>setScreen(prevScreen||"home")}/>}
