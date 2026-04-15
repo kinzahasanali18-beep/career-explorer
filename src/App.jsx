@@ -629,6 +629,7 @@ function AppContent({ signOut }) {
           onComplete={(industries) => {
             supabase.from('profiles').upsert({ id: user.id, industries });
             setShowQuiz(false);
+            setShowProfile(true);
           }}
         />
       )}
