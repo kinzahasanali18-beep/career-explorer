@@ -101,6 +101,10 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
 
   const userIdentifier = user?.email || user?.phone || '';
 
+  const completeness = [form.name?.trim(), form.avatar, selectedIndustries?.length > 0].filter(Boolean).length;
+  const completenessPercent = Math.round((completeness / 3) * 100);
+  const completenessLabel = completenessPercent === 100 ? 'Profile complete ✦' : completenessPercent >= 66 ? 'Almost there' : completenessPercent >= 33 ? 'Getting somewhere' : 'Just getting started';
+
   useEffect(() => {
     supabase.from('profiles').select('*').eq('id', user.id).single()
       .then(({ data }) => {
@@ -156,6 +160,17 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <div style={{ fontSize: 18, fontWeight: 800, color: T.text }}>Your Profile</div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: T.textMid, fontSize: 20, cursor: 'pointer', lineHeight: 1, padding: '0 4px' }}>✕</button>
+        </div>
+
+        {/* Completeness bar */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#a78bfa', marginBottom: '6px', fontWeight: '500', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            <span>{completenessLabel}</span>
+            <span>{completenessPercent}%</span>
+          </div>
+          <div style={{ height: '3px', background: 'rgba(255,255,255,0.08)', borderRadius: '99px', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${completenessPercent}%`, background: completenessPercent === 100 ? 'linear-gradient(90deg, #a78bfa, #38bdf8)' : 'linear-gradient(90deg, #a78bfa, #c084fc)', borderRadius: '99px', transition: 'width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)' }} />
+          </div>
         </div>
 
         {/* Account identifier */}
@@ -220,6 +235,26 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
                   — pick everything that pulls you in
                 </span>
               </label>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                marginBottom: '10px',
+                color: '#a78bfa',
+                fontSize: '12px',
+                fontWeight: '500',
+                letterSpacing: '0.05em',
+              }}>
+                <span style={{ fontSize: '14px' }}>✦</span>
+                <span>Pick as many as feel like you</span>
+                <span style={{
+                  background: 'rgba(167,139,250,0.15)',
+                  border: '1px solid rgba(167,139,250,0.3)',
+                  borderRadius: '4px',
+                  padding: '1px 6px',
+                  fontSize: '11px',
+                }}>multi-select</span>
+              </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
                 {INDUSTRIES.map(industry => (
                   <IndustryTile

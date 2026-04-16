@@ -68,11 +68,25 @@ function GhostBtn({ children, ...props }) {
 }
 
 export default function LoginScreen() {
-  const { signInWithEmail } = useAuth();
+  const { signInWithEmail, verifyEmailOtp } = useAuth();
   const [email, setEmail] = useState('');
-  const [step, setStep] = useState('input'); // 'input' | 'sent'
+  const [token, setToken] = useState('');
+  const [step, setStep] = useState('input'); // 'input' | 'verify'
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  async function handleVerify(e) {
+    e.preventDefault();
+    setError('');
+    setSubmitting(true);
+    try {
+      await verifyEmailOtp(email, token);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -80,7 +94,7 @@ export default function LoginScreen() {
     setSubmitting(true);
     try {
       await signInWithEmail(email);
-      setStep('sent');
+      setStep('verify');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -146,24 +160,42 @@ export default function LoginScreen() {
           </form>
         )}
 
-        {/* ── Sent confirmation step ── */}
-        {step === 'sent' && (
-          <div>
+        {/* ── OTP verify step ── */}
+        {step === 'verify' && (
+          <form onSubmit={handleVerify}>
             <div style={{ textAlign: 'center', marginBottom: 24 }}>
-              <div style={{ fontSize: 40, marginBottom: 12 }}>📬</div>
+              <div style={{ fontSize: 40, marginBottom: 12 }}>🔐</div>
               <div style={{ color: T.text, fontSize: 15, fontWeight: 600, marginBottom: 8 }}>
-                Check your inbox
+                Enter your code
               </div>
               <div style={{ color: T.textMid, fontSize: 14, lineHeight: 1.6 }}>
-                We sent a magic link to{' '}
+                We sent a 6-digit code to{' '}
                 <span style={{ color: T.accent1, fontWeight: 600 }}>{email}</span>.
-                Click it to sign in.
               </div>
             </div>
-            <GhostBtn type="button" onClick={() => { setStep('input'); setError(''); }}>
-              Use a different email
+            <label style={{ display: 'block', marginBottom: 8, color: T.textMid, fontSize: 12, fontWeight: 600, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+              6-digit code
+            </label>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              required
+              autoFocus
+              placeholder="000000"
+              value={token}
+              onChange={e => setToken(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              style={{ ...inputStyle, marginBottom: 20, letterSpacing: '0.3em', textAlign: 'center', fontSize: 22 }}
+            />
+            {error && <div style={{ color: '#F87171', fontSize: 13, marginBottom: 14 }}>{error}</div>}
+            <PrimaryBtn type="submit" loading={submitting}>
+              {submitting ? 'Verifying…' : 'Verify'}
+            </PrimaryBtn>
+            <GhostBtn type="button" onClick={() => { setStep('input'); setToken(''); setError(''); }}>
+              Resend email
             </GhostBtn>
-          </div>
+          </form>
         )}
       </div>
     </div>
