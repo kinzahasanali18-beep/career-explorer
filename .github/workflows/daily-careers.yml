@@ -21,7 +21,7 @@ jobs:
 
       - name: Generate and push careers
         env:
-          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           ANTHROPIC_KEY: ${{ secrets.ANTHROPIC_KEY }}
         run: node scripts/daily_add_careers.cjs
 

@@ -1,17 +1,16 @@
 // scripts/daily_add_careers.cjs
 // Runs daily via GitHub Actions.
-// 1. Fetches all existing career names from Airtable
+// 1. Fetches all existing career names from Supabase
 // 2. Generates 100 new unique careers via Claude
 // 3. For each career, generates ALL fields in one Claude call
-// 4. Pushes complete records to Airtable
+// 4. Pushes complete records to Supabase
 
-const AT  = process.env.AIRTABLE_TOKEN;
-const AK  = process.env.ANTHROPIC_KEY;
-const BASE  = "app7CzdOBdcdWpqj4";
-const TABLE = "tblIM2gYIKk8Xt6KT";
+const SUPABASE_URL = process.env.SUPABASE_URL || "https://qywesurzzunxdduvyquy.supabase.co";
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const AK           = process.env.ANTHROPIC_KEY;
 
-if (!AT || !AK) {
-  console.error("❌ Missing AIRTABLE_TOKEN or ANTHROPIC_KEY environment variables.");
+if (!SUPABASE_KEY || !AK) {
+  console.error("❌ Missing SUPABASE_SERVICE_KEY or ANTHROPIC_KEY environment variables.");
   process.exit(1);
 }
 
@@ -160,34 +159,42 @@ function snapSalary(raw) {
   return best;
 }
 
-// ─── Airtable helpers ─────────────────────────────────────────────────────────
+// ─── Supabase helpers ─────────────────────────────────────────────────────────
 
 async function fetchExistingNames() {
   console.log("📋 Fetching existing careers...");
-  const records = [];
-  let offset = null;
-  do {
-    const url = `https://api.airtable.com/v0/${BASE}/${TABLE}?pageSize=100${offset ? "&offset=" + offset : ""}`;
-    const r = await fetch(url, { headers: { Authorization: "Bearer " + AT } });
-    const d = await r.json();
-    if (d.error) { console.error("Airtable error:", JSON.stringify(d.error)); process.exit(1); }
-    records.push(...d.records);
-    offset = d.offset || null;
-  } while (offset);
-  const names = records.map(r => r.fields.name).filter(Boolean);
+  const names = [];
+  const limit = 1000;
+  let offset = 0;
+
+  while (true) {
+    const url = `${SUPABASE_URL}/rest/v1/careers?select=name&limit=${limit}&offset=${offset}`;
+    const r = await fetch(url, {
+      headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY },
+    });
+    if (!r.ok) { console.error("Supabase error:", await r.text()); process.exit(1); }
+    const data = await r.json();
+    names.push(...data.map(row => row.name).filter(Boolean));
+    if (data.length < limit) break;
+    offset += limit;
+  }
+
   console.log(`   ${names.length} existing careers found.\n`);
   return names;
 }
 
 async function createRecord(fields) {
-  const r = await fetch(`https://api.airtable.com/v0/${BASE}/${TABLE}`, {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/careers`, {
     method: "POST",
-    headers: { Authorization: "Bearer " + AT, "Content-Type": "application/json" },
-    body: JSON.stringify({ records: [{ fields }] })
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: "Bearer " + SUPABASE_KEY,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal",
+    },
+    body: JSON.stringify(fields),
   });
-  const d = await r.json();
-  if (!r.ok) throw new Error("Airtable POST: " + JSON.stringify(d.error));
-  return d.records[0].id;
+  if (!r.ok) throw new Error("Supabase POST: " + await r.text());
 }
 
 // ─── Claude helpers ───────────────────────────────────────────────────────────
@@ -328,7 +335,7 @@ async function main() {
   const toProcess = careers.slice(0, TARGET);
   console.log(`📝 Processing ${toProcess.length} careers...\n`);
 
-  // Step 3: For each career, generate all fields then push to Airtable
+  // Step 3: For each career, generate all fields then push to Supabase
   let ok = 0, fail = 0;
   for (let i = 0; i < toProcess.length; i++) {
     const { name, primary_industry } = toProcess[i];

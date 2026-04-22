@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import BubbleScreen from "./BubbleScreen";
 import CareerTimeline from "./CareerTimeline";
-import { fetchCareers } from "./airtable";
+import { fetchCareers } from "./supabase";
 import { useAuth } from "./AuthContext";
 import LoginScreen from "./LoginScreen";
 import ProfilePage from "./ProfilePage";
