@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import BubbleScreen from "./BubbleScreen";
 import CareerTimeline from "./CareerTimeline";
+import WorldExplorer from "./WorldExplorer";
+import MyWorld from "./MyWorld";
 import { fetchCareers } from "./supabase";
 import { useAuth } from "./AuthContext";
 import LoginScreen from "./LoginScreen";
@@ -202,9 +204,14 @@ function DesktopSidebar({ screen, activeQuiz, selectedIndustries, onSelectMode, 
       ))}
       <div className="sidebar-section-label">Explore</div>
       <button
-        className={`sidebar-item${screen === "bubble" ? " active" : ""}`}
-        onClick={() => onSelectMode("bubble")}>
-        <span style={{fontSize:14}}>✦</span>Bubble Map
+        className={`sidebar-item${screen === "world" ? " active" : ""}`}
+        onClick={() => onSelectMode("world")}>
+        <span style={{fontSize:14}}>◎</span>World Explorer
+      </button>
+      <button
+        className={`sidebar-item${screen === "myworld" ? " active" : ""}`}
+        onClick={() => onSelectMode("myworld")}>
+        <span style={{fontSize:14}}>✦</span>Your Echoes
       </button>
       <div className="sidebar-divider" />
       <div className="sidebar-section-label">Browse Industries</div>
@@ -416,7 +423,9 @@ function HomeScreen({selectedIndustries,onSelectMode,onReset,onStartOver,industr
   const modes=[
     {id:"abstract",icon:"◈",name:"The Abstract Quiz",desc:"Strange questions. Surprising results."},
     {id:"cinematic",icon:"◎",name:"The Cinematic Quiz",desc:"Pick movie scenes. Find where you fit."},
-    {id:"bubble",icon:"✦",name:"Career Bubble Map",desc:"Click and explore. Watch careers branch."},
+    {id:"world",icon:"◎",name:"World Explorer",desc:"Walk through worlds. Meet the careers that live there."},
+    {id:"myworld",icon:"✦",name:"Your Echoes",desc:"All the careers you've echoed, in one place."},
+    {id:"bubble",icon:"◉",name:"Career Bubble Map",desc:"Click and explore. Watch careers branch."},
     {id:"moody",icon:"◉",name:"The Deep Dive",desc:"Introspective. What drives you at your core?"},
   ];
   const activeInds = selectedIndustries.length>0?industries.filter(i=>selectedIndustries.includes(i.id)):industries;
@@ -674,7 +683,7 @@ function IndustryBrowse({industryId,onBack,onViewCareer,industries}) {
 
 
 // Screens that are safe to restore on reload (excludes mid-quiz and transient screens)
-const RESTORABLE = new Set(["industry","home","result","bubble","browse"]);
+const RESTORABLE = new Set(["industry","home","result","bubble","browse","world","myworld"]);
 
 function ls(key,fallback){try{const v=localStorage.getItem(key);return v!=null?JSON.parse(v):fallback;}catch{return fallback;}}
 function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch{}}
@@ -687,8 +696,17 @@ function AppContent({ signOut }) {
   const [showQuiz, setShowQuiz] = useState(false);
   useEffect(() => {
     if (!user) return;
-    supabase.from('profiles').select('name').eq('id', user.id).single().then(({ data, error }) => {
+    supabase.from('profiles').select('name, industries').eq('id', user.id).single().then(({ data, error }) => {
       if (error || !data || !data.name) setShowOnboarding(true);
+
+      const savedIndustries = data?.industries;
+      if (savedIndustries?.length) {
+        // Use their saved profile preferences and skip the picker
+        setSelected(savedIndustries);
+        lsSet('ce_industries', savedIndustries);
+        localStorage.setItem('ce_landing_seen', '1');
+        setScreen(prev => prev === 'industry' || prev === 'landing' ? 'home' : prev);
+      }
     });
   }, [user?.id]);
   const [screen,setScreen]=useState(()=>{
@@ -714,6 +732,7 @@ function AppContent({ signOut }) {
         careers: careers
           .filter(c=>normalizeIndustryId(c.primary_industry)===ind.id)
           .map(c=>({
+            id: c.id,
             title: c.name,
             salary: c.salary_range,
             desc: c.description,
@@ -736,13 +755,34 @@ function AppContent({ signOut }) {
   function handleSelectMode(mode){
     if(mode.startsWith("industry:")){setBrowseIndustry(mode.split(":")[1]);goTo("browse");return;}
     if(mode==="bubble"){goTo("bubble");return;}
+    if(mode==="world"){goTo("world");return;}
+    if(mode==="myworld"){goTo("myworld");return;}
     setActiveQuiz(mode);goTo("quiz");
   }
   function handleViewCareer(career,color){
-    const normalized = career.title ? career : {
-      title:career.t, salary:career.s, school:career.sc,
-      desc:career.d, day:career.day, growth:career.growth
-    };
+    let normalized;
+    if (career.title) {
+      normalized = career;
+    } else if (career.name) {
+      normalized = {
+        id: career.id,
+        title: career.name,
+        salary: career.salary_range,
+        school: "",
+        desc: career.description,
+        day: "",
+        growth: [],
+        primary_industry: career.primary_industry,
+        secondary_industries: career.secondary_industries,
+        traits: Array.isArray(career.traits) ? career.traits : (career.traits||"").split(",").map(t=>t.trim()).filter(Boolean),
+        keywords: Array.isArray(career.keywords) ? career.keywords : (career.keywords||"").split(",").map(k=>k.trim()).filter(Boolean),
+      };
+    } else {
+      normalized = {
+        title:career.t, salary:career.s, school:career.sc,
+        desc:career.d, day:career.day, growth:career.growth
+      };
+    }
     setActiveCareer(normalized);setCareerColor(color);goTo("career");
   }
   function handleSearch(query, results) {
@@ -819,6 +859,8 @@ function AppContent({ signOut }) {
         {screen==="career"   && <CareerTimeline career={activeCareer} industryColor={activeCareerColor} onBack={()=>setScreen(prevScreen||"home")}/>}
         {screen==="browse"   && <IndustryBrowse industryId={browseIndustry} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer} industries={industries}/>}
         {screen==="bubble"   && <BubbleScreen selectedIndustries={selectedIndustries} onBack={()=>setScreen("home")} onViewCareer={handleViewCareer} industries={industries}/>}
+        {screen==="world"    && <WorldExplorer onBack={()=>setScreen(prevScreen||"home")} onViewCareer={handleViewCareer}/>}
+        {screen==="myworld"  && <MyWorld onBack={()=>setScreen(prevScreen||"home")} onViewCareer={handleViewCareer}/>}
       </div>
     </div>
   );

@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "./supabaseClient";
+import { useAuth } from "./AuthContext";
 
 const STAGE_COLORS = ["#F472B6", "#C084FC", "#818CF8", "#38BDF8"];
 const STAGE_VIBES  = ["Education & Training", "Entry Level", "Mid Career", "Senior Level"];
@@ -282,6 +284,26 @@ function Stage({ step, index, isLast }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function CareerTimeline({ career, industryColor, onBack }) {
+  const { user } = useAuth();
+  const [echoed, setEchoed] = useState(false);
+
+  useEffect(() => {
+    if (!user || !career.id) return;
+    supabase
+      .from("saved_careers")
+      .select("career_id")
+      .eq("user_id", user.id)
+      .eq("career_id", career.id)
+      .maybeSingle()
+      .then(({ data }) => { if (data) setEchoed(true); });
+  }, [user, career.id]);
+
+  async function handleEcho() {
+    if (!user || echoed || !career.id) return;
+    await supabase.from("saved_careers").insert({ user_id: user.id, career_id: career.id });
+    setEchoed(true);
+  }
+
   const title    = career.title || career.t || "Career";
   const desc     = career.desc  || career.d || "";
   const salary   = career.salary || career.s || "";
@@ -346,8 +368,8 @@ export default function CareerTimeline({ career, industryColor, onBack }) {
         <div style={{ fontSize: 13, color: "#8B8FA8", lineHeight: 1.6, marginBottom: 14 }}>{desc}</div>
       </div>
 
-      {/* Salary range pill */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap", ...anim(0) }}>
+      {/* Salary range pill + Echo button */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap", alignItems: "center", ...anim(0) }}>
         {salary && (
           <span style={{
             background: "#F472B618", border: "1px solid #F472B640",
@@ -359,6 +381,20 @@ export default function CareerTimeline({ career, industryColor, onBack }) {
             background: "#818CF818", border: "1px solid #818CF840",
             borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "#818CF8",
           }}>🎓 {school}</span>
+        )}
+        {career.id && (
+          <button
+            onClick={handleEcho}
+            disabled={echoed}
+            style={{
+              padding: "4px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700,
+              border: `1px solid ${echoed ? "#22c55e55" : "#3D3F55"}`,
+              background: echoed ? "#22c55e18" : "#1A1D2E",
+              color: echoed ? "#22c55e" : "#8B8FA8",
+              cursor: echoed ? "default" : "pointer",
+              transition: "all 0.2s",
+            }}
+          >{echoed ? "✓ Echoed" : "+ Echo"}</button>
         )}
       </div>
 
