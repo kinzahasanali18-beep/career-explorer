@@ -6,6 +6,31 @@ const STAGE_COLORS = ["#F472B6", "#C084FC", "#818CF8", "#38BDF8"];
 const STAGE_VIBES  = ["Education & Training", "Entry Level", "Mid Career", "Senior Level"];
 const STAGE_EMOJIS = ["🎓", "🌱", "🔥", "👑"];
 
+const INDUSTRY_ACCENT = {
+  "Tech & Engineering": "#7F77DD",
+  "Business & Finance": "#F0A030",
+  "Healthcare & Medicine": "#2DD4A4",
+  "Design & Creative": "#F070A0",
+  "Media & Journalism": "#E06AAC",
+  "Sports & Fitness": "#FF7A50",
+  "Fashion & Beauty": "#FF50B0",
+  "Education & Coaching": "#8EC430",
+  "Law & Government": "#60AAFF",
+  "Science & Research": "#B07AFF",
+  "Hospitality & Events": "#7068D0",
+  "Entrepreneurship": "#FFBF40",
+  "Arts & Performance": "#C080E0",
+  "Social Impact & Nonprofit": "#34D399",
+  "Architecture & Urban Planning": "#94A3B8",
+  "Aviation & Transportation": "#38BDF8",
+  "Cybersecurity": "#FF6666",
+  "Environment & Sustainability": "#4ADE80",
+  "Food & Culinary": "#F9A825",
+  "Gaming & Esports": "#22D3EE",
+  "Marketing & Communications": "#F472B6",
+  "Supply Chain & Operations": "#9CA3AF",
+};
+
 // ─── Salary helpers ───────────────────────────────────────────────────────────
 
 function parseSalaryRange(str) {
@@ -281,11 +306,51 @@ function Stage({ step, index, isLast }) {
   );
 }
 
+// ─── Discovery card ───────────────────────────────────────────────────────────
+
+function DiscoveryCard({ career: c, accentColor, sharedKeywords, onViewCareer }) {
+  const title = c.name || c.title || "";
+  const salary = c.salary_range || c.salary || "";
+  const desc = c.description || c.desc || "";
+  const truncDesc = desc.length > 72 ? desc.slice(0, 72) + "…" : desc;
+  return (
+    <div
+      onClick={() => onViewCareer && onViewCareer(c, accentColor)}
+      style={{
+        minWidth: 160, maxWidth: 180, background: "#272B40",
+        border: "1px solid #3D3F55", borderRadius: 12,
+        padding: "10px 12px", cursor: "pointer", flexShrink: 0,
+      }}
+    >
+      <div style={{ fontSize: 12, fontWeight: 700, color: "#F9FAFB", marginBottom: 3, lineHeight: 1.3 }}>{title}</div>
+      {salary && (
+        <div style={{ fontSize: 10, fontWeight: 700, color: accentColor, marginBottom: 5 }}>{salary}</div>
+      )}
+      {truncDesc && (
+        <div style={{ fontSize: 11, color: "#8B8FA8", lineHeight: 1.5, marginBottom: sharedKeywords?.length ? 7 : 0 }}>{truncDesc}</div>
+      )}
+      {sharedKeywords?.length > 0 && (
+        <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+          {sharedKeywords.slice(0, 2).map(k => (
+            <span key={k} style={{
+              background: `${accentColor}22`, border: `1px solid ${accentColor}55`,
+              borderRadius: 10, padding: "2px 6px",
+              fontSize: 9, color: accentColor, fontWeight: 600,
+            }}>{k}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function CareerTimeline({ career, industryColor, onBack }) {
+export default function CareerTimeline({ career, industryColor, onBack, onViewCareer }) {
   const { user } = useAuth();
   const [echoed, setEchoed] = useState(false);
+  const [moreCareers, setMoreCareers] = useState([]);
+  const [connectionCareers, setConnectionCareers] = useState([]);
 
   useEffect(() => {
     if (!user || !career.id) return;
@@ -297,6 +362,42 @@ export default function CareerTimeline({ career, industryColor, onBack }) {
       .maybeSingle()
       .then(({ data }) => { if (data) setEchoed(true); });
   }, [user, career.id]);
+
+  useEffect(() => {
+    if (!career.primary_industry || !career.id) return;
+    setMoreCareers([]);
+    supabase
+      .from("careers")
+      .select("id, name, salary_range, description, primary_industry, keywords")
+      .eq("primary_industry", career.primary_industry)
+      .neq("id", career.id)
+      .limit(6)
+      .then(({ data }) => { if (data) setMoreCareers(data); });
+  }, [career.id, career.primary_industry]);
+
+  useEffect(() => {
+    const rawKeywords = Array.isArray(career.keywords)
+      ? career.keywords
+      : (career.keywords || "").split(",").map(k => k.trim()).filter(Boolean);
+    if (!rawKeywords.length || !career.primary_industry || !career.id) return;
+    setConnectionCareers([]);
+    const orFilter = rawKeywords.map(k => `keywords.ilike.%${k}%`).join(",");
+    supabase
+      .from("careers")
+      .select("id, name, salary_range, description, primary_industry, keywords")
+      .neq("primary_industry", career.primary_industry)
+      .or(orFilter)
+      .limit(12)
+      .then(({ data }) => {
+        if (!data) return;
+        const withShared = data.map(c => {
+          const theirKw = (c.keywords || "").split(",").map(k => k.trim().toLowerCase());
+          const shared = rawKeywords.filter(k => theirKw.includes(k.toLowerCase()));
+          return { ...c, sharedKeywords: shared };
+        }).filter(c => c.sharedKeywords.length > 0).slice(0, 6);
+        setConnectionCareers(withShared);
+      });
+  }, [career.id, career.primary_industry, career.keywords]);
 
   async function handleEcho() {
     if (!user || echoed || !career.id) return;
@@ -336,6 +437,7 @@ export default function CareerTimeline({ career, industryColor, onBack }) {
           from { opacity: 0; transform: translateY(20px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        .ct-scroll::-webkit-scrollbar { display: none; }
       `}</style>
 
       {/* Back button */}
@@ -464,6 +566,40 @@ export default function CareerTimeline({ career, industryColor, onBack }) {
           Explore more careers like this →
         </button>
       </div>
+
+      {/* More in Industry */}
+      {moreCareers.length > 0 && (
+        <div style={{ marginTop: 28 }}>
+          <div style={{ fontSize: 10, color: "#4A4D66", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700, marginBottom: 10 }}>
+            More in {career.primary_industry}
+          </div>
+          <div className="ct-scroll" style={{
+            display: "flex", gap: 10, overflowX: "auto", overflowY: "hidden",
+            paddingBottom: 8, scrollbarWidth: "none", WebkitOverflowScrolling: "touch",
+          }}>
+            {moreCareers.map(c => (
+              <DiscoveryCard key={c.id} career={c} accentColor={industryColor || INDUSTRY_ACCENT[c.primary_industry] || "#7F77DD"} onViewCareer={onViewCareer} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Surprising connections */}
+      {connectionCareers.length > 0 && (
+        <div style={{ marginTop: 24, marginBottom: 24 }}>
+          <div style={{ fontSize: 10, color: "#4A4D66", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700, marginBottom: 10 }}>
+            Surprising connections
+          </div>
+          <div className="ct-scroll" style={{
+            display: "flex", gap: 10, overflowX: "auto", overflowY: "hidden",
+            paddingBottom: 8, scrollbarWidth: "none", WebkitOverflowScrolling: "touch",
+          }}>
+            {connectionCareers.map(c => (
+              <DiscoveryCard key={c.id} career={c} accentColor={INDUSTRY_ACCENT[c.primary_industry] || "#7F77DD"} sharedKeywords={c.sharedKeywords} onViewCareer={onViewCareer} />
+            ))}
+          </div>
+        </div>
+      )}
 
     </div>
   );

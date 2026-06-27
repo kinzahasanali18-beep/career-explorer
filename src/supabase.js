@@ -31,6 +31,8 @@ export async function fetchCareers() {
     traits: r.traits ? r.traits.split(",").map((t) => t.trim()) : [],
     keywords: r.keywords ? r.keywords.split(",").map((k) => k.trim()) : [],
     salary_range: r.salary_range || "",
+    work_style: r.work_style || "",
+    degree_required: r.degree_required ? r.degree_required.trim() : "",
     crossover_label: r.crossover_label || "",
     source_url: r.source_url || "",
     reviewed: r.reviewed || false,
