@@ -737,8 +737,12 @@ function AppContent({ signOut }) {
           <CareerTimeline
             career={activeCareer}
             industryColor={activeCareerColor}
-            onBack={() => setScreen(prevScreen || "home")}
+            onBack={() => setScreen("home")}
             onViewCareer={handleViewCareer}
+            onExploreIndustry={(industryName) => {
+              if (industryName) setSelected([industryName]);
+              setScreen("home");
+            }}
           />
         )}
         {screen === "echoes" && (

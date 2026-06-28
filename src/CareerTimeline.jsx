@@ -346,7 +346,7 @@ function DiscoveryCard({ career: c, accentColor, sharedKeywords, onViewCareer })
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function CareerTimeline({ career, industryColor, onBack, onViewCareer }) {
+export default function CareerTimeline({ career, industryColor, onBack, onViewCareer, onExploreIndustry }) {
   const { user } = useAuth();
   const [echoed, setEchoed] = useState(false);
   const [moreCareers, setMoreCareers] = useState([]);
@@ -555,7 +555,7 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
           Curious what this could look like for you specifically?
         </div>
         <button
-          onClick={() => {}}
+          onClick={() => onExploreIndustry && onExploreIndustry(career.primary_industry)}
           style={{
             width: "100%", padding: "0.8rem",
             background: "linear-gradient(135deg, #F472B6, #818CF8, #38BDF8)",
