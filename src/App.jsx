@@ -92,7 +92,8 @@ function matchesVibe(career, active) {
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
-function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndustry }) {
+function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndustry, onClearIndustries }) {
+  const allSelected = selectedIndustries.length === 0;
   return (
     <div className="desktop-sidebar" style={{ background: T.bg }}>
       <div className="sidebar-brand">⚡ Sparq</div>
@@ -114,6 +115,19 @@ function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndust
       <div className="sidebar-divider" />
 
       <div className="sidebar-section-label">Industries</div>
+      <button
+        className="sidebar-item"
+        onClick={onClearIndustries}
+        style={{
+          color: allSelected ? T.accent : T.textMid,
+          background: allSelected ? `${T.accent}14` : "transparent",
+          fontWeight: allSelected ? 600 : 400,
+        }}
+      >
+        <span style={{ fontSize: 13, flexShrink: 0 }}>◉</span>
+        <span style={{ flex: 1 }}>All industries</span>
+        {allSelected && <span style={{ fontSize: 10, flexShrink: 0, opacity: 0.8 }}>✓</span>}
+      </button>
       {INDUSTRY_CONFIG.map(ind => {
         const sel = selectedIndustries.includes(ind.name);
         return (
@@ -950,6 +964,11 @@ function AppContent({ signOut }) {
           selectedIndustries={selectedIndustries}
           onNavigate={setScreen}
           onToggleIndustry={handleToggleIndustry}
+          onClearIndustries={() => {
+            setSelected([]);
+            lsSet("ce_industries", []);
+            if (screen !== "home") setScreen("home");
+          }}
         />
       )}
 
