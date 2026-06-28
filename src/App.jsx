@@ -105,10 +105,10 @@ function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndust
         <span style={{ fontSize: 14 }}>◈</span> Explore Careers
       </button>
       <button
-        className={`sidebar-item${screen === "echoes" ? " active" : ""}`}
-        onClick={() => onNavigate("echoes")}
+        className={`sidebar-item${screen === "shortlist" ? " active" : ""}`}
+        onClick={() => onNavigate("shortlist")}
       >
-        <span style={{ fontSize: 14 }}>✦</span> Your Echoes
+        <span style={{ fontSize: 14 }}>★</span> Your Shortlist
       </button>
 
       <div className="sidebar-divider" />
@@ -159,10 +159,9 @@ function FilterChip({ label, active, color = T.accent, onClick }) {
   );
 }
 
-function CareerCard({ career, onClick }) {
+function CareerCard({ career, onClick, isStarred, onToggleStar }) {
   const title = career.name || career.title || "";
   const desc = career.description || career.desc || "";
-  const salary = career.salary_range || career.salary || "";
 
   const secondaryList = career.secondary_industries
     ? career.secondary_industries.split(",").map(s => s.trim()).filter(Boolean)
@@ -184,7 +183,19 @@ function CareerCard({ career, onClick }) {
       onMouseEnter={e => { e.currentTarget.style.borderColor = primaryCfg.color; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; }}
     >
-      <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 7, lineHeight: 1.35 }}>{title}</div>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 6, marginBottom: 7 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: T.text, flex: 1, lineHeight: 1.35 }}>{title}</div>
+        {onToggleStar && (
+          <button
+            onClick={e => { e.stopPropagation(); onToggleStar(career.id); }}
+            style={{
+              background: "none", border: "none", cursor: "pointer",
+              fontSize: 16, lineHeight: 1, padding: "0 0 0 2px", flexShrink: 0,
+              color: isStarred ? "#F59E0B" : T.textDim,
+            }}
+          >{isStarred ? "★" : "☆"}</button>
+        )}
+      </div>
 
       {allIndustries.length > 0 && (
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
@@ -314,6 +325,7 @@ function CareerGridScreen({
   selectedIndustries, allCareers, loading, onViewCareer, onChangeIndustries,
   workStyleActive, setWorkStyleActive, pathActive, setPathActive,
   vibeActive, setVibeActive, searchQuery, setSearchQuery, restoreScrollY,
+  starredIds, onToggleStar,
 }) {
   useLayoutEffect(() => {
     window.scrollTo(0, restoreScrollY || 0);
@@ -440,6 +452,8 @@ function CareerGridScreen({
               key={c.id || c.name}
               career={c}
               onClick={() => onViewCareer(c, getConfig(c.primary_industry).color)}
+              isStarred={starredIds?.has(c.id)}
+              onToggleStar={onToggleStar}
             />
           ))}
         </div>
@@ -456,52 +470,38 @@ function CareerGridScreen({
   );
 }
 
-function EchoesScreen({ onViewCareer }) {
-  const { user } = useAuth();
-  const [careers, setCareers] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!user) return;
-    setLoading(true);
-    supabase
-      .from("saved_careers")
-      .select("career_id, careers(id, name, salary_range, description, primary_industry, secondary_industries, keywords)")
-      .eq("user_id", user.id)
-      .then(({ data, error }) => {
-        if (!error && data) {
-          setCareers(data.map(row => row.careers).filter(Boolean));
-        }
-        setLoading(false);
-      });
-  }, [user?.id]);
+function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar }) {
+  const starred = allCareers.filter(c => starredIds.has(c.id));
+  const loading = allCareers.length === 0;
 
   return (
     <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
-      <div style={{ fontSize: 20, fontWeight: 800, color: T.text, marginBottom: 4 }}>Your Echoes</div>
-      <div style={{ fontSize: 13, color: T.textMid, marginBottom: 22 }}>Careers you've saved.</div>
+      <div style={{ fontSize: 20, fontWeight: 800, color: T.text, marginBottom: 4 }}>Your Shortlist</div>
+      <div style={{ fontSize: 13, color: T.textMid, marginBottom: 22 }}>Careers you've starred.</div>
 
       {loading && (
         <div style={{ textAlign: "center", padding: "48px 20px", color: T.textMid, fontSize: 14 }}>Loading…</div>
       )}
 
-      {!loading && careers.length === 0 && (
+      {!loading && starred.length === 0 && (
         <div style={{ textAlign: "center", padding: "48px 20px" }}>
-          <div style={{ fontSize: 36, marginBottom: 12 }}>✦</div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 8 }}>No echoes yet</div>
+          <div style={{ fontSize: 36, marginBottom: 12, color: T.textDim }}>☆</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 8 }}>No starred careers yet</div>
           <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.6 }}>
-            Open any career roadmap and tap <strong style={{ color: T.text }}>+ Echo</strong> to save it here.
+            Tap the <strong style={{ color: "#F59E0B" }}>☆</strong> on any career card or roadmap to add it here.
           </div>
         </div>
       )}
 
-      {!loading && careers.length > 0 && (
+      {!loading && starred.length > 0 && (
         <div className="echoes-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-          {careers.map(c => (
+          {starred.map(c => (
             <CareerCard
               key={c.id}
               career={c}
               onClick={() => onViewCareer(c, getConfig(c.primary_industry).color)}
+              isStarred={true}
+              onToggleStar={onToggleStar}
             />
           ))}
         </div>
@@ -512,8 +512,8 @@ function EchoesScreen({ onViewCareer }) {
 
 function BottomNav({ screen, onNavigate }) {
   const tabs = [
-    { id: "home", label: "Explore", icon: "◈" },
-    { id: "echoes", label: "Echoes", icon: "✦" },
+    { id: "home",      label: "Explore",   icon: "◈" },
+    { id: "shortlist", label: "Shortlist", icon: "★" },
   ];
   return (
     <div className="sparq-bottom-nav" style={{
@@ -548,7 +548,7 @@ function BottomNav({ screen, onNavigate }) {
 
 // ─── State helpers ─────────────────────────────────────────────────────────────
 
-const RESTORABLE = new Set(["pick", "home", "echoes"]);
+const RESTORABLE = new Set(["pick", "home", "shortlist"]);
 function ls(key, fallback) { try { const v = localStorage.getItem(key); return v != null ? JSON.parse(v) : fallback; } catch { return fallback; } }
 function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
 
@@ -576,6 +576,26 @@ function AppContent({ signOut }) {
   const [prevScreen, setPrevScreen] = useState(null);
   const [allCareers, setAllCareers] = useState([]);
   const [careersLoading, setCareersLoading] = useState(true);
+
+  const [starredIds, setStarredIds] = useState(new Set());
+
+  // Load starred career IDs once on sign-in
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("saved_careers").select("career_id").eq("user_id", user.id)
+      .then(({ data }) => { if (data) setStarredIds(new Set(data.map(r => r.career_id))); });
+  }, [user?.id]);
+
+  async function toggleStar(careerId) {
+    if (!user || !careerId) return;
+    if (starredIds.has(careerId)) {
+      await supabase.from("saved_careers").delete().eq("user_id", user.id).eq("career_id", careerId);
+      setStarredIds(prev => { const n = new Set(prev); n.delete(careerId); return n; });
+    } else {
+      await supabase.from("saved_careers").insert({ user_id: user.id, career_id: careerId });
+      setStarredIds(prev => new Set([...prev, careerId]));
+    }
+  }
 
   // Persisted across career navigation so Back restores exact state
   const savedScrollY = useRef(0);
@@ -658,7 +678,7 @@ function AppContent({ signOut }) {
     goTo("career");
   }
 
-  const showNav = screen === "home" || screen === "echoes";
+  const showNav = screen === "home" || screen === "shortlist";
   const showSidebar = screen !== "pick";
 
   function handleToggleIndustry(name) {
@@ -752,6 +772,8 @@ function AppContent({ signOut }) {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             restoreScrollY={savedScrollY.current}
+            starredIds={starredIds}
+            onToggleStar={toggleStar}
           />
         )}
         {screen === "career" && (
@@ -764,10 +786,17 @@ function AppContent({ signOut }) {
               if (industryName) setSelected([industryName]);
               setScreen("home");
             }}
+            isStarred={starredIds.has(activeCareer?.id)}
+            onToggleStar={toggleStar}
           />
         )}
-        {screen === "echoes" && (
-          <EchoesScreen onViewCareer={handleViewCareer} />
+        {screen === "shortlist" && (
+          <ShortlistScreen
+            allCareers={allCareers}
+            starredIds={starredIds}
+            onViewCareer={handleViewCareer}
+            onToggleStar={toggleStar}
+          />
         )}
       </div>
 

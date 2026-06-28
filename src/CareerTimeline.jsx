@@ -1,6 +1,5 @@
 import { useState, useEffect, useLayoutEffect } from "react";
 import { supabase } from "./supabaseClient";
-import { useAuth } from "./AuthContext";
 
 const STAGE_COLORS = ["#F472B6", "#C084FC", "#818CF8", "#38BDF8"];
 const STAGE_VIBES  = ["Education & Training", "Entry Level", "Mid Career", "Senior Level"];
@@ -346,26 +345,13 @@ function DiscoveryCard({ career: c, accentColor, sharedKeywords, onViewCareer })
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function CareerTimeline({ career, industryColor, onBack, onViewCareer, onExploreIndustry }) {
-  const { user } = useAuth();
-  const [echoed, setEchoed] = useState(false);
+export default function CareerTimeline({ career, industryColor, onBack, onViewCareer, onExploreIndustry, isStarred, onToggleStar }) {
   const [moreCareers, setMoreCareers] = useState([]);
   const [connectionCareers, setConnectionCareers] = useState([]);
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, [career.id]);
-
-  useEffect(() => {
-    if (!user || !career.id) return;
-    supabase
-      .from("saved_careers")
-      .select("career_id")
-      .eq("user_id", user.id)
-      .eq("career_id", career.id)
-      .maybeSingle()
-      .then(({ data }) => { if (data) setEchoed(true); });
-  }, [user, career.id]);
 
   useEffect(() => {
     if (!career.primary_industry || !career.id) return;
@@ -402,12 +388,6 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
         setConnectionCareers(withShared);
       });
   }, [career.id, career.primary_industry, career.keywords]);
-
-  async function handleEcho() {
-    if (!user || echoed || !career.id) return;
-    await supabase.from("saved_careers").insert({ user_id: user.id, career_id: career.id });
-    setEchoed(true);
-  }
 
   const title    = career.title || career.t || "Career";
   const desc     = career.desc  || career.d || "";
@@ -488,19 +468,18 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
             borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 600, color: "#818CF8",
           }}>🎓 {school}</span>
         )}
-        {career.id && (
+        {career.id && onToggleStar && (
           <button
-            onClick={handleEcho}
-            disabled={echoed}
+            onClick={() => onToggleStar(career.id)}
             style={{
-              padding: "4px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700,
-              border: `1px solid ${echoed ? "#22c55e55" : "#3D3F55"}`,
-              background: echoed ? "#22c55e18" : "#1A1D2E",
-              color: echoed ? "#22c55e" : "#8B8FA8",
-              cursor: echoed ? "default" : "pointer",
+              padding: "4px 14px", borderRadius: 20, fontSize: 13, fontWeight: 700,
+              border: `1px solid ${isStarred ? "#F59E0B55" : "#3D3F55"}`,
+              background: isStarred ? "#F59E0B18" : "#1A1D2E",
+              color: isStarred ? "#F59E0B" : "#8B8FA8",
+              cursor: "pointer",
               transition: "all 0.2s",
             }}
-          >{echoed ? "✓ Echoed" : "+ Echo"}</button>
+          >{isStarred ? "★ Starred" : "☆ Star"}</button>
         )}
       </div>
 
