@@ -314,6 +314,7 @@ function CareerGridScreen({ selectedIndustries, allCareers, loading, onViewCaree
   const [workStyleActive, setWorkStyleActive] = useState(new Set());
   const [pathActive, setPathActive] = useState(null);
   const [vibeActive, setVibeActive] = useState(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
 
   function toggleSet(setter, id) {
     setter(prev => {
@@ -323,16 +324,22 @@ function CareerGridScreen({ selectedIndustries, allCareers, loading, onViewCaree
     });
   }
 
+  const q = searchQuery.trim().toLowerCase();
+
   const displayed = allCareers
     .filter(c => selectedIndustries.length === 0 || selectedIndustries.includes(c.primary_industry))
     .filter(c => matchesWorkStyle(c.work_style, workStyleActive))
     .filter(c => !pathActive || (c.degree_required || "").toLowerCase() === pathActive.toLowerCase())
-    .filter(c => matchesVibe(c, vibeActive));
+    .filter(c => matchesVibe(c, vibeActive))
+    .filter(c => !q ||
+      (c.name || "").toLowerCase().includes(q) ||
+      (c.description || c.desc || "").toLowerCase().includes(q)
+    );
 
   return (
     <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
         <div style={{ fontSize: 22, fontWeight: 800, color: T.text, flex: 1 }}>Explore Careers</div>
         <button
           onClick={onChangeIndustries}
@@ -342,6 +349,42 @@ function CareerGridScreen({ selectedIndustries, allCareers, loading, onViewCaree
             color: T.textMid, cursor: "pointer", flexShrink: 0,
           }}
         >Change worlds</button>
+      </div>
+
+      {/* Search */}
+      <div style={{ position: "relative", marginBottom: 18 }}>
+        <svg
+          width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke={T.textDim} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
+        >
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search careers..."
+          style={{
+            width: "100%", padding: "10px 36px 10px 36px",
+            background: T.bgCard, border: `1px solid ${T.border}`,
+            borderRadius: 12, color: T.text, fontSize: 13,
+            fontFamily: "inherit", outline: "none", boxSizing: "border-box",
+            transition: "border-color 0.15s",
+          }}
+          onFocus={e => { e.target.style.borderColor = T.accent; }}
+          onBlur={e => { e.target.style.borderColor = T.border; }}
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery("")}
+            style={{
+              position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+              background: "none", border: "none", cursor: "pointer",
+              color: T.textDim, fontSize: 16, lineHeight: 1, padding: "2px 4px",
+            }}
+          >×</button>
+        )}
       </div>
 
       {/* Filters */}
