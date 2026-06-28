@@ -470,41 +470,250 @@ function CareerGridScreen({
   );
 }
 
-function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar }) {
-  const starred = allCareers.filter(c => starredIds.has(c.id));
-  const loading = allCareers.length === 0;
+// ─── Shortlist helpers ────────────────────────────────────────────────────────
+
+const GROUP_BY_OPTIONS = [
+  { value: "industry",   label: "Industry" },
+  { value: "workstyle",  label: "Work Style" },
+  { value: "salary",     label: "Salary" },
+  { value: "experience", label: "Experience level" },
+];
+
+const SALARY_ORDER = ["Under $70k", "$70k – $100k", "$100k – $140k", "$140k+", "Salary unlisted"];
+
+function salaryBucket(salaryStr) {
+  const nums = (salaryStr || "").match(/\d+/g);
+  if (!nums) return "Salary unlisted";
+  const lo = parseInt(nums[0]);
+  if (lo < 70)  return "Under $70k";
+  if (lo < 100) return "$70k – $100k";
+  if (lo < 140) return "$100k – $140k";
+  return "$140k+";
+}
+
+function experienceGroup(degreeRequired) {
+  const d = (degreeRequired || "").trim().toLowerCase();
+  if (d === "no")        return "No degree needed";
+  if (d === "sometimes") return "Degree helpful";
+  if (d === "yes")       return "Degree required";
+  return "Unspecified";
+}
+
+function buildGroups(careers, by) {
+  if (!by) return null;
+  const map = new Map();
+  careers.forEach(c => {
+    const key =
+      by === "industry"   ? (c.primary_industry || "Other") :
+      by === "workstyle"  ? (c.work_style || "Unspecified") :
+      by === "salary"     ? salaryBucket(c.salary_range || c.salary || "") :
+      /* experience */      experienceGroup(c.degree_required);
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(c);
+  });
+  const pairs = Array.from(map.entries());
+  if (by === "salary") {
+    return SALARY_ORDER
+      .filter(k => map.has(k))
+      .map(k => ({ label: k, careers: map.get(k) }));
+  }
+  return pairs.sort(([a], [b]) => a.localeCompare(b)).map(([label, careers]) => ({ label, careers }));
+}
+
+function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, onGoToExplore }) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [workStyleActive, setWorkStyleActive] = useState(new Set());
+  const [pathActive, setPathActive] = useState(null);
+  const [vibeActive, setVibeActive] = useState(new Set());
+  const [groupBy, setGroupBy] = useState("");
+
+  function toggleSet(setter, id) {
+    setter(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  }
+
+  const starred  = allCareers.filter(c => starredIds.has(c.id));
+  const loading  = allCareers.length === 0 && starredIds.size > 0;
+  const q        = searchQuery.trim().toLowerCase();
+  const hasFilters = q || workStyleActive.size > 0 || pathActive || vibeActive.size > 0;
+
+  const filtered = starred
+    .filter(c => !q || (c.name || "").toLowerCase().includes(q) || (c.description || c.desc || "").toLowerCase().includes(q))
+    .filter(c => matchesWorkStyle(c.work_style, workStyleActive))
+    .filter(c => !pathActive || (c.degree_required || "").toLowerCase() === pathActive.toLowerCase())
+    .filter(c => matchesVibe(c, vibeActive));
+
+  const groups = buildGroups(filtered, groupBy);
+
+  function CardGrid({ careers }) {
+    return (
+      <div className="career-card-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        {careers.map(c => (
+          <CareerCard
+            key={c.id}
+            career={c}
+            onClick={() => onViewCareer(c, getConfig(c.primary_industry).color)}
+            isStarred={true}
+            onToggleStar={onToggleStar}
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
-      <div style={{ fontSize: 20, fontWeight: 800, color: T.text, marginBottom: 4 }}>Your Shortlist</div>
-      <div style={{ fontSize: 13, color: T.textMid, marginBottom: 22 }}>Careers you've starred.</div>
 
+      {/* Header row */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 18 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: T.text }}>Your Shortlist</div>
+          {!loading && starred.length > 0 && (
+            <div style={{ fontSize: 12, color: T.textMid, marginTop: 3 }}>
+              {starred.length} starred career{starred.length !== 1 ? "s" : ""}
+            </div>
+          )}
+        </div>
+
+        {starred.length > 0 && (
+          <div style={{ position: "relative", flexShrink: 0 }}>
+            <select
+              value={groupBy}
+              onChange={e => setGroupBy(e.target.value)}
+              style={{
+                background: T.bgCard, border: `1px solid ${groupBy ? T.accent : T.border}`,
+                borderRadius: 10, color: groupBy ? T.accent : T.textMid,
+                fontSize: 12, fontWeight: 600, padding: "7px 28px 7px 10px",
+                cursor: "pointer", fontFamily: "inherit", outline: "none",
+                appearance: "none", WebkitAppearance: "none",
+              }}
+            >
+              <option value="">Group by…</option>
+              {GROUP_BY_OPTIONS.map(o => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+              stroke={groupBy ? T.accent : T.textMid} strokeWidth="2.5"
+              strokeLinecap="round" strokeLinejoin="round"
+              style={{ position: "absolute", right: 9, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
+            >
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+        )}
+      </div>
+
+      {/* Loading */}
       {loading && (
         <div style={{ textAlign: "center", padding: "48px 20px", color: T.textMid, fontSize: 14 }}>Loading…</div>
       )}
 
+      {/* Empty state — nothing starred */}
       {!loading && starred.length === 0 && (
-        <div style={{ textAlign: "center", padding: "48px 20px" }}>
-          <div style={{ fontSize: 36, marginBottom: 12, color: T.textDim }}>☆</div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 8 }}>No starred careers yet</div>
-          <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.6 }}>
-            Tap the <strong style={{ color: "#F59E0B" }}>☆</strong> on any career card or roadmap to add it here.
+        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <div style={{ fontSize: 44, marginBottom: 14, color: T.textDim }}>☆</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 8 }}>
+            No careers starred yet — explore to find ones you love
           </div>
+          <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.6, marginBottom: 24 }}>
+            Tap <strong style={{ color: "#F59E0B" }}>☆</strong> on any career card or roadmap to save it here.
+          </div>
+          <button
+            onClick={onGoToExplore}
+            style={{
+              padding: "11px 28px",
+              background: "linear-gradient(135deg, #7F77DD, #38BDF8)",
+              color: "#fff", border: "none", borderRadius: 12,
+              fontSize: 14, fontWeight: 700, cursor: "pointer",
+            }}
+          >Explore Careers →</button>
         </div>
       )}
 
+      {/* Search + filters + grid — only when there are starred careers */}
       {!loading && starred.length > 0 && (
-        <div className="echoes-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-          {starred.map(c => (
-            <CareerCard
-              key={c.id}
-              career={c}
-              onClick={() => onViewCareer(c, getConfig(c.primary_industry).color)}
-              isStarred={true}
-              onToggleStar={onToggleStar}
+        <>
+          {/* Search bar */}
+          <div style={{ position: "relative", marginBottom: 18 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke={T.textDim} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+              style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
+            >
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search your shortlist..."
+              style={{
+                width: "100%", padding: "10px 36px 10px 36px",
+                background: T.bgCard, border: `1px solid ${T.border}`,
+                borderRadius: 12, color: T.text, fontSize: 13,
+                fontFamily: "inherit", outline: "none", boxSizing: "border-box",
+                transition: "border-color 0.15s",
+              }}
+              onFocus={e => { e.target.style.borderColor = T.accent; }}
+              onBlur={e => { e.target.style.borderColor = T.border; }}
             />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} style={{
+                position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+                background: "none", border: "none", cursor: "pointer",
+                color: T.textDim, fontSize: 16, lineHeight: 1, padding: "2px 4px",
+              }}>×</button>
+            )}
+          </div>
+
+          <FilterGroup label="Work Style" chips={WORK_STYLE_FILTERS}
+            isActive={id => workStyleActive.has(id)}
+            onToggle={id => toggleSet(setWorkStyleActive, id)} color="#38BDF8" />
+          <FilterGroup label="Path" chips={PATH_FILTERS}
+            isActive={id => pathActive === id}
+            onToggle={id => setPathActive(p => p === id ? null : id)} color="#22C55E" />
+          <FilterGroup label="Vibe" chips={VIBE_FILTERS}
+            isActive={id => vibeActive.has(id)}
+            onToggle={id => toggleSet(setVibeActive, id)} color="#A78BFA" />
+
+          {/* Result count */}
+          <div style={{ fontSize: 11, color: T.textDim, marginBottom: 14, marginTop: 4 }}>
+            {filtered.length} career{filtered.length !== 1 ? "s" : ""}{hasFilters ? " match" : ""}
+            {groupBy && filtered.length > 0 && (
+              <span> · grouped by {GROUP_BY_OPTIONS.find(o => o.value === groupBy)?.label}</span>
+            )}
+          </div>
+
+          {/* No filter matches */}
+          {filtered.length === 0 && (
+            <div style={{ textAlign: "center", padding: "32px 20px" }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>No matches</div>
+              <div style={{ fontSize: 13, color: T.textMid }}>Try removing a filter.</div>
+            </div>
+          )}
+
+          {/* Flat grid */}
+          {filtered.length > 0 && !groups && <CardGrid careers={filtered} />}
+
+          {/* Grouped */}
+          {filtered.length > 0 && groups && groups.map(({ label, careers: grpCareers }) => (
+            <div key={label} style={{ marginBottom: 26 }}>
+              <div style={{
+                fontSize: 10, fontWeight: 700, color: T.textDim,
+                textTransform: "uppercase", letterSpacing: "0.11em",
+                marginBottom: 10, display: "flex", alignItems: "center", gap: 7,
+              }}>
+                {label}
+                <span style={{
+                  background: T.bgCard, border: `1px solid ${T.border}`,
+                  borderRadius: 20, padding: "1px 7px",
+                  fontSize: 10, fontWeight: 600, color: T.textMid,
+                  textTransform: "none", letterSpacing: 0,
+                }}>{grpCareers.length}</span>
+              </div>
+              <CardGrid careers={grpCareers} />
+            </div>
           ))}
-        </div>
+        </>
       )}
     </div>
   );
@@ -796,6 +1005,7 @@ function AppContent({ signOut }) {
             starredIds={starredIds}
             onViewCareer={handleViewCareer}
             onToggleStar={toggleStar}
+            onGoToExplore={() => setScreen("home")}
           />
         )}
       </div>
