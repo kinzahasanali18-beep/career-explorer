@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import CareerTimeline from "./CareerTimeline";
 import { fetchCareers } from "./supabase";
 import { supabase } from "./supabaseClient";
@@ -310,11 +310,14 @@ function FilterGroup({ label, chips, isActive, onToggle, color }) {
   );
 }
 
-function CareerGridScreen({ selectedIndustries, allCareers, loading, onViewCareer, onChangeIndustries }) {
-  const [workStyleActive, setWorkStyleActive] = useState(new Set());
-  const [pathActive, setPathActive] = useState(null);
-  const [vibeActive, setVibeActive] = useState(new Set());
-  const [searchQuery, setSearchQuery] = useState("");
+function CareerGridScreen({
+  selectedIndustries, allCareers, loading, onViewCareer, onChangeIndustries,
+  workStyleActive, setWorkStyleActive, pathActive, setPathActive,
+  vibeActive, setVibeActive, searchQuery, setSearchQuery, restoreScrollY,
+}) {
+  useLayoutEffect(() => {
+    window.scrollTo(0, restoreScrollY || 0);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function toggleSet(setter, id) {
     setter(prev => {
@@ -574,6 +577,13 @@ function AppContent({ signOut }) {
   const [allCareers, setAllCareers] = useState([]);
   const [careersLoading, setCareersLoading] = useState(true);
 
+  // Persisted across career navigation so Back restores exact state
+  const savedScrollY = useRef(0);
+  const [workStyleActive, setWorkStyleActive] = useState(new Set());
+  const [pathActive, setPathActive] = useState(null);
+  const [vibeActive, setVibeActive] = useState(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Load saved profile preferences
   useEffect(() => {
     if (!user) return;
@@ -628,6 +638,8 @@ function AppContent({ signOut }) {
   function goTo(s) { setPrevScreen(screen); setScreen(s); }
 
   function handleViewCareer(career, color) {
+    if (screen !== "career") savedScrollY.current = window.scrollY;
+    window.scrollTo(0, 0);
     const normalized = (career.title && !career.name) ? career : {
       id: career.id,
       title: career.name || career.title,
@@ -731,6 +743,15 @@ function AppContent({ signOut }) {
             loading={careersLoading}
             onViewCareer={handleViewCareer}
             onChangeIndustries={() => setScreen("pick")}
+            workStyleActive={workStyleActive}
+            setWorkStyleActive={setWorkStyleActive}
+            pathActive={pathActive}
+            setPathActive={setPathActive}
+            vibeActive={vibeActive}
+            setVibeActive={setVibeActive}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            restoreScrollY={savedScrollY.current}
           />
         )}
         {screen === "career" && (

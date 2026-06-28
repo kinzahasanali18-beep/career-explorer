@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { supabase } from "./supabaseClient";
 import { useAuth } from "./AuthContext";
 
@@ -351,6 +351,10 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
   const [echoed, setEchoed] = useState(false);
   const [moreCareers, setMoreCareers] = useState([]);
   const [connectionCareers, setConnectionCareers] = useState([]);
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [career.id]);
 
   useEffect(() => {
     if (!user || !career.id) return;
