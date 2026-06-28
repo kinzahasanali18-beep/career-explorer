@@ -3,36 +3,28 @@ import { supabase } from "./supabaseClient";
 import { useAuth } from "./AuthContext";
 
 const SCENES = [
-  {
-    industryName: "Healthcare & Medicine",
-    label: "Healthcare",
-    slug: "healthcare",
-    color: "#1D9E75",
-    skyTop: "#071812",
-    skyBottom: "#0f2a1e",
-    groundColor: "#0a2018",
-    accentColor: "#2DD4A4",
-  },
-  {
-    industryName: "Business & Finance",
-    label: "Business",
-    slug: "business",
-    color: "#BA7517",
-    skyTop: "#140e00",
-    skyBottom: "#1e1600",
-    groundColor: "#180e00",
-    accentColor: "#F0A030",
-  },
-  {
-    industryName: "Media & Journalism",
-    label: "Media",
-    slug: "media",
-    color: "#D4537E",
-    skyTop: "#150810",
-    skyBottom: "#1e0f16",
-    groundColor: "#150a10",
-    accentColor: "#F070A0",
-  },
+  { industryName: "Tech & Engineering",            label: "Tech",          slug: "tech",            color: "#7F77DD", skyTop: "#0e0d1a", skyBottom: "#13112a", groundColor: "#0c0b17", accentColor: "#A89EFF" },
+  { industryName: "Business & Finance",            label: "Business",      slug: "business",        color: "#BA7517", skyTop: "#140e00", skyBottom: "#1e1600", groundColor: "#180e00", accentColor: "#F0A030" },
+  { industryName: "Healthcare & Medicine",         label: "Healthcare",    slug: "healthcare",      color: "#1D9E75", skyTop: "#071812", skyBottom: "#0f2a1e", groundColor: "#0a2018", accentColor: "#2DD4A4" },
+  { industryName: "Design & Creative",             label: "Design",        slug: "design",          color: "#D4537E", skyTop: "#180a10", skyBottom: "#1e0f16", groundColor: "#150a10", accentColor: "#F070A0" },
+  { industryName: "Media & Journalism",            label: "Media",         slug: "media",           color: "#C4508E", skyTop: "#150810", skyBottom: "#1e0f16", groundColor: "#150a10", accentColor: "#E06AAC" },
+  { industryName: "Sports & Fitness",              label: "Sports",        slug: "sports",          color: "#D85A30", skyTop: "#180900", skyBottom: "#1e0f00", groundColor: "#160800", accentColor: "#FF7A50" },
+  { industryName: "Fashion & Beauty",              label: "Fashion",       slug: "fashion",         color: "#E91E8C", skyTop: "#170010", skyBottom: "#1e0018", groundColor: "#150010", accentColor: "#FF50B0" },
+  { industryName: "Education & Coaching",          label: "Education",     slug: "education",       color: "#639922", skyTop: "#0a1000", skyBottom: "#111800", groundColor: "#090e00", accentColor: "#8EC430" },
+  { industryName: "Law & Government",              label: "Law",           slug: "law",             color: "#378ADD", skyTop: "#05091a", skyBottom: "#0a1026", groundColor: "#060a18", accentColor: "#60AAFF" },
+  { industryName: "Science & Research",            label: "Science",       slug: "science",         color: "#8B5CF6", skyTop: "#0e0a1a", skyBottom: "#140f22", groundColor: "#0c0918", accentColor: "#B07AFF" },
+  { industryName: "Hospitality & Events",          label: "Hospitality",   slug: "hospitality",     color: "#534AB7", skyTop: "#080716", skyBottom: "#0e0c1e", groundColor: "#070614", accentColor: "#7068D0" },
+  { industryName: "Entrepreneurship",              label: "Startup",       slug: "entrepreneurship",color: "#F59E0B", skyTop: "#140c00", skyBottom: "#1c1200", groundColor: "#120a00", accentColor: "#FFBF40" },
+  { industryName: "Arts & Performance",            label: "Arts",          slug: "arts",            color: "#9B59B6", skyTop: "#0e0614", skyBottom: "#160a1e", groundColor: "#0c0612", accentColor: "#C080E0" },
+  { industryName: "Social Impact & Nonprofit",     label: "Social Impact", slug: "nonprofit",       color: "#10B981", skyTop: "#061410", skyBottom: "#0a1c18", groundColor: "#061210", accentColor: "#34D399" },
+  { industryName: "Architecture & Urban Planning", label: "Architecture",  slug: "architecture",    color: "#64748B", skyTop: "#0c0e12", skyBottom: "#121520", groundColor: "#0a0c10", accentColor: "#94A3B8" },
+  { industryName: "Aviation & Transportation",     label: "Aviation",      slug: "aviation",        color: "#0EA5E9", skyTop: "#040e14", skyBottom: "#08141c", groundColor: "#040c12", accentColor: "#38BDF8" },
+  { industryName: "Cybersecurity",                 label: "Cyber",         slug: "cybersecurity",   color: "#EF4444", skyTop: "#140404", skyBottom: "#1c0808", groundColor: "#120404", accentColor: "#FF6666" },
+  { industryName: "Environment & Sustainability",  label: "Environment",   slug: "environment",     color: "#22C55E", skyTop: "#041004", skyBottom: "#081808", groundColor: "#041004", accentColor: "#4ADE80" },
+  { industryName: "Food & Culinary",               label: "Food",          slug: "food",            color: "#D97706", skyTop: "#120800", skyBottom: "#1a0e00", groundColor: "#100800", accentColor: "#F9A825" },
+  { industryName: "Gaming & Esports",              label: "Gaming",        slug: "gaming",          color: "#06B6D4", skyTop: "#040e14", skyBottom: "#081418", groundColor: "#040c10", accentColor: "#22D3EE" },
+  { industryName: "Marketing & Communications",    label: "Marketing",     slug: "marketing",       color: "#EC4899", skyTop: "#140610", skyBottom: "#1c0a18", groundColor: "#120610", accentColor: "#F472B6" },
+  { industryName: "Supply Chain & Operations",     label: "Supply Chain",  slug: "supplychain",     color: "#6B7280", skyTop: "#0c0e10", skyBottom: "#121618", groundColor: "#0a0c0e", accentColor: "#9CA3AF" },
 ];
 
 // ─── URL helpers ──────────────────────────────────────────────────────────────
@@ -60,69 +52,7 @@ function seededRng(seed) {
   };
 }
 
-function roundedRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.arcTo(x + w, y, x + w, y + r, r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
-  ctx.lineTo(x + r, y + h);
-  ctx.arcTo(x, y + h, x, y + h - r, r);
-  ctx.lineTo(x, y + r);
-  ctx.arcTo(x, y, x + r, y, r);
-  ctx.closePath();
-}
-
-function drawPerson(ctx, x, y, color, bobOffset = 0, selected = false) {
-  const py = y + bobOffset;
-
-  ctx.save();
-  ctx.globalAlpha = 0.25;
-  ctx.fillStyle = "#000";
-  ctx.beginPath();
-  ctx.ellipse(x, py + 42, 16, 5, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  if (selected) {
-    ctx.save();
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 24;
-    ctx.strokeStyle = color + "99";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(x, py - 18, 16, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.arc(x, py - 18, 12, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.fillStyle = "rgba(255,255,255,0.22)";
-  ctx.beginPath();
-  ctx.arc(x - 3, py - 22, 5, 0, Math.PI * 2);
-  ctx.fill();
-
-  const bodyGrad = ctx.createLinearGradient(x - 10, py - 4, x + 10, py + 28);
-  bodyGrad.addColorStop(0, color);
-  bodyGrad.addColorStop(1, color + "88");
-  ctx.fillStyle = bodyGrad;
-  roundedRect(ctx, x - 10, py - 4, 20, 30, 6);
-  ctx.fill();
-
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 4.5;
-  ctx.lineCap = "round";
-  ctx.beginPath(); ctx.moveTo(x - 10, py + 2); ctx.lineTo(x - 18, py + 16); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(x + 10, py + 2); ctx.lineTo(x + 18, py + 16); ctx.stroke();
-  ctx.lineWidth = 5.5;
-  ctx.beginPath(); ctx.moveTo(x - 5, py + 26); ctx.lineTo(x - 7, py + 42); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(x + 5, py + 26); ctx.lineTo(x + 7, py + 42); ctx.stroke();
-}
+const SKIN_COLORS = ["#e8c9a0", "#d4a574", "#c8a882", "#b5936b", "#e0b896"];
 
 function drawSceneBackground(ctx, W, H, scene, time) {
   const groundY = Math.floor(H * 0.72);
@@ -202,6 +132,7 @@ export default function WorldExplorer({ onBack, onViewCareer }) {
   const panStartX = useRef(0);
   const animFrameRef = useRef(null);
   const peopleRef = useRef([]);
+  const figureContainerRef = useRef(null);
   const timeRef = useRef(0);
   const sceneIdxRef = useRef(sceneIdx);
   const selectedRef = useRef(null);
@@ -265,10 +196,7 @@ export default function WorldExplorer({ onBack, onViewCareer }) {
   useEffect(() => {
     peopleRef.current = careers.map((c, i) => ({
       id: c.id,
-      career: c,
       x: 120 + i * 155,
-      bobPhase: (i * 1.37) % (Math.PI * 2),
-      bobSpeed: 0.55 + (i * 0.13) % 0.5,
     }));
 
     if (!restoredRef.current && careers.length > 0) {
@@ -336,43 +264,20 @@ export default function WorldExplorer({ onBack, onViewCareer }) {
       const t = timeRef.current;
       const sc = SCENES[sceneIdxRef.current];
 
-      const groundY = drawSceneBackground(ctx, W, H, sc, t);
-      const personBaseY = groundY - 42;
+      drawSceneBackground(ctx, W, H, sc, t);
 
-      // Only clamp once people exist — avoids zeroing a restored pan
+      // Clamp pan once figures are laid out
       if (peopleRef.current.length > 0) {
         const totalWidth = peopleRef.current.length * 155 + 240;
         const minPan = Math.min(0, W - totalWidth);
         panX.current = Math.max(minPan, Math.min(0, panX.current));
       }
 
-      ctx.save();
-      ctx.translate(panX.current, 0);
+      // Sync DOM figure container with pan
+      if (figureContainerRef.current) {
+        figureContainerRef.current.style.transform = `translateX(${panX.current}px)`;
+      }
 
-      peopleRef.current.forEach(p => {
-        const bob = Math.sin(t * p.bobSpeed + p.bobPhase) * 3;
-        const isSel = selectedRef.current && selectedRef.current.id === p.id;
-        drawPerson(ctx, p.x, personBaseY, sc.color, bob, isSel);
-
-        const name = p.career.name || "";
-        const words = name.split(" ");
-        const lines = [];
-        let cur = "";
-        ctx.font = "bold 11px Inter, system-ui, sans-serif";
-        words.forEach(w => {
-          const test = cur ? cur + " " + w : w;
-          if (ctx.measureText(test).width > 110) { lines.push(cur); cur = w; }
-          else cur = test;
-        });
-        if (cur) lines.push(cur);
-        ctx.textAlign = "center";
-        ctx.fillStyle = "rgba(224,232,255,0.82)";
-        lines.forEach((line, li) => {
-          ctx.fillText(line, p.x, personBaseY + 58 + li * 14);
-        });
-      });
-
-      ctx.restore();
       animFrameRef.current = requestAnimationFrame(draw);
     }
 
@@ -416,7 +321,8 @@ export default function WorldExplorer({ onBack, onViewCareer }) {
   function handleMouseUp(e) {
     isButtonDown.current = false;
     if (!isDragging.current) {
-      handleCanvasClick(e.clientX, e.clientY);
+      // Only close card when clicking the background, not a figure div
+      if (!e.target.closest?.("[data-figure]")) closeCareer();
     } else {
       writeParams(sceneIdxRef.current, panX.current, selectedRef.current?.id || null);
     }
@@ -436,34 +342,11 @@ export default function WorldExplorer({ onBack, onViewCareer }) {
 
   function handleTouchEnd(e) {
     if (!isDragging.current) {
-      const t = e.changedTouches[0];
-      handleCanvasClick(t.clientX, t.clientY);
+      if (!e.target.closest?.("[data-figure]")) closeCareer();
     } else {
       writeParams(sceneIdxRef.current, panX.current, selectedRef.current?.id || null);
     }
     isDragging.current = false;
-  }
-
-  function handleCanvasClick(clientX, clientY) {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    const H = canvas.height / dpr;
-    const groundY = H * 0.72;
-    const personBaseY = groundY - 42;
-    const localX = clientX - rect.left - panX.current;
-    const localY = clientY - rect.top;
-
-    let hit = null;
-    for (const p of peopleRef.current) {
-      const dx = localX - p.x;
-      const dy = localY - personBaseY;
-      if (Math.abs(dx) < 24 && dy > -55 && dy < 55) { hit = p; break; }
-    }
-
-    if (hit) openCareer(hit.career);
-    else closeCareer();
   }
 
   async function handleSaveCareer(career) {
@@ -502,11 +385,27 @@ export default function WorldExplorer({ onBack, onViewCareer }) {
   const scene = SCENES[sceneIdx];
 
   return (
-    <div style={{
-      position: "relative", width: "100%", height: "100vh",
-      background: scene.skyTop, overflow: "hidden",
-      fontFamily: "'Inter', system-ui, sans-serif",
-    }}>
+    <div
+      style={{
+        position: "relative", width: "100%", height: "100vh",
+        background: scene.skyTop, overflow: "hidden",
+        fontFamily: "'Inter', system-ui, sans-serif",
+        cursor: isDragging.current ? "grabbing" : "grab",
+      }}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={() => {
+        if (isDragging.current) {
+          writeParams(sceneIdxRef.current, panX.current, selectedRef.current?.id || null);
+        }
+        isDragging.current = false;
+        isButtonDown.current = false;
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
 
       {flashColor && (
         <div style={{
@@ -529,19 +428,32 @@ export default function WorldExplorer({ onBack, onViewCareer }) {
         letterSpacing: "0.08em", textTransform: "uppercase", whiteSpace: "nowrap",
       }}>World Explorer</div>
 
-      <div style={{
-        position: "absolute", top: 56, left: "50%", transform: "translateX(-50%)",
-        zIndex: 20, display: "flex", gap: 6,
-        background: "rgba(20,22,36,0.85)", border: "1px solid #3D3F55",
-        borderRadius: 26, padding: "4px", backdropFilter: "blur(10px)",
+      <style>{`
+        #we-tabs::-webkit-scrollbar{display:none}
+        @keyframes we-bob {
+          0%,100%{transform:translateY(0)}
+          50%{transform:translateY(-5px)}
+        }
+      `}</style>
+      <div id="we-tabs" style={{
+        position: "absolute", top: 56, left: 0, right: 0,
+        zIndex: 20, display: "flex", gap: 6, alignItems: "center",
+        background: "rgba(20,22,36,0.88)", borderBottom: "1px solid #3D3F5544",
+        padding: "6px 12px",
+        overflowX: "auto", overflowY: "hidden",
+        scrollbarWidth: "none",
+        backdropFilter: "blur(10px)",
+        WebkitOverflowScrolling: "touch",
       }}>
         {SCENES.map((s, i) => (
           <button
             key={s.slug}
             onClick={() => switchScene(i)}
             style={{
-              padding: "6px 16px", fontSize: 12, fontWeight: 600,
+              flexShrink: 0,
+              padding: "6px 14px", fontSize: 12, fontWeight: 600,
               borderRadius: 22, border: "none", cursor: "pointer",
+              whiteSpace: "nowrap",
               background: sceneIdx === i ? s.color : "transparent",
               color: sceneIdx === i ? "#fff" : "#8B8FA8",
               transition: "all 0.2s",
@@ -559,23 +471,74 @@ export default function WorldExplorer({ onBack, onViewCareer }) {
         }}>← drag to explore →</div>
       )}
 
+      {/* Background canvas — pure rendering, no pointer events */}
       <canvas
         ref={canvasRef}
-        style={{ width: "100%", height: "100%", display: "block", cursor: "grab" }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={() => {
-          if (isDragging.current) {
-            writeParams(sceneIdxRef.current, panX.current, selectedRef.current?.id || null);
-          }
-          isDragging.current = false;
-          isButtonDown.current = false;
-        }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        style={{ width: "100%", height: "100%", display: "block", pointerEvents: "none" }}
       />
+
+      {/* SVG figure layer */}
+      {!loading && (
+        <div
+          ref={figureContainerRef}
+          style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
+        >
+          {careers.map((c, i) => {
+            const skinColor    = SKIN_COLORS[i % SKIN_COLORS.length];
+            const uniformColor = scene.accentColor;
+            const isSelected   = selectedCareer?.id === c.id;
+            const bobDur = (2 * Math.PI / (0.55 + (i * 0.13) % 0.5)).toFixed(2);
+            const bobDel = (-(((i * 1.37) % (Math.PI * 2)) / (0.55 + (i * 0.13) % 0.5))).toFixed(2);
+            return (
+              <div
+                key={c.id}
+                data-figure="true"
+                onClick={() => openCareer(c)}
+                style={{
+                  position: "absolute",
+                  left: `${120 + i * 155 - 22}px`,
+                  top: "calc(72% - 77px)",
+                  width: "44px",
+                  cursor: "pointer",
+                  pointerEvents: "auto",
+                  userSelect: "none",
+                  animation: `we-bob ${bobDur}s ${bobDel}s infinite ease-in-out`,
+                  filter: isSelected
+                    ? `drop-shadow(0 0 8px ${uniformColor}) drop-shadow(0 0 3px #fff)`
+                    : "none",
+                }}
+              >
+                <svg width="44" height="90" viewBox="0 0 44 90" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="22" cy="10" r="9"  fill={skinColor}/>
+                  <rect x="10" y="20" width="24" height="28" rx="4" fill={uniformColor}/>
+                  <rect x="3"  y="22" width="8"  height="18" rx="3" fill={uniformColor}/>
+                  <rect x="33" y="22" width="8"  height="18" rx="3" fill={uniformColor}/>
+                  <circle cx="7"  cy="41" r="3" fill={skinColor}/>
+                  <circle cx="37" cy="41" r="3" fill={skinColor}/>
+                  <rect x="11" y="46" width="10" height="26" rx="3" fill={uniformColor} opacity="0.85"/>
+                  <rect x="23" y="46" width="10" height="26" rx="3" fill={uniformColor} opacity="0.85"/>
+                  <ellipse cx="16" cy="73" rx="7" ry="4" fill={uniformColor} opacity="0.7"/>
+                  <ellipse cx="28" cy="73" rx="7" ry="4" fill={uniformColor} opacity="0.7"/>
+                  {isSelected && (
+                    <circle cx="22" cy="10" r="13" fill="none"
+                      stroke="rgba(255,255,255,0.7)" strokeWidth="2.5"/>
+                  )}
+                </svg>
+                <div style={{
+                  position: "absolute", top: "96px",
+                  left: "50%", transform: "translateX(-50%)",
+                  width: "110px", textAlign: "center",
+                  color: "rgba(224,232,255,0.82)",
+                  fontSize: "11px", fontWeight: "bold", lineHeight: "1.3",
+                  pointerEvents: "none",
+                }}>
+                  {c.name}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {loading && (
         <div style={{
