@@ -7,6 +7,7 @@ import LoginScreen from "./LoginScreen";
 import ProfilePage from "./ProfilePage";
 import OnboardingScreen from "./OnboardingScreen";
 import OnboardingQuiz from "./OnboardingQuiz";
+import SparqGuide from "./pages/SparqGuide";
 
 const T = {
   bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
@@ -111,13 +112,12 @@ function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndust
       >
         <span style={{ fontSize: 14 }}>★</span> Your Shortlist
       </button>
-      <a
-        href="/guide"
-        className="sidebar-item"
-        style={{ textDecoration: "none", color: T.textMid }}
+      <button
+        className={`sidebar-item${screen === "guide" ? " active" : ""}`}
+        onClick={() => onNavigate("guide")}
       >
         <span style={{ fontSize: 14 }}>📖</span> The Guide
-      </a>
+      </button>
 
       <div className="sidebar-divider" />
 
@@ -744,7 +744,7 @@ function BottomNav({ screen, onNavigate }) {
   const tabs = [
     { id: "home",      label: "Explore",   icon: "◈" },
     { id: "shortlist", label: "Shortlist", icon: "★" },
-    { id: "guide",     label: "Guide",     icon: "📖", href: "/guide" },
+    { id: "guide",     label: "Guide",     icon: "📖" },
   ];
   return (
     <div className="sparq-bottom-nav" style={{
@@ -769,9 +769,7 @@ function BottomNav({ screen, onNavigate }) {
           background: "transparent", border: "none", cursor: "pointer",
           display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
         };
-        return tab.href ? (
-          <a key={tab.id} href={tab.href} style={{ ...sharedStyle, textDecoration: "none" }}>{inner}</a>
-        ) : (
+        return (
           <button key={tab.id} onClick={() => onNavigate(tab.id)} style={sharedStyle}>{inner}</button>
         );
       })}
@@ -781,7 +779,7 @@ function BottomNav({ screen, onNavigate }) {
 
 // ─── State helpers ─────────────────────────────────────────────────────────────
 
-const RESTORABLE = new Set(["pick", "home", "shortlist"]);
+const RESTORABLE = new Set(["pick", "home", "shortlist", "guide"]);
 function ls(key, fallback) { try { const v = localStorage.getItem(key); return v != null ? JSON.parse(v) : fallback; } catch { return fallback; } }
 function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
 
@@ -911,7 +909,7 @@ function AppContent({ signOut }) {
     goTo("career");
   }
 
-  const showNav = screen === "home" || screen === "shortlist";
+  const showNav = screen === "home" || screen === "shortlist" || screen === "guide";
   const showSidebar = screen !== "pick";
 
   function handleToggleIndustry(name) {
@@ -1037,6 +1035,7 @@ function AppContent({ signOut }) {
             onGoToExplore={() => setScreen("home")}
           />
         )}
+        {screen === "guide" && <SparqGuide />}
       </div>
 
       {/* Bottom nav — mobile only (hidden on desktop via CSS) */}

@@ -1,11 +1,17 @@
 import { useState } from "react";
 
+const T = {
+  bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
+  border: "#3D3F55", text: "#E0E8FF", textMid: "#8B8FA8", textDim: "#4A4D66",
+  accent: "#7F77DD",
+};
+
 const categories = [
-  { id: "all", label: "All" },
-  { id: "programs", label: "Programs" },
-  { id: "recruiting", label: "Recruiting" },
-  { id: "offers", label: "Offers & Money" },
-  { id: "school", label: "School Stuff" },
+  { id: "all",       label: "All" },
+  { id: "programs",  label: "Programs" },
+  { id: "recruiting",label: "Recruiting" },
+  { id: "offers",    label: "Offers & Money" },
+  { id: "school",    label: "School Stuff" },
 ];
 
 const glossary = [
@@ -117,9 +123,9 @@ const glossary = [
     term: "Credit vs. Paid Internship",
     category: "offers",
     emoji: "⚖️",
-    simple: "Some internships pay you money. Some make you pay your school for 'credit' instead.",
-    real: "Unpaid internships that offer 'academic credit' are common but controversial. You're essentially working for free AND paying tuition for the privilege. They're legal under specific conditions but not great. Whenever possible, pursue paid internships. If a company tells you they only offer credit, it's okay to say no or negotiate.",
-    tip: "Paid is always better. Don't let anyone make you feel guilty for asking if something is paid.",
+    simple: "Some internships pay you money. Some offer 'academic credit' instead.",
+    real: "Some internships pay you hourly or a salary. Others offer 'academic credit' instead — which means you work for free and sometimes even pay tuition for the privilege. Both are common, especially in creative and nonprofit fields. Neither is inherently wrong, but you should always know which one you're signing up for before you commit.",
+    tip: "Always ask upfront. 'Is this position paid or for academic credit?' is a completely normal question and any good employer will answer it without hesitation.",
   },
   {
     term: "Gap Year",
@@ -162,178 +168,148 @@ export default function SparqGuide() {
   });
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#0d0d14",
-      color: "#f0eeff",
-      fontFamily: "'Inter', -apple-system, sans-serif",
-      padding: "0",
-    }}>
-      <div style={{
-        background: "linear-gradient(135deg, #1a1030 0%, #0d0d14 60%)",
-        padding: "60px 24px 48px",
-        textAlign: "center",
-        borderBottom: "1px solid rgba(127,90,240,0.15)",
-        position: "relative",
-        overflow: "hidden",
-      }}>
-        <div style={{
-          position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
-          background: "radial-gradient(ellipse at 50% 0%, rgba(127,90,240,0.15) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }} />
-        <div style={{
-          display: "inline-block",
-          background: "rgba(127,90,240,0.15)",
-          border: "1px solid rgba(127,90,240,0.3)",
-          borderRadius: "100px",
-          padding: "6px 16px",
-          fontSize: "12px",
-          fontWeight: "600",
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          color: "#a78bfa",
-          marginBottom: "20px",
-        }}>
+    <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
+
+      {/* Header */}
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ fontSize: 10, color: T.accent, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, marginBottom: 6 }}>
           The Big Sister Guide
         </div>
-        <h1 style={{
-          fontSize: "clamp(32px, 6vw, 52px)",
-          fontWeight: "800",
-          margin: "0 0 16px",
-          lineHeight: "1.1",
-          letterSpacing: "-0.02em",
-        }}>
-          Things nobody<br />
-          <span style={{ color: "#a78bfa" }}>told you about.</span>
-        </h1>
-        <p style={{
-          fontSize: "16px",
-          color: "rgba(200,192,255,0.65)",
-          maxWidth: "480px",
-          margin: "0 auto 32px",
-          lineHeight: "1.6",
-        }}>
-          i spent way too long nodding along pretending i knew what everyone was talking about. nobody just texts you this stuff — you're either in the know or you're not. until now. let's get into it.
-        </p>
-        <div style={{ maxWidth: "400px", margin: "0 auto", position: "relative" }}>
-          <span style={{
-            position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)",
-            color: "rgba(200,192,255,0.4)", fontSize: "16px",
-          }}>🔍</span>
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search anything..."
-            style={{
-              width: "100%",
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(127,90,240,0.2)",
-              borderRadius: "12px",
-              padding: "12px 16px 12px 42px",
-              color: "#f0eeff",
-              fontSize: "14px",
-              outline: "none",
-              boxSizing: "border-box",
-            }}
-          />
+        <div style={{ fontSize: 22, fontWeight: 800, color: T.text, marginBottom: 6 }}>The Guide</div>
+        <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.5 }}>
+          Things nobody told you about — internships, recruiting, money, and more.
         </div>
       </div>
 
-      <div style={{
-        display: "flex",
-        gap: "8px",
-        padding: "20px 24px",
-        overflowX: "auto",
-        borderBottom: "1px solid rgba(127,90,240,0.1)",
-      }}>
-        {categories.map((cat) => (
+      {/* Search bar */}
+      <div style={{ position: "relative", marginBottom: 18 }}>
+        <svg
+          width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke={T.textDim} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
+        >
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search anything..."
+          style={{
+            width: "100%", padding: "10px 36px 10px 36px",
+            background: T.bgCard, border: `1px solid ${T.border}`,
+            borderRadius: 12, color: T.text, fontSize: 13,
+            fontFamily: "inherit", outline: "none", boxSizing: "border-box",
+            transition: "border-color 0.15s",
+          }}
+          onFocus={e => { e.target.style.borderColor = T.accent; }}
+          onBlur={e => { e.target.style.borderColor = T.border; }}
+        />
+        {search && (
+          <button
+            onClick={() => setSearch("")}
+            style={{
+              position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+              background: "none", border: "none", cursor: "pointer",
+              color: T.textDim, fontSize: 16, lineHeight: 1, padding: "2px 4px",
+            }}
+          >×</button>
+        )}
+      </div>
+
+      {/* Category chips */}
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 18 }}>
+        {categories.map(cat => (
           <button
             key={cat.id}
             onClick={() => setActiveCategory(cat.id)}
             style={{
-              background: activeCategory === cat.id ? "#7f5af0" : "rgba(255,255,255,0.05)",
-              border: "1px solid",
-              borderColor: activeCategory === cat.id ? "#7f5af0" : "rgba(127,90,240,0.15)",
-              borderRadius: "100px",
-              padding: "8px 18px",
-              color: activeCategory === cat.id ? "#fff" : "rgba(200,192,255,0.6)",
-              fontSize: "13px",
-              fontWeight: "500",
-              cursor: "pointer",
-              whiteSpace: "nowrap",
-              transition: "all 0.15s",
+              padding: "5px 13px", borderRadius: 20, fontSize: 12, fontWeight: 600,
+              border: `1px solid ${activeCategory === cat.id ? T.accent : T.border}`,
+              background: activeCategory === cat.id ? `${T.accent}22` : "transparent",
+              color: activeCategory === cat.id ? T.accent : T.textMid,
+              cursor: "pointer", flexShrink: 0, whiteSpace: "nowrap",
+              transition: "all 0.15s", fontFamily: "inherit",
             }}
-          >
-            {cat.label}
-          </button>
+          >{cat.label}</button>
         ))}
       </div>
 
-      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "24px 24px 80px" }}>
-        {filtered.length === 0 && (
-          <div style={{ textAlign: "center", color: "rgba(200,192,255,0.4)", padding: "60px 0", fontSize: "15px" }}>
-            Nothing found for "{search}" 🤔
-          </div>
-        )}
-        {filtered.map((item) => {
-          const isOpen = expandedTerm === item.term;
-          return (
-            <div
-              key={item.term}
-              onClick={() => setExpandedTerm(isOpen ? null : item.term)}
-              style={{
-                background: isOpen ? "rgba(127,90,240,0.08)" : "rgba(255,255,255,0.03)",
-                border: "1px solid",
-                borderColor: isOpen ? "rgba(127,90,240,0.3)" : "rgba(127,90,240,0.1)",
-                borderRadius: "14px",
-                padding: "20px",
-                marginBottom: "10px",
-                cursor: "pointer",
-                transition: "all 0.2s",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <span style={{ fontSize: "22px" }}>{item.emoji}</span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: "700", fontSize: "16px", color: "#f0eeff", marginBottom: "2px" }}>
-                    {item.term}
-                  </div>
-                  <div style={{ fontSize: "13px", color: "rgba(200,192,255,0.55)", lineHeight: "1.4" }}>
-                    {item.simple}
-                  </div>
-                </div>
-                <span style={{
-                  color: "rgba(200,192,255,0.3)",
-                  fontSize: "18px",
-                  transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform 0.2s",
-                  flexShrink: 0,
-                }}>▾</span>
-              </div>
-              {isOpen && (
-                <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid rgba(127,90,240,0.12)" }}>
-                  <p style={{ fontSize: "14px", color: "rgba(220,215,255,0.75)", lineHeight: "1.7", margin: "0 0 14px" }}>
-                    {item.real}
-                  </p>
-                  <div style={{
-                    background: "rgba(127,90,240,0.12)",
-                    border: "1px solid rgba(127,90,240,0.2)",
-                    borderRadius: "10px",
-                    padding: "12px 14px",
-                    fontSize: "13px",
-                    color: "#c4b5fd",
-                    lineHeight: "1.5",
-                  }}>
-                    <span style={{ fontWeight: "700", marginRight: "6px" }}>Big sis tip:</span>
-                    {item.tip}
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
+      {/* Count */}
+      <div style={{ fontSize: 11, color: T.textDim, marginBottom: 14 }}>
+        {filtered.length} term{filtered.length !== 1 ? "s" : ""}
       </div>
+
+      {/* Empty state */}
+      {filtered.length === 0 && (
+        <div style={{ textAlign: "center", padding: "48px 20px" }}>
+          <div style={{ fontSize: 36, marginBottom: 12 }}>◎</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>Nothing found</div>
+          <div style={{ fontSize: 13, color: T.textMid }}>Try a different search term.</div>
+        </div>
+      )}
+
+      {/* Glossary cards */}
+      {filtered.map(item => {
+        const isOpen = expandedTerm === item.term;
+        return (
+          <div
+            key={item.term}
+            onClick={() => setExpandedTerm(isOpen ? null : item.term)}
+            style={{
+              background: T.bgCard,
+              border: `1px solid ${isOpen ? T.accent : T.border}`,
+              borderRadius: 16,
+              padding: "14px",
+              marginBottom: 10,
+              cursor: "pointer",
+              transition: "border-color 0.15s",
+            }}
+            onMouseEnter={e => { if (!isOpen) e.currentTarget.style.borderColor = T.accent + "88"; }}
+            onMouseLeave={e => { if (!isOpen) e.currentTarget.style.borderColor = T.border; }}
+          >
+            {/* Collapsed row */}
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+              <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>{item.emoji}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 4, lineHeight: 1.35 }}>
+                  {item.term}
+                </div>
+                <div style={{ fontSize: 11, color: T.textMid, lineHeight: 1.5 }}>
+                  {item.simple}
+                </div>
+              </div>
+              <span style={{
+                color: T.textDim, fontSize: 12, flexShrink: 0, marginTop: 3,
+                display: "inline-block",
+                transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                transition: "transform 0.2s",
+              }}>▾</span>
+            </div>
+
+            {/* Expanded content */}
+            {isOpen && (
+              <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${T.border}` }}>
+                <p style={{ fontSize: 12, color: T.textMid, lineHeight: 1.7, margin: "0 0 10px" }}>
+                  {item.real}
+                </p>
+                <div style={{
+                  background: `${T.accent}14`,
+                  border: `1px solid ${T.accent}44`,
+                  borderRadius: 10,
+                  padding: "10px 12px",
+                  fontSize: 11,
+                  color: T.accent,
+                  lineHeight: 1.55,
+                }}>
+                  <span style={{ fontWeight: 700, marginRight: 5 }}>Big sis tip →</span>
+                  {item.tip}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
