@@ -111,6 +111,13 @@ function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndust
       >
         <span style={{ fontSize: 14 }}>★</span> Your Shortlist
       </button>
+      <a
+        href="/guide"
+        className="sidebar-item"
+        style={{ textDecoration: "none", color: T.textMid }}
+      >
+        <span style={{ fontSize: 14 }}>📖</span> The Guide
+      </a>
 
       <div className="sidebar-divider" />
 
@@ -737,6 +744,7 @@ function BottomNav({ screen, onNavigate }) {
   const tabs = [
     { id: "home",      label: "Explore",   icon: "◈" },
     { id: "shortlist", label: "Shortlist", icon: "★" },
+    { id: "guide",     label: "Guide",     icon: "📖", href: "/guide" },
   ];
   return (
     <div className="sparq-bottom-nav" style={{
@@ -748,21 +756,23 @@ function BottomNav({ screen, onNavigate }) {
     }}>
       {tabs.map(tab => {
         const active = screen === tab.id;
-        return (
-          <button
-            key={tab.id}
-            onClick={() => onNavigate(tab.id)}
-            style={{
-              flex: 1, padding: "10px 8px 14px",
-              background: "transparent", border: "none", cursor: "pointer",
-              display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
-            }}
-          >
+        const inner = (
+          <>
             <span style={{ fontSize: 18, color: active ? T.accent : T.textDim }}>{tab.icon}</span>
             <span style={{ fontSize: 10, fontWeight: 700, color: active ? T.accent : T.textDim, letterSpacing: "0.04em" }}>
               {tab.label}
             </span>
-          </button>
+          </>
+        );
+        const sharedStyle = {
+          flex: 1, padding: "10px 8px 14px",
+          background: "transparent", border: "none", cursor: "pointer",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+        };
+        return tab.href ? (
+          <a key={tab.id} href={tab.href} style={{ ...sharedStyle, textDecoration: "none" }}>{inner}</a>
+        ) : (
+          <button key={tab.id} onClick={() => onNavigate(tab.id)} style={sharedStyle}>{inner}</button>
         );
       })}
     </div>
