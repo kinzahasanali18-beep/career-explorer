@@ -818,6 +818,22 @@ function AppContent({ signOut }) {
 
   const [starredIds, setStarredIds] = useState(new Set());
 
+  const [starredWhenItems, setStarredWhenItems] = useState(() => {
+    try {
+      const s = localStorage.getItem("sparq_when_starred");
+      return s ? new Set(JSON.parse(s)) : new Set();
+    } catch { return new Set(); }
+  });
+
+  function toggleWhenStar(name) {
+    setStarredWhenItems(prev => {
+      const next = new Set(prev);
+      next.has(name) ? next.delete(name) : next.add(name);
+      try { localStorage.setItem("sparq_when_starred", JSON.stringify([...next])); } catch {}
+      return next;
+    });
+  }
+
   // Load starred career IDs once on sign-in
   useEffect(() => {
     if (!user) return;
@@ -1041,10 +1057,15 @@ function AppContent({ signOut }) {
             onViewCareer={handleViewCareer}
             onToggleStar={toggleStar}
             onGoToExplore={() => setScreen("home")}
+            starredWhenItems={starredWhenItems}
+            onToggleWhenStar={toggleWhenStar}
+            onGoToWhenToApply={() => setScreen("when-to-apply")}
           />
         )}
         {screen === "guide" && <SparqGuide />}
-        {screen === "when-to-apply" && <WhenToApply />}
+        {screen === "when-to-apply" && (
+          <WhenToApply starredItems={starredWhenItems} onToggleStar={toggleWhenStar} />
+        )}
       </div>
 
       {/* Bottom nav — mobile only (hidden on desktop via CSS) */}
