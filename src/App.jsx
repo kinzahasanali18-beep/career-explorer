@@ -8,6 +8,7 @@ import ProfilePage from "./ProfilePage";
 import OnboardingScreen from "./OnboardingScreen";
 import OnboardingQuiz from "./OnboardingQuiz";
 import SparqGuide from "./pages/SparqGuide";
+import WhenToApply from "./pages/WhenToApply";
 
 const T = {
   bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
@@ -117,6 +118,12 @@ function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndust
         onClick={() => onNavigate("guide")}
       >
         <span style={{ fontSize: 14 }}>📖</span> The Guide
+      </button>
+      <button
+        className={`sidebar-item${screen === "when-to-apply" ? " active" : ""}`}
+        onClick={() => onNavigate("when-to-apply")}
+      >
+        <span style={{ fontSize: 14 }}>📅</span> When to Apply
       </button>
 
       <div className="sidebar-divider" />
@@ -742,9 +749,10 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
 
 function BottomNav({ screen, onNavigate }) {
   const tabs = [
-    { id: "home",      label: "Explore",   icon: "◈" },
-    { id: "shortlist", label: "Shortlist", icon: "★" },
-    { id: "guide",     label: "Guide",     icon: "📖" },
+    { id: "home",         label: "Explore",   icon: "◈" },
+    { id: "shortlist",    label: "Shortlist", icon: "★" },
+    { id: "guide",        label: "Guide",     icon: "📖" },
+    { id: "when-to-apply", label: "Apply",    icon: "📅" },
   ];
   return (
     <div className="sparq-bottom-nav" style={{
@@ -779,7 +787,7 @@ function BottomNav({ screen, onNavigate }) {
 
 // ─── State helpers ─────────────────────────────────────────────────────────────
 
-const RESTORABLE = new Set(["pick", "home", "shortlist", "guide"]);
+const RESTORABLE = new Set(["pick", "home", "shortlist", "guide", "when-to-apply"]);
 function ls(key, fallback) { try { const v = localStorage.getItem(key); return v != null ? JSON.parse(v) : fallback; } catch { return fallback; } }
 function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
 
@@ -909,7 +917,7 @@ function AppContent({ signOut }) {
     goTo("career");
   }
 
-  const showNav = screen === "home" || screen === "shortlist" || screen === "guide";
+  const showNav = screen === "home" || screen === "shortlist" || screen === "guide" || screen === "when-to-apply";
   const showSidebar = screen !== "pick";
 
   function handleToggleIndustry(name) {
@@ -1036,6 +1044,7 @@ function AppContent({ signOut }) {
           />
         )}
         {screen === "guide" && <SparqGuide />}
+        {screen === "when-to-apply" && <WhenToApply />}
       </div>
 
       {/* Bottom nav — mobile only (hidden on desktop via CSS) */}
