@@ -348,7 +348,7 @@ export default function WhenToApply({ starredItems, onToggleStar }) {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <button
-                    onClick={e => { e.stopPropagation(); onToggleStar(item.n); }}
+                    onClick={e => { e.stopPropagation(); onToggleStar(item); }}
                     style={{
                       background: "none", border: "none", cursor: "pointer",
                       fontSize: 15, lineHeight: 1, padding: 0,

@@ -8,7 +8,7 @@ import ProfilePage from "./ProfilePage";
 import OnboardingScreen from "./OnboardingScreen";
 import OnboardingQuiz from "./OnboardingQuiz";
 import SparqGuide from "./pages/SparqGuide";
-import WhenToApply from "./pages/WhenToApply";
+import WhenToApply, { STATUS_CONFIG as DEADLINE_STATUS, WORLD_COLORS as DEADLINE_WORLD_COLORS } from "./pages/WhenToApply";
 
 const T = {
   bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
@@ -548,12 +548,59 @@ function buildGroups(careers, by) {
   return pairs.sort(([a], [b]) => a.localeCompare(b)).map(([label, careers]) => ({ label, careers }));
 }
 
-function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, onGoToExplore }) {
+function DeadlineCard({ item, onUnstar }) {
+  const sc = DEADLINE_STATUS[item.status] || DEADLINE_STATUS.later;
+  const wc = DEADLINE_WORLD_COLORS[item.world] || T.accent;
+
+  function handleClick() {
+    if (item.url) window.open(item.url, "_blank", "noopener,noreferrer");
+  }
+
+  return (
+    <div
+      onClick={handleClick}
+      style={{
+        background: T.bgCard, border: `1px solid ${T.border}`,
+        borderRadius: 16, padding: "14px",
+        cursor: item.url ? "pointer" : "default",
+        transition: "border-color 0.15s",
+      }}
+      onMouseEnter={e => { if (item.url) e.currentTarget.style.borderColor = sc.color; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; }}
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 6, marginBottom: 7 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: T.text, flex: 1, lineHeight: 1.35 }}>{item.n}</div>
+        <button
+          onClick={e => { e.stopPropagation(); onUnstar(); }}
+          style={{
+            background: "none", border: "none", cursor: "pointer",
+            fontSize: 16, lineHeight: 1, padding: "0 0 0 2px", flexShrink: 0,
+            color: "#F59E0B",
+          }}
+        >★</button>
+      </div>
+      <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
+        <span style={{
+          fontSize: 10, fontWeight: 700, color: sc.color, background: sc.bg,
+          border: `1px solid ${sc.color}44`, borderRadius: 20, padding: "2px 8px",
+        }}>{sc.emoji} {sc.label}</span>
+        <span style={{
+          fontSize: 10, fontWeight: 600, color: wc, background: `${wc}18`,
+          border: `1px solid ${wc}40`, borderRadius: 20, padding: "2px 8px",
+        }}>{item.world}</span>
+      </div>
+      <div style={{ fontSize: 11, color: T.textMid, lineHeight: 1.5 }}>{item.one}</div>
+    </div>
+  );
+}
+
+function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, onGoToExplore, starredWhenItems, onToggleWhenStar, onGoToWhenToApply }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [workStyleActive, setWorkStyleActive] = useState(new Set());
   const [pathActive, setPathActive] = useState(null);
   const [vibeActive, setVibeActive] = useState(new Set());
   const [groupBy, setGroupBy] = useState("");
+  const [activeTab, setActiveTab] = useState("careers");
 
   function toggleSet(setter, id) {
     setter(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
@@ -571,6 +618,7 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
     .filter(c => matchesVibe(c, vibeActive));
 
   const groups = buildGroups(filtered, groupBy);
+  const starredDeadlines = Array.from((starredWhenItems || new Map()).values());
 
   function CardGrid({ careers }) {
     return (
@@ -588,21 +636,32 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
     );
   }
 
+  const TABS = [
+    { id: "careers",       label: "Careers" },
+    { id: "deadlines",     label: "Deadlines" },
+    { id: "opportunities", label: "Opportunities" },
+    { id: "scholarships",  label: "Scholarships" },
+  ];
+
   return (
     <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
 
-      {/* Header row */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 18 }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 16 }}>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 22, fontWeight: 800, color: T.text }}>Your Shortlist</div>
-          {!loading && starred.length > 0 && (
+          {activeTab === "careers" && !loading && starred.length > 0 && (
             <div style={{ fontSize: 12, color: T.textMid, marginTop: 3 }}>
               {starred.length} starred career{starred.length !== 1 ? "s" : ""}
             </div>
           )}
+          {activeTab === "deadlines" && starredDeadlines.length > 0 && (
+            <div style={{ fontSize: 12, color: T.textMid, marginTop: 3 }}>
+              {starredDeadlines.length} saved deadline{starredDeadlines.length !== 1 ? "s" : ""}
+            </div>
+          )}
         </div>
-
-        {starred.length > 0 && (
+        {activeTab === "careers" && starred.length > 0 && (
           <div style={{ position: "relative", flexShrink: 0 }}>
             <select
               value={groupBy}
@@ -631,117 +690,181 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
         )}
       </div>
 
-      {/* Loading */}
-      {loading && (
-        <div style={{ textAlign: "center", padding: "48px 20px", color: T.textMid, fontSize: 14 }}>Loading…</div>
+      {/* Tab bar */}
+      <div style={{ display: "flex", borderBottom: `1px solid ${T.border}`, marginBottom: 20 }}>
+        {TABS.map(tab => {
+          const active = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                padding: "8px 14px", fontSize: 12, fontWeight: 700,
+                background: "transparent", border: "none", cursor: "pointer",
+                color: active ? T.accent : T.textMid,
+                borderBottom: `2px solid ${active ? T.accent : "transparent"}`,
+                marginBottom: -1, fontFamily: "inherit",
+                transition: "color 0.15s", whiteSpace: "nowrap",
+              }}
+            >{tab.label}</button>
+          );
+        })}
+      </div>
+
+      {/* ── Careers tab ── */}
+      {activeTab === "careers" && (
+        <>
+          {loading && (
+            <div style={{ textAlign: "center", padding: "48px 20px", color: T.textMid, fontSize: 14 }}>Loading…</div>
+          )}
+          {!loading && starred.length === 0 && (
+            <div style={{ textAlign: "center", padding: "60px 20px" }}>
+              <div style={{ fontSize: 44, marginBottom: 14, color: T.textDim }}>☆</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 8 }}>
+                No careers starred yet — explore to find ones you love
+              </div>
+              <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.6, marginBottom: 24 }}>
+                Tap <strong style={{ color: "#F59E0B" }}>☆</strong> on any career card or roadmap to save it here.
+              </div>
+              <button onClick={onGoToExplore} style={{
+                padding: "11px 28px",
+                background: "linear-gradient(135deg, #7F77DD, #38BDF8)",
+                color: "#fff", border: "none", borderRadius: 12,
+                fontSize: 14, fontWeight: 700, cursor: "pointer",
+              }}>Explore Careers →</button>
+            </div>
+          )}
+          {!loading && starred.length > 0 && (
+            <>
+              <div style={{ position: "relative", marginBottom: 18 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke={T.textDim} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                  style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
+                >
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input
+                  type="text" value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Search your shortlist..."
+                  style={{
+                    width: "100%", padding: "10px 36px 10px 36px",
+                    background: T.bgCard, border: `1px solid ${T.border}`,
+                    borderRadius: 12, color: T.text, fontSize: 13,
+                    fontFamily: "inherit", outline: "none", boxSizing: "border-box",
+                    transition: "border-color 0.15s",
+                  }}
+                  onFocus={e => { e.target.style.borderColor = T.accent; }}
+                  onBlur={e => { e.target.style.borderColor = T.border; }}
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery("")} style={{
+                    position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+                    background: "none", border: "none", cursor: "pointer",
+                    color: T.textDim, fontSize: 16, lineHeight: 1, padding: "2px 4px",
+                  }}>×</button>
+                )}
+              </div>
+              <FilterGroup label="Work Style" chips={WORK_STYLE_FILTERS}
+                isActive={id => workStyleActive.has(id)}
+                onToggle={id => toggleSet(setWorkStyleActive, id)} color="#38BDF8" />
+              <FilterGroup label="Path" chips={PATH_FILTERS}
+                isActive={id => pathActive === id}
+                onToggle={id => setPathActive(p => p === id ? null : id)} color="#22C55E" />
+              <FilterGroup label="Vibe" chips={VIBE_FILTERS}
+                isActive={id => vibeActive.has(id)}
+                onToggle={id => toggleSet(setVibeActive, id)} color="#A78BFA" />
+              <div style={{ fontSize: 11, color: T.textDim, marginBottom: 14, marginTop: 4 }}>
+                {filtered.length} career{filtered.length !== 1 ? "s" : ""}{hasFilters ? " match" : ""}
+                {groupBy && filtered.length > 0 && (
+                  <span> · grouped by {GROUP_BY_OPTIONS.find(o => o.value === groupBy)?.label}</span>
+                )}
+              </div>
+              {filtered.length === 0 && (
+                <div style={{ textAlign: "center", padding: "32px 20px" }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>No matches</div>
+                  <div style={{ fontSize: 13, color: T.textMid }}>Try removing a filter.</div>
+                </div>
+              )}
+              {filtered.length > 0 && !groups && <CardGrid careers={filtered} />}
+              {filtered.length > 0 && groups && groups.map(({ label, careers: grpCareers }) => (
+                <div key={label} style={{ marginBottom: 26 }}>
+                  <div style={{
+                    fontSize: 10, fontWeight: 700, color: T.textDim,
+                    textTransform: "uppercase", letterSpacing: "0.11em",
+                    marginBottom: 10, display: "flex", alignItems: "center", gap: 7,
+                  }}>
+                    {label}
+                    <span style={{
+                      background: T.bgCard, border: `1px solid ${T.border}`,
+                      borderRadius: 20, padding: "1px 7px",
+                      fontSize: 10, fontWeight: 600, color: T.textMid,
+                      textTransform: "none", letterSpacing: 0,
+                    }}>{grpCareers.length}</span>
+                  </div>
+                  <CardGrid careers={grpCareers} />
+                </div>
+              ))}
+            </>
+          )}
+        </>
       )}
 
-      {/* Empty state — nothing starred */}
-      {!loading && starred.length === 0 && (
-        <div style={{ textAlign: "center", padding: "60px 20px" }}>
-          <div style={{ fontSize: 44, marginBottom: 14, color: T.textDim }}>☆</div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 8 }}>
-            No careers starred yet — explore to find ones you love
-          </div>
-          <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.6, marginBottom: 24 }}>
-            Tap <strong style={{ color: "#F59E0B" }}>☆</strong> on any career card or roadmap to save it here.
-          </div>
-          <button
-            onClick={onGoToExplore}
-            style={{
+      {/* ── Deadlines tab ── */}
+      {activeTab === "deadlines" && (
+        starredDeadlines.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "60px 20px" }}>
+            <div style={{ fontSize: 44, marginBottom: 14, color: T.textDim }}>📅</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 8 }}>
+              No deadlines saved yet
+            </div>
+            <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.6, marginBottom: 24 }}>
+              Star the ones you're tracking on the When to Apply page and they'll show up here.
+            </div>
+            <button onClick={onGoToWhenToApply} style={{
               padding: "11px 28px",
               background: "linear-gradient(135deg, #7F77DD, #38BDF8)",
               color: "#fff", border: "none", borderRadius: 12,
               fontSize: 14, fontWeight: 700, cursor: "pointer",
-            }}
-          >Explore Careers →</button>
+            }}>When to Apply →</button>
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {starredDeadlines.map(item => (
+              <DeadlineCard
+                key={item.n}
+                item={item}
+                onUnstar={() => onToggleWhenStar(item)}
+              />
+            ))}
+          </div>
+        )
+      )}
+
+      {/* ── Opportunities tab ── */}
+      {activeTab === "opportunities" && (
+        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <div style={{ fontSize: 44, marginBottom: 14, color: T.textDim }}>🔭</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 8 }}>
+            Opportunities coming soon
+          </div>
+          <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.6, maxWidth: 320, margin: "0 auto" }}>
+            A curated portal of hidden gems like research fly-outs, corporate high school programs, and fellowships most people never hear about.
+          </div>
         </div>
       )}
 
-      {/* Search + filters + grid — only when there are starred careers */}
-      {!loading && starred.length > 0 && (
-        <>
-          {/* Search bar */}
-          <div style={{ position: "relative", marginBottom: 18 }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke={T.textDim} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-              style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
-            >
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search your shortlist..."
-              style={{
-                width: "100%", padding: "10px 36px 10px 36px",
-                background: T.bgCard, border: `1px solid ${T.border}`,
-                borderRadius: 12, color: T.text, fontSize: 13,
-                fontFamily: "inherit", outline: "none", boxSizing: "border-box",
-                transition: "border-color 0.15s",
-              }}
-              onFocus={e => { e.target.style.borderColor = T.accent; }}
-              onBlur={e => { e.target.style.borderColor = T.border; }}
-            />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery("")} style={{
-                position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
-                background: "none", border: "none", cursor: "pointer",
-                color: T.textDim, fontSize: 16, lineHeight: 1, padding: "2px 4px",
-              }}>×</button>
-            )}
+      {/* ── Scholarships tab ── */}
+      {activeTab === "scholarships" && (
+        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <div style={{ fontSize: 44, marginBottom: 14, color: T.textDim }}>🎓</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 8 }}>
+            Scholarships coming soon
           </div>
-
-          <FilterGroup label="Work Style" chips={WORK_STYLE_FILTERS}
-            isActive={id => workStyleActive.has(id)}
-            onToggle={id => toggleSet(setWorkStyleActive, id)} color="#38BDF8" />
-          <FilterGroup label="Path" chips={PATH_FILTERS}
-            isActive={id => pathActive === id}
-            onToggle={id => setPathActive(p => p === id ? null : id)} color="#22C55E" />
-          <FilterGroup label="Vibe" chips={VIBE_FILTERS}
-            isActive={id => vibeActive.has(id)}
-            onToggle={id => toggleSet(setVibeActive, id)} color="#A78BFA" />
-
-          {/* Result count */}
-          <div style={{ fontSize: 11, color: T.textDim, marginBottom: 14, marginTop: 4 }}>
-            {filtered.length} career{filtered.length !== 1 ? "s" : ""}{hasFilters ? " match" : ""}
-            {groupBy && filtered.length > 0 && (
-              <span> · grouped by {GROUP_BY_OPTIONS.find(o => o.value === groupBy)?.label}</span>
-            )}
+          <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.6, maxWidth: 320, margin: "0 auto" }}>
+            Find scholarships matched to your interests, plus wildcard ones open to everyone.
           </div>
-
-          {/* No filter matches */}
-          {filtered.length === 0 && (
-            <div style={{ textAlign: "center", padding: "32px 20px" }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>No matches</div>
-              <div style={{ fontSize: 13, color: T.textMid }}>Try removing a filter.</div>
-            </div>
-          )}
-
-          {/* Flat grid */}
-          {filtered.length > 0 && !groups && <CardGrid careers={filtered} />}
-
-          {/* Grouped */}
-          {filtered.length > 0 && groups && groups.map(({ label, careers: grpCareers }) => (
-            <div key={label} style={{ marginBottom: 26 }}>
-              <div style={{
-                fontSize: 10, fontWeight: 700, color: T.textDim,
-                textTransform: "uppercase", letterSpacing: "0.11em",
-                marginBottom: 10, display: "flex", alignItems: "center", gap: 7,
-              }}>
-                {label}
-                <span style={{
-                  background: T.bgCard, border: `1px solid ${T.border}`,
-                  borderRadius: 20, padding: "1px 7px",
-                  fontSize: 10, fontWeight: 600, color: T.textMid,
-                  textTransform: "none", letterSpacing: 0,
-                }}>{grpCareers.length}</span>
-              </div>
-              <CardGrid careers={grpCareers} />
-            </div>
-          ))}
-        </>
+        </div>
       )}
     </div>
   );
@@ -821,15 +944,25 @@ function AppContent({ signOut }) {
   const [starredWhenItems, setStarredWhenItems] = useState(() => {
     try {
       const s = localStorage.getItem("sparq_when_starred");
-      return s ? new Set(JSON.parse(s)) : new Set();
-    } catch { return new Set(); }
+      if (!s) return new Map();
+      const parsed = JSON.parse(s);
+      const map = new Map();
+      parsed.forEach(item => {
+        if (item && typeof item === "object" && item.n) map.set(item.n, item);
+      });
+      return map;
+    } catch { return new Map(); }
   });
 
-  function toggleWhenStar(name) {
+  function toggleWhenStar(item) {
     setStarredWhenItems(prev => {
-      const next = new Set(prev);
-      next.has(name) ? next.delete(name) : next.add(name);
-      try { localStorage.setItem("sparq_when_starred", JSON.stringify([...next])); } catch {}
+      const next = new Map(prev);
+      if (next.has(item.n)) {
+        next.delete(item.n);
+      } else {
+        next.set(item.n, { type: "deadline", n: item.n, world: item.world, status: item.status, one: item.one, url: item.url || "" });
+      }
+      try { localStorage.setItem("sparq_when_starred", JSON.stringify([...next.values()])); } catch {}
       return next;
     });
   }
