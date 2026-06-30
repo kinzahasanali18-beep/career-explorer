@@ -6,7 +6,7 @@ const T = {
   accent: "#7F77DD",
 };
 
-const WORLD_COLORS = {
+export const WORLD_COLORS = {
   "Business & Finance":        "#BA7517",
   "Tech & Engineering":        "#7F77DD",
   "Law & Government":          "#378ADD",
@@ -21,7 +21,7 @@ const WORLD_COLORS = {
 
 function worldColor(w) { return WORLD_COLORS[w] || T.accent; }
 
-const STATUS_CONFIG = {
+export const STATUS_CONFIG = {
   open:    { label: "Open now",   emoji: "🔴", color: "#EF4444", bg: "#EF444418" },
   soon:    { label: "Opens soon", emoji: "🟡", color: "#F59E0B", bg: "#F59E0B18" },
   rolling: { label: "Rolling",    emoji: "🟢", color: "#10B981", bg: "#10B98118" },
@@ -38,161 +38,155 @@ const URGENCY_LABELS = {
   1: "Plan 1–3 months ahead",
 };
 
-const collegeData = [
+export const collegeData = [
   { n: "Finance / Investment Banking", world: "Business & Finance", status: "later", urgency: 5,
     one: "The earliest of everyone — banks open & close a year+ ahead",
     when: "Bulge brackets (Goldman, JPMorgan, Morgan Stanley, Citi) opened & closed Summer 2027 apps Dec 2025–Jan 2026. Elite boutiques even earlier. Big 4 advisory & asset managers reopen Aug–fall 2026.",
     who: "Sophomores aiming for junior-summer internships; freshmen/sophomores for early-insight & diversity programs.",
-    tip: "You're always a year behind where you think. Network sophomore fall, apply the week it opens — it's rolling, so the deadline is a lie.",
+    tip: "Finance recruiting runs on a rolling basis, often a year or more before the internship starts. The posted deadline is usually later than when spots actually fill.",
     url: "https://www.adventiscg.com/class-of-2028-recruiting-timeline" },
   { n: "Big Tech / Software", world: "Tech & Engineering", status: "soon", urgency: 4,
     one: "Rolling, no deadlines — apply the day it drops",
     when: "Amazon posts first (~Jul 2026), Microsoft mid-Aug, then Meta/Google/Apple Sep–Oct. Google's SWE listing sometimes opens only 2–4 weeks.",
     who: "CS/eng + adjacent (math, stats, physics). Underclassmen: Google STEP, Microsoft Explore, Amazon Propel.",
-    tip: "Apply the DAY a role drops. Speed beats polish.",
+    tip: "Most tech roles are reviewed on a rolling basis, so earlier applications are seen first. There are often no fixed deadlines.",
     url: "https://github.com/sndsh404/summer-2027-internships" },
   { n: "Consulting", world: "Business & Finance", status: "later", urgency: 4,
     one: "MBB opens winter; early-ID programs are the side door",
     when: "MBB opens ~Jan 2026, Round 1 deadlines late March; Bain has a 2nd window into Aug. Boutiques/economic consulting Sep–Nov. Big 4 consulting Aug–Sep.",
     who: "Juniors for main programs; sophomores for diversity/early-ID (some get cut year to year — check).",
-    tip: "Early-ID and diversity programs are the side door into interviews. Worth more than a stack of cold apps.",
+    tip: "Many firms run diversity and early-identification programs that feed directly into interview pipelines, sometimes a year ahead of main recruiting.",
     url: "https://managementconsulted.com/consulting-internships/" },
   { n: "Big 4 / Accounting & Advisory", world: "Business & Finance", status: "soon", urgency: 3,
     one: "Forgiving timeline, broad majors, your finance backup",
     when: "Aug–Sep 2026, rolling, some open into January.",
     who: "Sophomores/juniors wanting finance-adjacent experience without banking's brutal clock.",
-    tip: "Your move if you missed banking — higher acceptance, broad majors, strong name.",
+    tip: "Big 4 advisory tends to have higher acceptance rates than bulge-bracket banking and accepts a broader range of majors.",
     url: "https://www.deloitte.com/us/en/careers/students-early-careers.html" },
   { n: "Engineering", world: "Tech & Engineering", status: "soon", urgency: 3,
     one: "Career fairs Sep–Oct are the main door",
     when: "Aerospace/defense (SpaceX, Boeing, Lockheed, Northrop) Aug–Oct. Broad peak Sep–Oct via career fairs. Mech/EE/chem/biomed heavy through fall.",
     who: "Engineering majors, all years.",
-    tip: "Your Sep/Oct career fair isn't optional — printed resumes, 30-sec pitch per company.",
+    tip: "University career fairs in September and October are a primary recruiting channel for many engineering employers.",
     url: "https://github.com/sndsh404/summer-2027-internships" },
   { n: "Government / Federal", world: "Law & Government", status: "later", urgency: 3,
     one: "Clearance roles = apply 9–12 mo ahead",
     when: "Federal programs (Pathways, NIH, CDC) Oct–Jan. Clearance roles (CIA/FBI/NSA) need 9–12 mo lead for background checks. State/local Jan–Mar.",
     who: "Any major; usually US citizenship required.",
-    tip: "Set up a USAJobs profile early. The clearance timeline IS the deadline.",
+    tip: "Roles requiring a security clearance can take 9–12 months to process due to background checks. USAJobs is the central federal application portal.",
     url: "https://www.usajobs.gov/" },
   { n: "Marketing / Advertising / PR", world: "Media & Journalism", status: "soon", urgency: 2,
     one: "Major doesn't matter — portfolio does",
     when: "CPG (P&G, Unilever, Nike, Coca-Cola) Aug–Sep; tech marketing Sep–Oct; agencies Nov–Mar.",
     who: "Any major — English, comms, psych all welcome.",
-    tip: "No one cares about your major here; they care about your portfolio and whether you get why people buy things.",
+    tip: "Marketing roles typically weigh portfolio and demonstrated interest more heavily than a specific major.",
     url: "https://www.extern.com/post/marketing-internships-summer-2027-guide" },
   { n: "Healthcare / Pharma / Public Health", world: "Healthcare & Medicine", status: "later", urgency: 2,
     one: "Wide range Nov–May; research locks in early",
     when: "Corporate pharma (J&J etc.) Aug–Nov rolling. Research positions lock in early — get into a lab and you often keep the spot.",
     who: "Pre-med, bio, chem, nursing, public health.",
-    tip: "Research roles reward initiative — email professors directly, don't wait for a posting.",
+    tip: "Research positions are often secured by contacting professors directly rather than through formal postings.",
     url: "https://www.careers.jnj.com/en/early-career-programs/internships/" },
   { n: "Media / Journalism / Entertainment", world: "Media & Journalism", status: "rolling", urgency: 2,
     one: "Rarely standardized — network and watch postings",
     when: "Rarely standardized; many filled as-needed year-round.",
     who: "Comms, journalism, film, writing.",
-    tip: "Build a networking game plan, not a deadline list. Watch target outlets and pitch yourself.",
+    tip: "Media roles are frequently filled as-needed throughout the year rather than on a fixed cycle.",
     url: "https://simplify.jobs/" },
   { n: "Law / Legal (pre-JD)", world: "Law & Government", status: "rolling", urgency: 2,
     one: "Paralegal/assistant roles post year-round",
     when: "No standard timeline for non-JD roles. Paralegal/legal-assistant roles post year-round; private sector & federal tend winter/spring.",
     who: "Pre-law, any major.",
-    tip: "Sign up for job-board alerts; these appear and fill quietly.",
+    tip: "Non-JD legal roles like paralegal and legal assistant positions are typically posted year-round, with more activity in winter and spring.",
     url: "https://www.usajobs.gov/" },
   { n: "Data / Analytics", world: "Tech & Engineering", status: "soon", urgency: 3,
     one: "Follows the parent industry's clock",
     when: "At tech companies, opens with SWE (Jul–Oct). At banks/consulting/healthcare, follows that parent industry's clock.",
     who: "Stats, CS, econ, data-oriented majors.",
-    tip: "Figure out which 'parent' industry your target sits in — that's your real timeline.",
+    tip: "Data role timelines usually follow the parent industry — tech-company data roles open with software roles, while bank or healthcare data roles follow those sectors.",
     url: "https://github.com/sndsh404/summer-2027-internships" },
   { n: "Design / UX / Creative", world: "Design & Creative", status: "soon", urgency: 2,
     one: "Portfolio-first; tech-adjacent timelines",
     when: "Tech-adjacent roles follow tech timelines (Jul–Oct); agencies later.",
     who: "Design, HCI, art, comms.",
-    tip: "Portfolio over resume. Have 2–3 polished case studies ready before windows open.",
+    tip: "Design hiring is typically portfolio-driven, and tech-adjacent design roles tend to follow technology recruiting timelines.",
     url: "https://simplify.jobs/" },
   { n: "Sustainability / Energy / Environment", world: "Science & Research", status: "later", urgency: 2,
     one: "Posts in waves; lots of spring roles",
     when: "Posts in waves Sep–Nov, plus spring one-offs.",
     who: "Environmental science, policy, engineering.",
-    tip: "Apply early via company sites if firms don't come to your campus.",
+    tip: "Roles in this sector are often posted in waves through the fall, with additional openings in spring.",
     url: "https://www.usajobs.gov/" },
   { n: "Startups / Entrepreneurship", world: "Entrepreneurship", status: "rolling", urgency: 1,
     one: "Just-in-time hiring; spring is prime",
     when: "Rolling, heaviest Dec–Mar.",
     who: "Anyone, especially folks who missed early waves.",
-    tip: "Missing fall recruiting isn't the end — startups hire in spring and convert just as often. Check Wellfound.",
+    tip: "Startups commonly hire just-in-time and recruit later in the cycle, with the heaviest activity from December through March.",
     url: "https://wellfound.com/" },
   { n: "Nonprofits / Social Impact", world: "Social Impact & Nonprofit", status: "rolling", urgency: 1,
     one: "Funding-driven; service years have hard deadlines",
     when: "Funding-driven, spring-heavy & rolling. Service years (Teach for America, AmeriCorps, Peace Corps) have hard, early, once-a-year deadlines.",
     who: "Any major, mission-driven.",
-    tip: "Treat service-year deadlines like finance deadlines — early and firm.",
+    tip: "Nonprofit hiring is largely funding-driven and rolling, but structured service-year programs (Teach for America, AmeriCorps, Peace Corps) have firm, once-a-year deadlines.",
     url: "https://www.idealist.org/" },
   { n: "Co-op Programs", world: "Tech & Engineering", status: "later", urgency: 3,
     one: "Two cycles a year; apply a semester ahead",
     when: "Two cycles, spring (Jan–Jun) and fall (Jul–Dec); apply a semester ahead.",
     who: "Schools with formal co-op programs (eng, business, healthcare). Some require one to graduate.",
-    tip: "Pays well, full semester of real work. If your school offers it, it's a hidden cheat code. Check your school's co-op office.",
+    tip: "Co-ops run in two cycles per year and applications typically open a semester ahead. Availability depends on your school's co-op office.",
     url: "" },
 ];
 
-const highSchoolData = [
+export const highSchoolData = [
   { n: "Elite STEM Research (RSI, SSP, Simons)", world: "Science & Research", status: "later", urgency: 5,
     one: "Crown jewels — tiny acceptance, fall-of-junior-year apps",
     when: "Open fall, close Dec–Feb. RSI (~2.5% accept) closes early–mid Dec, for rising seniors applying junior fall. SSP/Simons cluster Jan–Feb.",
     who: "Rising juniors/seniors strong in math & science. Most free, housing covered.",
-    tip: "Rejection is normal — line up a local lab/mentor as backup. Real research often beats a program name anyway.",
+    tip: "These programs are highly competitive and most are free, covering housing and materials. Many students also build research experience through local labs.",
     url: "https://www.cee.org/programs/apply-rsi" },
   { n: "University Pre-College Research", world: "Science & Research", status: "later", urgency: 4,
     one: "Read eligibility fine print — age & location cutoffs",
     when: "Winter open (Dec–Jan), close ~Feb–Mar. NIH HS program opens mid-Nov, closes mid-Feb.",
     who: "Rising juniors/seniors, often 16+; some require living near campus.",
-    tip: "Read eligibility on every one — age, location radius, citizenship knock people out fast.",
+    tip: "Eligibility often includes age minimums, location requirements, and citizenship restrictions that vary by program.",
     url: "https://www.training.nih.gov/research-training/pb/sip/" },
   { n: "Corporate HS Programs", world: "Business & Finance", status: "later", urgency: 4,
     one: "The hidden gems — paid/prestigious, colleges notice",
     when: "Fall–Jan deadlines. Bank of America Student Leaders ~mid-Jan; Goldman & Big 4 explorations same window.",
     who: "HS juniors curious about business/finance/consulting/tech.",
-    tip: "This is the stuff nobody knows to Google. BofA Student Leaders = paid nonprofit internship + a D.C. summit. Apply even if it feels out of reach.",
+    tip: "Some corporate high school programs, like Bank of America Student Leaders, combine a paid internship with a leadership summit and are recognized by colleges.",
     url: "https://www.bankofamerica.com/en/about-us/student-leaders.html" },
   { n: "Government / National Labs", world: "Science & Research", status: "later", urgency: 3,
     one: "Dedicated HS slots almost nobody applies to",
     when: "Fall open, close winter (Jan–Feb). NASA runs one of the largest HS programs in the country.",
     who: "STEM-interested HS, many 16+; citizenship/proximity often required.",
-    tip: "National labs have HS slots barely anyone applies to. Less competition, huge credential.",
+    tip: "National labs and agencies like NASA run dedicated high school programs, many open to students 16 and older, often with citizenship or proximity requirements.",
     url: "https://stemgateway.nasa.gov/" },
   { n: "Summer Enrichment / Pre-College", world: "Education & Coaching", status: "soon", urgency: 2,
     one: "Watch cost — free & selective beats pay-to-play",
     when: "Widest range — winter open, some accept into April.",
     who: "Any HS student exploring a subject or college life.",
-    tip: "Watch the price tag. A free selective program is worth far more than an expensive name-brand one.",
+    tip: "These range widely in cost. Selective, free programs are generally regarded more highly than tuition-based ones.",
     url: "" },
   { n: "Competitions / Olympiads", world: "Science & Research", status: "rolling", urgency: 2,
     one: "Involvement + leadership matters more than winning",
     when: "School-year cycle — register fall, regionals/state winter, nationals spring/summer.",
     who: "Any HS student; team events (DECA, Science Olympiad) great for everyone.",
-    tip: "You don't need to win nationals. Consistent involvement + a leadership role beats five passive memberships.",
+    tip: "These follow the school-year calendar, with registration in fall, regional and state rounds in winter, and national events in spring or summer.",
     url: "https://www.soinc.org/" },
   { n: "Scholarships", world: "Education & Coaching", status: "rolling", urgency: 2,
     one: "Biggest ones close earlier than you'd think",
     when: "Many open fall, close winter/spring of senior year; others year-round.",
     who: "Mostly juniors/seniors, some underclassmen.",
-    tip: "Don't wait for spring of senior year — the biggest winnable ones close months earlier.",
+    tip: "Many large scholarships open in fall and close in winter or spring of senior year, though some accept applications year-round.",
     url: "" },
 ];
 
-export default function WhenToApply() {
+export default function WhenToApply({ starredItems, onToggleStar }) {
   const [mode, setMode] = useState("college");
   const [sortBy, setSortBy] = useState("urgent");
   const [expanded, setExpanded] = useState(null);
   const [activeWorld, setActiveWorld] = useState(null);
-  const [starredItems, setStarredItems] = useState(() => {
-    try {
-      const s = localStorage.getItem("sparq_when_starred");
-      return s ? new Set(JSON.parse(s)) : new Set();
-    } catch { return new Set(); }
-  });
 
   const data = mode === "college" ? collegeData : highSchoolData;
   const worlds = [...new Set(data.map(d => d.world))].sort();
@@ -204,16 +198,6 @@ export default function WhenToApply() {
     const sdiff = STATUS_ORDER[a.status] - STATUS_ORDER[b.status];
     return sdiff !== 0 ? sdiff : b.urgency - a.urgency;
   });
-
-  function toggleStar(name, e) {
-    e.stopPropagation();
-    setStarredItems(prev => {
-      const next = new Set(prev);
-      next.has(name) ? next.delete(name) : next.add(name);
-      try { localStorage.setItem("sparq_when_starred", JSON.stringify([...next])); } catch {}
-      return next;
-    });
-  }
 
   return (
     <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
@@ -364,7 +348,7 @@ export default function WhenToApply() {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <button
-                    onClick={e => toggleStar(item.n, e)}
+                    onClick={e => { e.stopPropagation(); onToggleStar(item.n); }}
                     style={{
                       background: "none", border: "none", cursor: "pointer",
                       fontSize: 15, lineHeight: 1, padding: 0,
@@ -404,7 +388,7 @@ export default function WhenToApply() {
                   fontSize: 11, color: T.accent, lineHeight: 1.55,
                   marginBottom: item.url ? 12 : 0,
                 }}>
-                  <span style={{ fontWeight: 700, marginRight: 5 }}>Big sis tip →</span>
+                  <span style={{ fontWeight: 700, marginRight: 5 }}>Good to know</span>
                   {item.tip}
                 </div>
 
