@@ -8,7 +8,7 @@ import ProfilePage from "./ProfilePage";
 import OnboardingScreen from "./OnboardingScreen";
 import OnboardingQuiz from "./OnboardingQuiz";
 import SparqGuide from "./pages/SparqGuide";
-import WhenToApply, { STATUS_CONFIG as DEADLINE_STATUS, WORLD_COLORS as DEADLINE_WORLD_COLORS } from "./pages/WhenToApply";
+import WhenToApply, { WORLD_COLORS as DEADLINE_WORLD_COLORS } from "./pages/WhenToApply";
 
 const T = {
   bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
@@ -549,7 +549,6 @@ function buildGroups(careers, by) {
 }
 
 function DeadlineCard({ item, onUnstar }) {
-  const sc = DEADLINE_STATUS[item.status] || DEADLINE_STATUS.later;
   const wc = DEADLINE_WORLD_COLORS[item.world] || T.accent;
 
   function handleClick() {
@@ -565,7 +564,7 @@ function DeadlineCard({ item, onUnstar }) {
         cursor: item.url ? "pointer" : "default",
         transition: "border-color 0.15s",
       }}
-      onMouseEnter={e => { if (item.url) e.currentTarget.style.borderColor = sc.color; }}
+      onMouseEnter={e => { if (item.url) e.currentTarget.style.borderColor = `${T.accent}88`; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; }}
     >
       <div style={{ display: "flex", alignItems: "flex-start", gap: 6, marginBottom: 7 }}>
@@ -580,10 +579,12 @@ function DeadlineCard({ item, onUnstar }) {
         >★</button>
       </div>
       <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
-        <span style={{
-          fontSize: 10, fontWeight: 700, color: sc.color, background: sc.bg,
-          border: `1px solid ${sc.color}44`, borderRadius: 20, padding: "2px 8px",
-        }}>{sc.emoji} {sc.label}</span>
+        {item.timing && (
+          <span style={{
+            fontSize: 10, fontWeight: 600, color: T.textMid, background: T.bgDeep,
+            border: `1px solid ${T.border}`, borderRadius: 20, padding: "2px 8px",
+          }}>{item.timing}</span>
+        )}
         <span style={{
           fontSize: 10, fontWeight: 600, color: wc, background: `${wc}18`,
           border: `1px solid ${wc}40`, borderRadius: 20, padding: "2px 8px",
@@ -960,7 +961,7 @@ function AppContent({ signOut }) {
       if (next.has(item.n)) {
         next.delete(item.n);
       } else {
-        next.set(item.n, { type: "deadline", n: item.n, world: item.world, status: item.status, one: item.one, url: item.url || "" });
+        next.set(item.n, { type: "deadline", n: item.n, world: item.world, timing: item.timing, one: item.one, url: item.url || "" });
       }
       try { localStorage.setItem("sparq_when_starred", JSON.stringify([...next.values()])); } catch {}
       return next;
