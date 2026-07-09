@@ -10,7 +10,7 @@ const T = {
 function worldColor(w) { return WORLD_COLORS[w] || T.accent; }
 
 // Map an age_range display string to a filter category.
-export function ageCategory(ageRange) {
+function ageCategory(ageRange) {
   const s = (ageRange || "").toLowerCase().trim();
   if (s === "13+" || s === "22 and under") return "both";
   if (/^18|18-23|18\+|college/.test(s)) return "college";
@@ -20,6 +20,18 @@ export function ageCategory(ageRange) {
 // A cost_note implies a real cost only when it contains a dollar figure.
 function hasCost(costNote) {
   return !!costNote && costNote.includes("$");
+}
+
+// Display value for the status pill: drop a leading "Active — " so the pill reads
+// like the timing pill on WhenToApply (e.g. "Active — summer/fall window" →
+// "Summer/fall window"); non-Active statuses ("Paused for 2026", "Verify current
+// status") are shown unchanged.
+function statusLabel(status) {
+  const s = (status || "").trim();
+  const m = s.match(/^active\s*[—-]\s*(.+)$/i);
+  if (!m) return s;
+  const rest = m[1];
+  return rest.charAt(0).toUpperCase() + rest.slice(1);
 }
 
 const AGE_FILTERS = [
@@ -162,7 +174,7 @@ export default function HiddenGems({ hiddenGems = [], loading, starredItems, onT
                     color: T.textMid, background: T.bgDeep,
                     border: `1px solid ${T.border}`,
                     borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap",
-                  }}>Status: {gem.status}</span>
+                  }}>{statusLabel(gem.status)}</span>
                 </div>
                 <div style={{ fontSize: 11, color: T.textMid, lineHeight: 1.5 }}>{gem.wow_line}</div>
               </div>
