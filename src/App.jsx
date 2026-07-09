@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import CareerTimeline from "./CareerTimeline";
-import { fetchCareers } from "./supabase";
+import { fetchCareers, fetchHiddenGems } from "./supabase";
 import { supabase } from "./supabaseClient";
 import { useAuth } from "./AuthContext";
 import LoginScreen from "./LoginScreen";
@@ -9,6 +9,7 @@ import OnboardingScreen from "./OnboardingScreen";
 import OnboardingQuiz from "./OnboardingQuiz";
 import SparqGuide from "./pages/SparqGuide";
 import WhenToApply, { WORLD_COLORS as DEADLINE_WORLD_COLORS } from "./pages/WhenToApply";
+import HiddenGems from "./pages/HiddenGems";
 
 const T = {
   bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
@@ -124,6 +125,12 @@ function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndust
         onClick={() => onNavigate("when-to-apply")}
       >
         <span style={{ fontSize: 14 }}>📅</span> When to Apply
+      </button>
+      <button
+        className={`sidebar-item${screen === "hidden-gems" ? " active" : ""}`}
+        onClick={() => onNavigate("hidden-gems")}
+      >
+        <span style={{ fontSize: 14 }}>◆</span> Hidden Gems
       </button>
 
       <div className="sidebar-divider" />
@@ -595,7 +602,69 @@ function DeadlineCard({ item, onUnstar }) {
   );
 }
 
-function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, onGoToExplore, starredWhenItems, onToggleWhenStar, onGoToWhenToApply }) {
+function OpportunityCard({ item, onUnstar }) {
+  const wc = DEADLINE_WORLD_COLORS[item.industry] || T.accent;
+  const showCost = !!item.cost_note && item.cost_note.includes("$");
+
+  function handleClick() {
+    if (item.url) window.open(item.url, "_blank", "noopener,noreferrer");
+  }
+
+  return (
+    <div
+      onClick={handleClick}
+      style={{
+        background: T.bgCard, border: `1px solid ${T.border}`,
+        borderRadius: 16, padding: "14px",
+        cursor: item.url ? "pointer" : "default",
+        transition: "border-color 0.15s",
+      }}
+      onMouseEnter={e => { if (item.url) e.currentTarget.style.borderColor = `${T.accent}88`; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; }}
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 6, marginBottom: 7 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: T.text, flex: 1, lineHeight: 1.35 }}>{item.name}</div>
+        {showCost && (
+          <span title={item.cost_note} style={{
+            fontSize: 10, fontWeight: 700, color: T.textMid,
+            background: T.bgDeep, border: `1px solid ${T.border}`,
+            borderRadius: 20, width: 18, height: 18, flexShrink: 0,
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+          }}>$</span>
+        )}
+        <button
+          onClick={e => { e.stopPropagation(); onUnstar(); }}
+          style={{
+            background: "none", border: "none", cursor: "pointer",
+            fontSize: 16, lineHeight: 1, padding: "0 0 0 2px", flexShrink: 0,
+            color: "#F59E0B",
+          }}
+        >★</button>
+      </div>
+      <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
+        <span style={{
+          fontSize: 10, fontWeight: 600, color: wc, background: `${wc}18`,
+          border: `1px solid ${wc}40`, borderRadius: 20, padding: "2px 8px",
+        }}>{item.industry}</span>
+        {item.age_range && (
+          <span style={{
+            fontSize: 10, fontWeight: 600, color: T.textMid, background: T.bgDeep,
+            border: `1px solid ${T.border}`, borderRadius: 20, padding: "2px 8px",
+          }}>{item.age_range}</span>
+        )}
+        {item.status && (
+          <span style={{
+            fontSize: 10, fontWeight: 600, color: T.textMid, background: T.bgDeep,
+            border: `1px solid ${T.border}`, borderRadius: 20, padding: "2px 8px",
+          }}>Status: {item.status}</span>
+        )}
+      </div>
+      <div style={{ fontSize: 11, color: T.textMid, lineHeight: 1.5 }}>{item.wow_line}</div>
+    </div>
+  );
+}
+
+function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, onGoToExplore, starredWhenItems, onToggleWhenStar, onGoToWhenToApply, starredOpportunities, onToggleOpportunityStar, onGoToHiddenGems }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [workStyleActive, setWorkStyleActive] = useState(new Set());
   const [pathActive, setPathActive] = useState(null);
@@ -620,6 +689,7 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
 
   const groups = buildGroups(filtered, groupBy);
   const starredDeadlines = Array.from((starredWhenItems || new Map()).values());
+  const starredOpps = Array.from((starredOpportunities || new Map()).values());
 
   function CardGrid({ careers }) {
     return (
@@ -659,6 +729,11 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
           {activeTab === "deadlines" && starredDeadlines.length > 0 && (
             <div style={{ fontSize: 12, color: T.textMid, marginTop: 3 }}>
               {starredDeadlines.length} saved deadline{starredDeadlines.length !== 1 ? "s" : ""}
+            </div>
+          )}
+          {activeTab === "opportunities" && starredOpps.length > 0 && (
+            <div style={{ fontSize: 12, color: T.textMid, marginTop: 3 }}>
+              {starredOpps.length} saved opportunit{starredOpps.length !== 1 ? "ies" : "y"}
             </div>
           )}
         </div>
@@ -844,15 +919,33 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
 
       {/* ── Opportunities tab ── */}
       {activeTab === "opportunities" && (
-        <div style={{ textAlign: "center", padding: "60px 20px" }}>
-          <div style={{ fontSize: 44, marginBottom: 14, color: T.textDim }}>🔭</div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 8 }}>
-            Opportunities coming soon
+        starredOpps.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "60px 20px" }}>
+            <div style={{ fontSize: 44, marginBottom: 14, color: T.textDim }}>◆</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 8 }}>
+              No opportunities saved yet
+            </div>
+            <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.6, marginBottom: 24, maxWidth: 320, margin: "0 auto 24px" }}>
+              Star the hidden gems you're interested in on the Hidden Gems page and they'll show up here.
+            </div>
+            <button onClick={onGoToHiddenGems} style={{
+              padding: "11px 28px",
+              background: "linear-gradient(135deg, #7F77DD, #38BDF8)",
+              color: "#fff", border: "none", borderRadius: 12,
+              fontSize: 14, fontWeight: 700, cursor: "pointer",
+            }}>Hidden Gems →</button>
           </div>
-          <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.6, maxWidth: 320, margin: "0 auto" }}>
-            A curated portal of hidden gems like research fly-outs, corporate high school programs, and fellowships most people never hear about.
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {starredOpps.map(item => (
+              <OpportunityCard
+                key={item.name}
+                item={item}
+                onUnstar={() => onToggleOpportunityStar(item)}
+              />
+            ))}
           </div>
-        </div>
+        )
       )}
 
       {/* ── Scholarships tab ── */}
@@ -877,6 +970,7 @@ function BottomNav({ screen, onNavigate }) {
     { id: "shortlist",    label: "Shortlist", icon: "★" },
     { id: "guide",        label: "Guide",     icon: "📖" },
     { id: "when-to-apply", label: "Apply",    icon: "📅" },
+    { id: "hidden-gems",  label: "Gems",      icon: "◆" },
   ];
   return (
     <div className="sparq-bottom-nav" style={{
@@ -911,7 +1005,7 @@ function BottomNav({ screen, onNavigate }) {
 
 // ─── State helpers ─────────────────────────────────────────────────────────────
 
-const RESTORABLE = new Set(["pick", "home", "shortlist", "guide", "when-to-apply"]);
+const RESTORABLE = new Set(["pick", "home", "shortlist", "guide", "when-to-apply", "hidden-gems"]);
 function ls(key, fallback) { try { const v = localStorage.getItem(key); return v != null ? JSON.parse(v) : fallback; } catch { return fallback; } }
 function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
 
@@ -964,6 +1058,53 @@ function AppContent({ signOut }) {
         next.set(item.n, { type: "deadline", n: item.n, world: item.world, timing: item.timing, one: item.one, url: item.url || "" });
       }
       try { localStorage.setItem("sparq_when_starred", JSON.stringify([...next.values()])); } catch {}
+      return next;
+    });
+  }
+
+  // Hidden Gems data
+  const [hiddenGems, setHiddenGems] = useState([]);
+  const [hiddenGemsLoading, setHiddenGemsLoading] = useState(true);
+
+  useEffect(() => {
+    setHiddenGemsLoading(true);
+    fetchHiddenGems()
+      .then(gems => { setHiddenGems(gems); setHiddenGemsLoading(false); })
+      .catch(err => { console.error("fetchHiddenGems failed:", err); setHiddenGemsLoading(false); });
+  }, []);
+
+  // Starred opportunities (Hidden Gems) — same mechanic as deadlines, tagged type "opportunity"
+  const [starredOpportunities, setStarredOpportunities] = useState(() => {
+    try {
+      const s = localStorage.getItem("sparq_opportunities_starred");
+      if (!s) return new Map();
+      const parsed = JSON.parse(s);
+      const map = new Map();
+      parsed.forEach(item => {
+        if (item && typeof item === "object" && item.name) map.set(item.name, item);
+      });
+      return map;
+    } catch { return new Map(); }
+  });
+
+  function toggleOpportunityStar(gem) {
+    setStarredOpportunities(prev => {
+      const next = new Map(prev);
+      if (next.has(gem.name)) {
+        next.delete(gem.name);
+      } else {
+        next.set(gem.name, {
+          type: "opportunity",
+          name: gem.name,
+          industry: gem.industry,
+          age_range: gem.age_range,
+          wow_line: gem.wow_line,
+          status: gem.status,
+          url: gem.url || "",
+          cost_note: gem.cost_note || "",
+        });
+      }
+      try { localStorage.setItem("sparq_opportunities_starred", JSON.stringify([...next.values()])); } catch {}
       return next;
     });
   }
@@ -1067,7 +1208,7 @@ function AppContent({ signOut }) {
     goTo("career");
   }
 
-  const showNav = screen === "home" || screen === "shortlist" || screen === "guide" || screen === "when-to-apply";
+  const showNav = screen === "home" || screen === "shortlist" || screen === "guide" || screen === "when-to-apply" || screen === "hidden-gems";
   const showSidebar = screen !== "pick";
 
   function handleToggleIndustry(name) {
@@ -1194,11 +1335,22 @@ function AppContent({ signOut }) {
             starredWhenItems={starredWhenItems}
             onToggleWhenStar={toggleWhenStar}
             onGoToWhenToApply={() => setScreen("when-to-apply")}
+            starredOpportunities={starredOpportunities}
+            onToggleOpportunityStar={toggleOpportunityStar}
+            onGoToHiddenGems={() => setScreen("hidden-gems")}
           />
         )}
         {screen === "guide" && <SparqGuide />}
         {screen === "when-to-apply" && (
           <WhenToApply starredItems={starredWhenItems} onToggleStar={toggleWhenStar} />
+        )}
+        {screen === "hidden-gems" && (
+          <HiddenGems
+            hiddenGems={hiddenGems}
+            loading={hiddenGemsLoading}
+            starredItems={starredOpportunities}
+            onToggleStar={toggleOpportunityStar}
+          />
         )}
       </div>
 

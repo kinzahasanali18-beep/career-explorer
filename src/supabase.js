@@ -39,6 +39,28 @@ export async function fetchCareers() {
   }));
 }
 
+export async function fetchHiddenGems() {
+  const { data, error } = await supabase
+    .from("hidden_gems")
+    .select("*")
+    .order("name", { ascending: true });
+
+  if (error) throw new Error(`Supabase fetch failed: ${error.message}`);
+
+  return (data || []).map((r) => ({
+    id: r.id,
+    name: r.name || "",
+    industry: r.industry || "",
+    age_range: r.age_range || "",
+    wow_line: r.wow_line || "",
+    description: r.description || "",
+    status: r.status || "",
+    url: r.url || "",
+    cost_note: r.cost_note || "",
+    verified_date: r.verified_date || "",
+  }));
+}
+
 export async function fetchReviewedCareers() {
   const all = await fetchCareers();
   return all.filter((c) => c.reviewed === true);
