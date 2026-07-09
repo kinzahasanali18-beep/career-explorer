@@ -171,8 +171,8 @@ export default function HiddenGems({ hiddenGems = [], loading, starredItems, onT
                   }}>{gem.industry}</span>
                   <span style={{
                     fontSize: 10, fontWeight: 600,
-                    color: T.textMid, background: T.bgDeep,
-                    border: `1px solid ${T.border}`,
+                    color: "#8B8FA8", background: "#1A1D2E",
+                    border: "1px solid #3D3F55",
                     borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap",
                   }}>{statusLabel(gem.status)}</span>
                 </div>
