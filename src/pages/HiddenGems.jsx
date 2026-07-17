@@ -44,15 +44,14 @@ function matchesAge(gem, ageFilter) {
   return true;
 }
 
-export default function HiddenGems({ hiddenGems = [], loading, starredItems, onToggleStar }) {
+export default function HiddenGems({ hiddenGems = [], loading, selectedIndustries = [], starredItems, onToggleStar }) {
   const [expanded, setExpanded] = useState(null);
-  const [activeWorld, setActiveWorld] = useState(null);
   const [ageFilter, setAgeFilter] = useState("all");
 
-  const worlds = [...new Set(hiddenGems.map(g => g.industry).filter(Boolean))].sort();
-
+  // Industry filtering is driven by the sidebar's shared `selectedIndustries`
+  // state (same source of truth as Explore Careers). An empty array = all.
   const filtered = hiddenGems
-    .filter(g => !activeWorld || g.industry === activeWorld)
+    .filter(g => selectedIndustries.length === 0 || selectedIndustries.includes(g.industry))
     .filter(g => matchesAge(g, ageFilter));
 
   return (
@@ -66,39 +65,7 @@ export default function HiddenGems({ hiddenGems = [], loading, starredItems, onT
         </div>
       </div>
 
-      {/* World filter chips */}
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
-        <button
-          onClick={() => setActiveWorld(null)}
-          style={{
-            padding: "5px 13px", borderRadius: 20, fontSize: 12, fontWeight: 600,
-            border: `1px solid ${!activeWorld ? T.accent : T.border}`,
-            background: !activeWorld ? `${T.accent}22` : "transparent",
-            color: !activeWorld ? T.accent : T.textMid,
-            cursor: "pointer", transition: "all 0.15s", fontFamily: "inherit",
-          }}
-        >All</button>
-        {worlds.map(w => {
-          const col = worldColor(w);
-          const active = activeWorld === w;
-          return (
-            <button
-              key={w}
-              onClick={() => setActiveWorld(active ? null : w)}
-              style={{
-                padding: "5px 13px", borderRadius: 20, fontSize: 12, fontWeight: 600,
-                border: `1px solid ${active ? col : T.border}`,
-                background: active ? `${col}22` : "transparent",
-                color: active ? col : T.textMid,
-                cursor: "pointer", transition: "all 0.15s", whiteSpace: "nowrap",
-                fontFamily: "inherit",
-              }}
-            >{w}</button>
-          );
-        })}
-      </div>
-
-      {/* Age group filter row */}
+      {/* Age group filter row — page-specific; industry filtering lives in the sidebar */}
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 18 }}>
         {AGE_FILTERS.map(f => {
           const active = ageFilter === f.id;

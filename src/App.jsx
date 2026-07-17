@@ -95,8 +95,14 @@ function matchesVibe(career, active) {
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
-function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndustry, onClearIndustries }) {
-  const allSelected = selectedIndustries.length === 0;
+// Screens that actually use the sidebar industry list to filter their content.
+// Other screens (Hidden Gems, When to Apply, etc.) have their own top-of-page
+// pill filters, so the sidebar Industries section is hidden there to avoid a
+// redundant / non-functional duplicate.
+const INDUSTRY_FILTER_SCREENS = ["home", "hidden-gems"];
+
+function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndustry }) {
+  const showIndustries = INDUSTRY_FILTER_SCREENS.includes(screen);
   return (
     <div className="desktop-sidebar" style={{ background: T.bg }}>
       <div className="sidebar-brand">⚡ Sparq</div>
@@ -135,39 +141,30 @@ function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndust
 
       <div className="sidebar-divider" />
 
-      <div className="sidebar-section-label">Industries</div>
-      <button
-        className="sidebar-item"
-        onClick={onClearIndustries}
-        style={{
-          color: allSelected ? T.accent : T.textMid,
-          background: allSelected ? `${T.accent}14` : "transparent",
-          fontWeight: allSelected ? 600 : 400,
-        }}
-      >
-        <span style={{ fontSize: 13, flexShrink: 0 }}>◉</span>
-        <span style={{ flex: 1 }}>All industries</span>
-        {allSelected && <span style={{ fontSize: 10, flexShrink: 0, opacity: 0.8 }}>✓</span>}
-      </button>
-      {INDUSTRY_CONFIG.map(ind => {
-        const sel = selectedIndustries.includes(ind.name);
-        return (
-          <button
-            key={ind.name}
-            className="sidebar-item"
-            onClick={() => onToggleIndustry(ind.name)}
-            style={{
-              color: sel ? ind.color : T.textMid,
-              background: sel ? `${ind.color}14` : "transparent",
-              fontWeight: sel ? 600 : 400,
-            }}
-          >
-            <span style={{ fontSize: 13, flexShrink: 0 }}>{ind.icon}</span>
-            <span style={{ flex: 1 }}>{ind.name}</span>
-            {sel && <span style={{ fontSize: 10, flexShrink: 0, opacity: 0.8 }}>✓</span>}
-          </button>
-        );
-      })}
+      {showIndustries && (
+        <>
+          <div className="sidebar-section-label">Industries</div>
+          {INDUSTRY_CONFIG.map(ind => {
+            const sel = selectedIndustries.includes(ind.name);
+            return (
+              <button
+                key={ind.name}
+                className="sidebar-item"
+                onClick={() => onToggleIndustry(ind.name)}
+                style={{
+                  color: sel ? ind.color : T.textMid,
+                  background: sel ? `${ind.color}14` : "transparent",
+                  fontWeight: sel ? 600 : 400,
+                }}
+              >
+                <span style={{ fontSize: 13, flexShrink: 0 }}>{ind.icon}</span>
+                <span style={{ flex: 1 }}>{ind.name}</span>
+                {sel && <span style={{ fontSize: 10, flexShrink: 0, opacity: 0.8 }}>✓</span>}
+              </button>
+            );
+          })}
+        </>
+      )}
 
       <button className="sidebar-start-over" onClick={() => onNavigate("pick")}>
         ↩ Change worlds
@@ -376,6 +373,11 @@ function CareerGridScreen({
 
   const q = searchQuery.trim().toLowerCase();
 
+  // "All industries" (nothing selected) is intentionally an empty state — the
+  // full unfiltered set is 6,000+ cards, so we prompt the user to pick an
+  // industry instead of dumping everything.
+  const noIndustrySelected = selectedIndustries.length === 0;
+
   const displayed = allCareers
     .filter(c => selectedIndustries.length === 0 || selectedIndustries.includes(c.primary_industry))
     .filter(c => matchesWorkStyle(c.work_style, workStyleActive))
@@ -460,13 +462,24 @@ function CareerGridScreen({
         color="#A78BFA"
       />
 
-      {/* Count */}
-      <div style={{ fontSize: 11, color: T.textDim, marginBottom: 14, marginTop: 4 }}>
-        {loading ? "Finding careers…" : `${displayed.length} career${displayed.length !== 1 ? "s" : ""}`}
-      </div>
+      {/* Count — hidden until an industry is chosen (see empty state below) */}
+      {!noIndustrySelected && (
+        <div style={{ fontSize: 11, color: T.textDim, marginBottom: 14, marginTop: 4 }}>
+          {loading ? "Finding careers…" : `${displayed.length} career${displayed.length !== 1 ? "s" : ""}`}
+        </div>
+      )}
+
+      {/* No industry selected — prompt to pick one instead of showing all 6,000+ */}
+      {!loading && noIndustrySelected && (
+        <div style={{ textAlign: "center", padding: "48px 20px" }}>
+          <div style={{ fontSize: 36, marginBottom: 12 }}>◈</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>Start exploring</div>
+          <div style={{ fontSize: 13, color: T.textMid }}>Pick an industry from the sidebar to start exploring careers.</div>
+        </div>
+      )}
 
       {/* Grid */}
-      {loading ? (
+      {noIndustrySelected ? null : loading ? (
         <div className="career-card-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} style={{
@@ -494,7 +507,7 @@ function CareerGridScreen({
         </div>
       )}
 
-      {!loading && displayed.length === 0 && (
+      {!loading && !noIndustrySelected && displayed.length === 0 && (
         <div style={{ textAlign: "center", padding: "48px 20px" }}>
           <div style={{ fontSize: 36, marginBottom: 12 }}>◎</div>
           <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>No careers match</div>
@@ -1217,8 +1230,8 @@ function AppContent({ signOut }) {
       lsSet("ce_industries", next);
       return next;
     });
-    // If user is on a non-home screen, navigate to home to see filtered results
-    if (screen !== "home") setScreen("home");
+    // Toggling an industry only updates filter state — it never changes the
+    // current screen. The active screen re-renders with the new filter applied.
   }
 
   return (
@@ -1271,11 +1284,6 @@ function AppContent({ signOut }) {
           selectedIndustries={selectedIndustries}
           onNavigate={setScreen}
           onToggleIndustry={handleToggleIndustry}
-          onClearIndustries={() => {
-            setSelected([]);
-            lsSet("ce_industries", []);
-            if (screen !== "home") setScreen("home");
-          }}
         />
       )}
 
@@ -1348,6 +1356,7 @@ function AppContent({ signOut }) {
           <HiddenGems
             hiddenGems={hiddenGems}
             loading={hiddenGemsLoading}
+            selectedIndustries={selectedIndustries}
             starredItems={starredOpportunities}
             onToggleStar={toggleOpportunityStar}
           />
