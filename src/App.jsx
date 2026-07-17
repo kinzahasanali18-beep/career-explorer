@@ -469,8 +469,10 @@ function CareerGridScreen({
         </div>
       )}
 
-      {/* No industry selected — prompt to pick one instead of showing all 6,000+ */}
-      {!loading && noIndustrySelected && (
+      {/* No industry selected — prompt to pick one instead of showing all 6,000+.
+          Not gated on `loading`: with no industry we never show cards, so this
+          should render immediately on first load, before careers finish fetching. */}
+      {noIndustrySelected && (
         <div style={{ textAlign: "center", padding: "48px 20px" }}>
           <div style={{ fontSize: 36, marginBottom: 12 }}>◈</div>
           <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>Start exploring</div>
