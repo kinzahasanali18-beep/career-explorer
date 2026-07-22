@@ -237,7 +237,10 @@ function CareerCard({ career, onClick, isStarred, onToggleStar }) {
       onClick={onClick}
       style={{
         background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 16,
-        padding: "14px", cursor: "pointer", transition: "border-color 0.15s",
+        // Subtle left accent in the card's primary-industry color. Inset shadow
+        // (not a border) so the hover border-color toggle below can't erase it.
+        boxShadow: `inset 3px 0 0 ${primaryCfg.color}`,
+        padding: "14px 14px 14px 16px", cursor: "pointer", transition: "border-color 0.15s",
       }}
       onMouseEnter={e => { e.currentTarget.style.borderColor = primaryCfg.color; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; }}
@@ -405,6 +408,12 @@ function CareerGridScreen({
   // industry instead of dumping everything.
   const noIndustrySelected = selectedIndustries.length === 0;
 
+  // Accent color for the search focus ring: the selected industry's color (the
+  // most recently selected, if several), or the neutral brand accent when none.
+  const focusColor = selectedIndustries.length
+    ? getConfig(selectedIndustries[selectedIndustries.length - 1]).color
+    : T.accent;
+
   const displayed = allCareers
     .filter(c => selectedIndustries.length === 0 || selectedIndustries.includes(c.primary_industry))
     .filter(c => matchesWorkStyle(c.work_style, workStyleActive))
@@ -424,10 +433,11 @@ function CareerGridScreen({
           onClick={onSparqMode}
           title="Swipe through a fresh set of careers"
           style={{
-            background: `${T.accent}22`, border: `1px solid ${T.accent}`,
-            borderRadius: 20, padding: "6px 16px", fontSize: 12, fontWeight: 700,
-            color: T.accent, cursor: "pointer", flexShrink: 0,
+            background: "linear-gradient(135deg, #7F77DD, #38BDF8)", border: "none",
+            borderRadius: 20, padding: "7px 16px", fontSize: 12, fontWeight: 700,
+            color: "#fff", cursor: "pointer", flexShrink: 0,
             display: "flex", alignItems: "center", gap: 5,
+            boxShadow: "0 2px 10px rgba(127,119,221,0.35)",
           }}
         >⚡ Sparq Mode</button>
       </div>
@@ -453,7 +463,7 @@ function CareerGridScreen({
             fontFamily: "inherit", outline: "none", boxSizing: "border-box",
             transition: "border-color 0.15s",
           }}
-          onFocus={e => { e.target.style.borderColor = T.accent; }}
+          onFocus={e => { e.target.style.borderColor = focusColor; }}
           onBlur={e => { e.target.style.borderColor = T.border; }}
         />
         {searchQuery && (
@@ -503,7 +513,12 @@ function CareerGridScreen({
           should render immediately on first load, before careers finish fetching. */}
       {noIndustrySelected && (
         <div style={{ textAlign: "center", padding: "48px 20px" }}>
-          <div style={{ fontSize: 36, marginBottom: 12 }}>◈</div>
+          <div style={{
+            fontSize: 44, marginBottom: 12, lineHeight: 1, display: "inline-block",
+            background: "linear-gradient(135deg, #7F77DD, #38BDF8)",
+            WebkitBackgroundClip: "text", backgroundClip: "text",
+            WebkitTextFillColor: "transparent", color: "transparent",
+          }}>◈</div>
           <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>Start exploring</div>
           <div style={{ fontSize: 13, color: T.textMid }}>Pick an industry from the sidebar to start exploring careers.</div>
         </div>
@@ -1175,22 +1190,36 @@ function buildSparqDeck(allCareers, { profileIndustries, industryClicks, skipped
   return deck.map(c => c.id);
 }
 
-// One swipeable card. Drag past threshold (or arrow buttons) fires onSwipe;
+// One swipeable card. Drag past threshold, or an external `command` (X/star
+// buttons, arrow keys), flies the card off with a tilt and then fires onExit;
 // a click that isn't a drag fires onOpen (→ the career's roadmap page).
-function SparqCard({ career, onSwipe, onOpen, isTop }) {
+function SparqCard({ career, onExit, onOpen, isTop, command }) {
   const [drag, setDrag] = useState(0);
   const [dragging, setDragging] = useState(false);
-  const [leaving, setLeaving] = useState(0); // -1 left, 1 right (animating out)
   const start = useRef(null);
   const moved = useRef(false);
+  const exiting = useRef(false); // guards against double-firing the exit
   const cfg = getConfig(career.primary_industry);
   const secondary = toSecondaryList(career.secondary_industries).filter(s => s !== career.primary_industry);
   const allInd = [career.primary_industry, ...secondary].filter(Boolean);
   const desc = career.description || career.desc || "";
   const THRESHOLD = 90;
+  const EXIT_MS = 260; // snappy Tinder-style slide-off (200–300ms range)
+  const OFFSCREEN = (typeof window !== "undefined" && window.innerWidth) || 800;
+
+  // A command (X/star button or arrow key) from the overlay: the offscreen
+  // transform is derived during render below; here we only schedule the advance
+  // after the CSS transition finishes (timeout + ref — no setState in effect).
+  const commandedDir = isTop && command ? (command === "right" ? 1 : -1) : 0;
+  useEffect(() => {
+    if (!commandedDir) return;
+    exiting.current = true;
+    const t = setTimeout(() => onExit(commandedDir > 0 ? "right" : "left"), EXIT_MS);
+    return () => clearTimeout(t);
+  }, [commandedDir]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function down(e) {
-    if (!isTop || leaving) return;
+    if (!isTop || exiting.current || commandedDir) return;
     start.current = e.clientX;
     moved.current = false;
     setDragging(true);
@@ -1207,19 +1236,22 @@ function SparqCard({ career, onSwipe, onOpen, isTop }) {
     start.current = null;
     setDragging(false);
     if (Math.abs(drag) >= THRESHOLD) {
+      // Past threshold → fling off, then advance after the animation.
+      exiting.current = true;
       const dir = drag > 0 ? 1 : -1;
-      setLeaving(dir);
-      setDrag(dir * (window.innerWidth || 800));
-      setTimeout(() => onSwipe(dir > 0 ? "right" : "left"), 180);
+      setDrag(dir * OFFSCREEN);
+      setTimeout(() => onExit(dir > 0 ? "right" : "left"), EXIT_MS);
     } else {
-      if (!moved.current) onOpen();
-      setDrag(0);
+      if (!moved.current) onOpen(); // a tap (no real drag) opens the roadmap
+      setDrag(0); // otherwise snap back to center
     }
   }
 
-  const rot = drag / 18;
-  const rightHint = Math.max(0, Math.min(1, drag / THRESHOLD));
-  const leftHint = Math.max(0, Math.min(1, -drag / THRESHOLD));
+  // translateX comes from the finger while dragging, or the commanded fly-out.
+  const tx = commandedDir ? commandedDir * OFFSCREEN : drag;
+  const rot = Math.max(-18, Math.min(18, tx / 18)); // capped tilt, even mid-fly
+  const rightHint = Math.max(0, Math.min(1, tx / THRESHOLD));
+  const leftHint = Math.max(0, Math.min(1, -tx / THRESHOLD));
 
   return (
     <div
@@ -1229,16 +1261,19 @@ function SparqCard({ career, onSwipe, onOpen, isTop }) {
       onPointerCancel={up}
       style={{
         position: "absolute", inset: 0,
-        transform: `translateX(${drag}px) rotate(${rot}deg) scale(${isTop ? 1 : 0.95})`,
-        transition: dragging ? "none" : "transform 0.18s ease-out",
+        transform: `translateX(${tx}px) rotate(${rot}deg) scale(${isTop ? 1 : 0.95})`,
+        transition: dragging ? "none" : `transform ${EXIT_MS / 1000}s ease-out`,
         touchAction: "pan-y", cursor: isTop ? "grab" : "default", userSelect: "none",
       }}
     >
       <div style={{
         position: "relative", height: "100%", boxSizing: "border-box",
-        background: T.bgCard, border: `1px solid ${cfg.color}`, borderRadius: 20,
-        padding: "22px 20px", display: "flex", flexDirection: "column",
-        boxShadow: "0 12px 40px rgba(0,0,0,0.45)", overflow: "hidden",
+        // Match the Explore Careers card: neutral border + inset left accent in
+        // the primary-industry color; keep the elevated drop shadow for depth.
+        background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 20,
+        boxShadow: `inset 4px 0 0 ${cfg.color}, 0 12px 40px rgba(0,0,0,0.45)`,
+        padding: "22px 20px 22px 24px", display: "flex", flexDirection: "column",
+        overflow: "hidden",
       }}>
         {/* Save / Skip drag hints */}
         <div style={{
@@ -1289,24 +1324,32 @@ function SparqCard({ career, onSwipe, onOpen, isTop }) {
 
 function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCareer, onOpenProfile }) {
   const [index, setIndex] = useState(initialIndex);
+  const [command, setCommand] = useState(null); // { dir, forIndex } — drives the exit animation
   const remaining = cards.slice(index);
 
-  function act(dir) {
+  // Buttons / keyboard don't advance directly; they ask the top card to fly out.
+  function requestSwipe(dir) {
+    if (index >= cards.length) return;
+    setCommand(prev => (prev && prev.forIndex === index) ? prev : { dir, forIndex: index });
+  }
+
+  // Called by the card once its slide-off animation completes.
+  function handleExit(dir) {
     const card = cards[index];
-    if (!card) return;
-    onSwipe(dir, card);
+    if (card) onSwipe(dir, card);
+    setCommand(null);
     setIndex(i => i + 1);
   }
 
   useEffect(() => {
     function onKey(e) {
       if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowRight") act("right");
-      else if (e.key === "ArrowLeft") act("left");
+      else if (e.key === "ArrowRight") requestSwipe("right");
+      else if (e.key === "ArrowLeft") requestSwipe("left");
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }); // re-bind each render so `index` in act() stays current
+  }); // re-bind each render so `index` stays current
 
   const empty = cards.length === 0;
   const done = index >= cards.length;
@@ -1375,7 +1418,8 @@ function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCar
                 <SparqCard
                   career={card}
                   isTop={isTop}
-                  onSwipe={dir => act(dir)}
+                  command={isTop && command && command.forIndex === index ? command.dir : null}
+                  onExit={handleExit}
                   onOpen={() => onOpenCareer(card, index)}
                 />
               </div>
@@ -1388,7 +1432,7 @@ function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCar
       {!done && (
         <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
           <button
-            onClick={() => act("left")}
+            onClick={() => requestSwipe("left")}
             title="Skip (never show again)"
             style={{
               width: 58, height: 58, borderRadius: "50%", cursor: "pointer",
@@ -1397,7 +1441,7 @@ function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCar
             }}
           >✕</button>
           <button
-            onClick={() => act("right")}
+            onClick={() => requestSwipe("right")}
             title="Save to Shortlist"
             style={{
               width: 58, height: 58, borderRadius: "50%", cursor: "pointer",
