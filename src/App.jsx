@@ -1322,7 +1322,7 @@ function SparqCard({ career, onExit, onOpen, isTop, command }) {
   );
 }
 
-function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCareer, onOpenProfile }) {
+function SparqModeOverlay({ cards, loading = false, initialIndex = 0, onClose, onSwipe, onOpenCareer, onOpenProfile }) {
   const [index, setIndex] = useState(initialIndex);
   const [command, setCommand] = useState(null); // { dir, forIndex } — drives the exit animation
   const remaining = cards.slice(index);
@@ -1353,6 +1353,7 @@ function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCar
 
   const empty = cards.length === 0;
   const done = index >= cards.length;
+  const showCount = !loading && cards.length > 0;
 
   return (
     <div style={{
@@ -1364,7 +1365,7 @@ function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCar
       <div style={{ width: "100%", maxWidth: 460, display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
         <div style={{ fontSize: 17, fontWeight: 800, color: T.text, flex: 1 }}>⚡ Sparq Mode</div>
         <div style={{ fontSize: 12, color: T.textMid }}>
-          {done ? `${cards.length} of ${cards.length}` : `${index + 1} of ${cards.length}`}
+          {showCount ? (done ? `${cards.length} of ${cards.length}` : `${index + 1} of ${cards.length}`) : ""}
         </div>
         <button
           onClick={onClose}
@@ -1377,7 +1378,18 @@ function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCar
 
       {/* Card stack */}
       <div style={{ position: "relative", width: "100%", maxWidth: 460, flex: 1, maxHeight: 560, marginBottom: 18 }}>
-        {done ? (
+        {loading ? (
+          <div style={{
+            position: "absolute", inset: 0, display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center", textAlign: "center", padding: 24,
+          }}>
+            <div className="sparq-spinner" style={{
+              width: 34, height: 34, borderRadius: "50%", marginBottom: 16,
+              border: `3px solid ${T.border}`, borderTopColor: T.accent,
+            }} />
+            <div style={{ fontSize: 14, color: T.textMid }}>Building your set…</div>
+          </div>
+        ) : done ? (
           <div style={{
             position: "absolute", inset: 0, display: "flex", flexDirection: "column",
             alignItems: "center", justifyContent: "center", textAlign: "center", padding: 24,
@@ -1429,7 +1441,7 @@ function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCar
       </div>
 
       {/* First-card affordance — faint, only on card 1, fades out once they engage */}
-      {!done && index === 0 && (
+      {!loading && !done && index === 0 && (
         <div style={{
           fontSize: 12, color: T.textMid, opacity: 0.6, marginBottom: 12,
           textAlign: "center", letterSpacing: "0.02em",
@@ -1439,7 +1451,7 @@ function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCar
       )}
 
       {/* Controls */}
-      {!done && (
+      {!loading && !done && (
         <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
           <button
             onClick={() => requestSwipe("left")}
@@ -1492,6 +1504,7 @@ function AppContent({ signOut }) {
 
   // Sparq Mode — swipeable discovery deck (see buildSparqDeck / SparqModeOverlay)
   const [sparqOpen, setSparqOpen] = useState(false);
+  const [sparqLoading, setSparqLoading] = useState(false); // deck being built (waits on careers fetch)
   const [sparqCards, setSparqCards] = useState([]);
   const [sparqStartIndex, setSparqStartIndex] = useState(0); // card to (re)open on
   const [careerFromSparq, setCareerFromSparq] = useState(false); // did we open the career page from Sparq Mode?
@@ -1703,18 +1716,27 @@ function AppContent({ signOut }) {
     // current screen. The active screen re-renders with the new filter applied.
   }
 
-  // Open Sparq Mode. Reads the user's worlds DIRECTLY from profiles.industries
-  // (the exact source the profile modal writes) at open time, so it can never go
-  // stale relative to a cached React state. Reuses today's deck only if it's a
-  // non-empty set; a previously-cached EMPTY deck is regenerated.
-  async function openSparqMode() {
+  // Open Sparq Mode. We only flip the overlay into a loading state here; the
+  // actual deck is built by the effect below once the careers fetch has resolved
+  // (opening immediately after first load would otherwise race an empty
+  // allCareers and wrongly show the "Set up Your Worlds" empty state).
+  function openSparqMode() {
     setSparqStartIndex(0); // fresh open always starts at the first card
+    setSparqCards([]);
+    setSparqLoading(true);
+    setSparqOpen(true);
+  }
+
+  // Build today's deck. Reads the user's worlds DIRECTLY from profiles.industries
+  // (the exact source the profile modal writes), so it can't go stale relative to
+  // a cached React state. Reuses today's deck only if it's a non-empty set; a
+  // previously-cached EMPTY deck is regenerated. Returns the resolved card list.
+  async function computeSparqDeck() {
     const today = sparqToday();
     const byId = new Map(allCareers.map(c => [c.id, c]));
     const skipped = ls(SPARQ_KEYS.skipped, []);
     const skipSet = new Set(skipped);
 
-    // Live read of the same Supabase column the profile modal uses.
     let rawIndustries = null;
     let worlds = profileIndustries;
     if (user) {
@@ -1727,8 +1749,6 @@ function AppContent({ signOut }) {
       }
     }
 
-    // Reuse today's deck only if it exists AND is non-empty (guards a poisoned
-    // empty cache from an earlier open when worlds hadn't loaded yet).
     const daily = ls(SPARQ_KEYS.daily, null);
     let ids = null;
     if (daily && daily.date === today && Array.isArray(daily.ids) && daily.ids.length) {
@@ -1763,16 +1783,25 @@ function AppContent({ signOut }) {
     if (import.meta.env.DEV) {
       console.log("[sparq] raw profiles.industries (what the modal writes):", rawIndustries);
       console.log("[sparq] normalized worlds Sparq uses:", worlds);
-      console.log("[sparq] ce_profile_industries cache:", ls("ce_profile_industries", "<<missing>>"));
-      console.log("[sparq] sparq_daily_set cache:", ls(SPARQ_KEYS.daily, "<<missing>>"));
-      console.log("[sparq] eligible careers with profile primary_industry:",
-        allCareers.filter(c => new Set(worlds).has(c.primary_industry)).length);
       console.log("[sparq] deck ids:", ids);
     }
 
-    setSparqCards(ids.map(id => byId.get(id)).filter(Boolean));
-    setSparqOpen(true);
+    return ids.map(id => byId.get(id)).filter(Boolean);
   }
+
+  // Build the deck once the overlay is open AND the careers fetch has finished.
+  // Runs only during a fresh open (sparqLoading); the Back-to-deck path reopens
+  // with sparqLoading=false and reuses the existing cards at the resume index.
+  useEffect(() => {
+    if (!sparqOpen || !sparqLoading || careersLoading) return;
+    let cancelled = false;
+    computeSparqDeck().then(cards => {
+      if (cancelled) return;
+      setSparqCards(cards);
+      setSparqLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [sparqOpen, sparqLoading, careersLoading, allCareers]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Swipe right → save to Shortlist (never un-stars); swipe left → permanent skip.
   function handleSparqSwipe(dir, career) {
@@ -1864,6 +1893,7 @@ function AppContent({ signOut }) {
       {sparqOpen && (
         <SparqModeOverlay
           cards={sparqCards}
+          loading={sparqLoading}
           initialIndex={sparqStartIndex}
           onClose={() => setSparqOpen(false)}
           onSwipe={handleSparqSwipe}
