@@ -46,6 +46,33 @@ function getConfig(industryName) {
   return INDUSTRY_CONFIG.find(c => c.name === industryName) || { icon: "◉", color: T.accent, bg: T.bgDeep };
 }
 
+// The profile modal + onboarding quiz store industry SLUGS (e.g. "tech") in
+// profiles.industries, while INDUSTRY_CONFIG and careers.primary_industry use
+// full names ("Tech & Engineering"). This maps slug → full name.
+const INDUSTRY_SLUG_TO_NAME = {
+  tech: "Tech & Engineering", design: "Design & Creative", biz: "Business & Finance",
+  health: "Healthcare & Medicine", arts: "Arts & Performance", edu: "Education & Coaching",
+  media: "Media & Journalism", law: "Law & Government", science: "Science & Research",
+  hospitality: "Hospitality & Events", sports: "Sports & Fitness", fashion: "Fashion & Beauty",
+  entrepreneur: "Entrepreneurship", environment: "Environment & Sustainability",
+  nonprofit: "Social Impact & Nonprofit", marketing: "Marketing & Communications",
+  cyber: "Cybersecurity", architecture: "Architecture & Urban Planning",
+  gaming: "Gaming & Esports", supplychain: "Supply Chain & Operations",
+  food: "Food & Culinary", aviation: "Aviation & Transportation",
+};
+
+// Normalize a raw profiles.industries array to full industry names, accepting
+// both slugs ("tech") and already-full names, and dropping anything unknown.
+function normalizeIndustries(raw) {
+  const validNames = new Set(INDUSTRY_CONFIG.map(c => c.name));
+  const out = [];
+  (raw || []).forEach(v => {
+    if (validNames.has(v)) out.push(v);
+    else if (INDUSTRY_SLUG_TO_NAME[v]) out.push(INDUSTRY_SLUG_TO_NAME[v]);
+  });
+  return [...new Set(out)];
+}
+
 // ─── Filter definitions ───────────────────────────────────────────────────────
 
 const WORK_STYLE_FILTERS = [
@@ -354,7 +381,7 @@ function FilterGroup({ label, chips, isActive, onToggle, color }) {
 }
 
 function CareerGridScreen({
-  selectedIndustries, allCareers, loading, onViewCareer, onChangeIndustries,
+  selectedIndustries, allCareers, loading, onViewCareer, onSparqMode,
   workStyleActive, setWorkStyleActive, pathActive, setPathActive,
   vibeActive, setVibeActive, searchQuery, setSearchQuery, restoreScrollY,
   starredIds, onToggleStar,
@@ -394,13 +421,15 @@ function CareerGridScreen({
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
         <div style={{ fontSize: 22, fontWeight: 800, color: T.text, flex: 1 }}>Explore Careers</div>
         <button
-          onClick={onChangeIndustries}
+          onClick={onSparqMode}
+          title="Swipe through a fresh set of careers"
           style={{
-            background: "transparent", border: `1px solid ${T.border}`,
-            borderRadius: 20, padding: "6px 14px", fontSize: 12, fontWeight: 600,
-            color: T.textMid, cursor: "pointer", flexShrink: 0,
+            background: `${T.accent}22`, border: `1px solid ${T.accent}`,
+            borderRadius: 20, padding: "6px 16px", fontSize: 12, fontWeight: 700,
+            color: T.accent, cursor: "pointer", flexShrink: 0,
+            display: "flex", alignItems: "center", gap: 5,
           }}
-        >Change worlds</button>
+        >⚡ Sparq Mode</button>
       </div>
 
       {/* Search */}
@@ -1024,6 +1053,364 @@ const RESTORABLE = new Set(["pick", "home", "shortlist", "guide", "when-to-apply
 function ls(key, fallback) { try { const v = localStorage.getItem(key); return v != null ? JSON.parse(v) : fallback; } catch { return fallback; } }
 function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
 
+// ─── Sparq Mode ────────────────────────────────────────────────────────────────
+// Swipeable, one-card-at-a-time discovery deck. All persistence uses the same
+// localStorage-JSON pattern as the starred/saved items above.
+const SPARQ_KEYS = {
+  skipped: "sparq_skipped_careers",       // number[] — swiped-left ids, excluded forever
+  recent:  "sparq_recently_shown",        // { [id]: "YYYY-MM-DD" } — excluded for 30 days
+  clicks:  "sparq_industry_clicks",       // { [industryName]: count } — sidebar-select tally
+  daily:   "sparq_daily_set",             // { date: "YYYY-MM-DD", ids: number[] }
+};
+const SPARQ_DECK_SIZE = 6;
+const SPARQ_PROFILE_CARDS = 3;            // from the user's own worlds
+const SPARQ_RECENT_DAYS = 30;
+
+// Local calendar date as YYYY-MM-DD (used for daily-set + recently-shown stamps).
+function sparqToday() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+function toTagList(v) {
+  if (Array.isArray(v)) return v.map(x => String(x).trim().toLowerCase()).filter(Boolean);
+  if (typeof v === "string") return v.split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
+  return [];
+}
+function toSecondaryList(v) {
+  if (Array.isArray(v)) return v.map(x => String(x).trim()).filter(Boolean);
+  if (typeof v === "string") return v.split(",").map(x => x.trim()).filter(Boolean);
+  return [];
+}
+
+// Was this career shown in Sparq Mode within the last SPARQ_RECENT_DAYS?
+function shownRecently(id, recentMap, todayStr) {
+  const day = recentMap[id];
+  if (!day) return false;
+  const then = Date.parse(day + "T00:00:00");
+  const now = Date.parse(todayStr + "T00:00:00");
+  if (isNaN(then) || isNaN(now)) return false;
+  return (now - then) / 86400000 < SPARQ_RECENT_DAYS;
+}
+
+// Weighted-without-replacement pick of `n` industries, biased by click counts
+// (weight = clicks + 1 so unclicked worlds still rotate in).
+function pickIndustriesWeighted(industries, clicks, n) {
+  const pool = [...industries];
+  const chosen = [];
+  while (chosen.length < n && pool.length) {
+    const weights = pool.map(ind => (clicks[ind] || 0) + 1);
+    let r = Math.random() * weights.reduce((a, b) => a + b, 0);
+    let i = 0;
+    for (; i < weights.length; i++) { r -= weights[i]; if (r <= 0) break; }
+    if (i >= pool.length) i = pool.length - 1;
+    chosen.push(pool.splice(i, 1)[0]);
+  }
+  return chosen;
+}
+
+function pickRandom(arr, n) {
+  const pool = [...arr];
+  const out = [];
+  while (out.length < n && pool.length) {
+    out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+  }
+  return out;
+}
+
+// Build today's deck of up to 6 careers. Returns an array of career ids.
+// - 3 "profile" cards: primary industry ∈ the user's worlds, industries chosen
+//   weighted by how often they've been clicked into.
+// - 3 "wildcard" cards: primary industry OUTSIDE their worlds but adjacent —
+//   either tagged with one of their worlds as a secondary industry, or sharing a
+//   niche/skill tag with careers they've shortlisted. Never zero-overlap.
+// Excludes the permanent skip list and anything shown in the last 30 days.
+function buildSparqDeck(allCareers, { profileIndustries, industryClicks, skipped, recentMap, nicheTags, todayStr }) {
+  const skipSet = new Set(skipped);
+  const profSet = new Set(profileIndustries);
+  const eligible = allCareers.filter(c =>
+    c.id != null && !skipSet.has(c.id) && !shownRecently(c.id, recentMap, todayStr)
+  );
+
+  const profilePool = eligible.filter(c => profSet.has(c.primary_industry));
+  const wildcardPool = eligible.filter(c => {
+    if (profSet.has(c.primary_industry)) return false;
+    const secMatch = toSecondaryList(c.secondary_industries).some(s => profSet.has(s));
+    if (secMatch) return true;
+    if (nicheTags.size === 0) return false;
+    const tags = [...toTagList(c.keywords), ...toTagList(c.traits)];
+    return tags.some(t => nicheTags.has(t));
+  });
+
+  const used = new Set();
+  const take = c => { used.add(c.id); return c; };
+
+  // Profile cards — one per weighted-chosen industry, then backfill from the pool.
+  const byIndustry = new Map();
+  profilePool.forEach(c => {
+    if (!byIndustry.has(c.primary_industry)) byIndustry.set(c.primary_industry, []);
+    byIndustry.get(c.primary_industry).push(c);
+  });
+  const profileCards = [];
+  const industries = pickIndustriesWeighted([...byIndustry.keys()], industryClicks, SPARQ_PROFILE_CARDS);
+  industries.forEach(ind => {
+    const pick = pickRandom(byIndustry.get(ind).filter(c => !used.has(c.id)), 1)[0];
+    if (pick) profileCards.push(take(pick));
+  });
+  // If fewer distinct industries than needed, top up from anywhere in the pool.
+  pickRandom(profilePool.filter(c => !used.has(c.id)), SPARQ_PROFILE_CARDS - profileCards.length)
+    .forEach(c => profileCards.push(take(c)));
+
+  // Wildcards fill the rest of the deck.
+  const wildCards = pickRandom(wildcardPool.filter(c => !used.has(c.id)), SPARQ_DECK_SIZE - profileCards.length)
+    .map(take);
+
+  // Last-resort backfill so a thin profile/wildcard pool still yields a full deck.
+  const deck = [...profileCards, ...wildCards];
+  if (deck.length < SPARQ_DECK_SIZE) {
+    pickRandom([...profilePool, ...wildcardPool].filter(c => !used.has(c.id)), SPARQ_DECK_SIZE - deck.length)
+      .forEach(c => deck.push(take(c)));
+  }
+  return deck.map(c => c.id);
+}
+
+// One swipeable card. Drag past threshold (or arrow buttons) fires onSwipe;
+// a click that isn't a drag fires onOpen (→ the career's roadmap page).
+function SparqCard({ career, onSwipe, onOpen, isTop }) {
+  const [drag, setDrag] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [leaving, setLeaving] = useState(0); // -1 left, 1 right (animating out)
+  const start = useRef(null);
+  const moved = useRef(false);
+  const cfg = getConfig(career.primary_industry);
+  const secondary = toSecondaryList(career.secondary_industries).filter(s => s !== career.primary_industry);
+  const allInd = [career.primary_industry, ...secondary].filter(Boolean);
+  const desc = career.description || career.desc || "";
+  const THRESHOLD = 90;
+
+  function down(e) {
+    if (!isTop || leaving) return;
+    start.current = e.clientX;
+    moved.current = false;
+    setDragging(true);
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  }
+  function move(e) {
+    if (start.current == null) return;
+    const dx = e.clientX - start.current;
+    if (Math.abs(dx) > 6) moved.current = true;
+    setDrag(dx);
+  }
+  function up() {
+    if (start.current == null) return;
+    start.current = null;
+    setDragging(false);
+    if (Math.abs(drag) >= THRESHOLD) {
+      const dir = drag > 0 ? 1 : -1;
+      setLeaving(dir);
+      setDrag(dir * (window.innerWidth || 800));
+      setTimeout(() => onSwipe(dir > 0 ? "right" : "left"), 180);
+    } else {
+      if (!moved.current) onOpen();
+      setDrag(0);
+    }
+  }
+
+  const rot = drag / 18;
+  const rightHint = Math.max(0, Math.min(1, drag / THRESHOLD));
+  const leftHint = Math.max(0, Math.min(1, -drag / THRESHOLD));
+
+  return (
+    <div
+      onPointerDown={down}
+      onPointerMove={move}
+      onPointerUp={up}
+      onPointerCancel={up}
+      style={{
+        position: "absolute", inset: 0,
+        transform: `translateX(${drag}px) rotate(${rot}deg) scale(${isTop ? 1 : 0.95})`,
+        transition: dragging ? "none" : "transform 0.18s ease-out",
+        touchAction: "pan-y", cursor: isTop ? "grab" : "default", userSelect: "none",
+      }}
+    >
+      <div style={{
+        position: "relative", height: "100%", boxSizing: "border-box",
+        background: T.bgCard, border: `1px solid ${cfg.color}`, borderRadius: 20,
+        padding: "22px 20px", display: "flex", flexDirection: "column",
+        boxShadow: "0 12px 40px rgba(0,0,0,0.45)", overflow: "hidden",
+      }}>
+        {/* Save / Skip drag hints */}
+        <div style={{
+          position: "absolute", top: 18, left: 18, opacity: rightHint,
+          border: "2px solid #22C55E", color: "#22C55E", borderRadius: 10,
+          padding: "3px 10px", fontSize: 13, fontWeight: 800, transform: "rotate(-12deg)",
+        }}>SAVE</div>
+        <div style={{
+          position: "absolute", top: 18, right: 18, opacity: leftHint,
+          border: "2px solid #EF4444", color: "#EF4444", borderRadius: 10,
+          padding: "3px 10px", fontSize: 13, fontWeight: 800, transform: "rotate(12deg)",
+        }}>SKIP</div>
+
+        <div style={{ fontSize: 22, fontWeight: 800, color: T.text, lineHeight: 1.25, marginBottom: 12, marginTop: 8 }}>
+          {career.name || career.title}
+        </div>
+        {allInd.length > 0 && (
+          <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 14 }}>
+            {allInd.map(ind => {
+              const ic = getConfig(ind);
+              return (
+                <span key={ind} style={{
+                  fontSize: 11, fontWeight: 600, color: ic.color,
+                  background: `${ic.color}18`, border: `1px solid ${ic.color}40`,
+                  borderRadius: 20, padding: "3px 10px",
+                }}>{ind}</span>
+              );
+            })}
+          </div>
+        )}
+        {career.salary_range || career.salary ? (
+          <div style={{ fontSize: 12, fontWeight: 600, color: T.textMid, marginBottom: 12 }}>
+            💰 {career.salary_range || career.salary}
+          </div>
+        ) : null}
+        {desc && (
+          <div style={{ fontSize: 14, color: T.textMid, lineHeight: 1.6, flex: 1, overflow: "hidden" }}>
+            {desc.length > 260 ? desc.slice(0, 260) + "…" : desc}
+          </div>
+        )}
+        <div style={{ fontSize: 11, color: T.textDim, marginTop: 14, textAlign: "center" }}>
+          Tap card for the full roadmap
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCareer, onOpenProfile }) {
+  const [index, setIndex] = useState(initialIndex);
+  const remaining = cards.slice(index);
+
+  function act(dir) {
+    const card = cards[index];
+    if (!card) return;
+    onSwipe(dir, card);
+    setIndex(i => i + 1);
+  }
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape") onClose();
+      else if (e.key === "ArrowRight") act("right");
+      else if (e.key === "ArrowLeft") act("left");
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }); // re-bind each render so `index` in act() stays current
+
+  const empty = cards.length === 0;
+  const done = index >= cards.length;
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 10000, background: "rgba(10,11,20,0.92)",
+      backdropFilter: "blur(6px)", display: "flex", flexDirection: "column",
+      alignItems: "center", padding: "20px 16px", boxSizing: "border-box",
+    }}>
+      {/* Header */}
+      <div style={{ width: "100%", maxWidth: 460, display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+        <div style={{ fontSize: 17, fontWeight: 800, color: T.text, flex: 1 }}>⚡ Sparq Mode</div>
+        <div style={{ fontSize: 12, color: T.textMid }}>
+          {done ? `${cards.length} of ${cards.length}` : `${index + 1} of ${cards.length}`}
+        </div>
+        <button
+          onClick={onClose}
+          style={{
+            background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 10,
+            color: T.textMid, fontSize: 16, lineHeight: 1, padding: "6px 11px", cursor: "pointer",
+          }}
+        >×</button>
+      </div>
+
+      {/* Card stack */}
+      <div style={{ position: "relative", width: "100%", maxWidth: 460, flex: 1, maxHeight: 560, marginBottom: 18 }}>
+        {done ? (
+          <div style={{
+            position: "absolute", inset: 0, display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center", textAlign: "center", padding: 24,
+          }}>
+            <div style={{ fontSize: 40, marginBottom: 14 }}>{empty ? "🧭" : "✨"}</div>
+            <div style={{ fontSize: 17, fontWeight: 700, color: T.text, marginBottom: 6 }}>
+              {empty ? "Set up Your Worlds first" : "That's today's set"}
+            </div>
+            <div style={{ fontSize: 13, color: T.textMid, marginBottom: 20, maxWidth: 300 }}>
+              {empty
+                ? "Sparq Mode builds your set from the worlds saved in your profile. Add a few in your profile settings to get started."
+                : "A fresh set of careers unlocks tomorrow. Saved ones are in your Shortlist."}
+            </div>
+            {empty && onOpenProfile ? (
+              <button
+                onClick={onOpenProfile}
+                style={{
+                  background: T.accent, border: "none", borderRadius: 12, color: "#fff",
+                  fontSize: 14, fontWeight: 700, padding: "10px 22px", cursor: "pointer",
+                }}
+              >Open profile settings</button>
+            ) : (
+              <button
+                onClick={onClose}
+                style={{
+                  background: T.accent, border: "none", borderRadius: 12, color: "#fff",
+                  fontSize: 14, fontWeight: 700, padding: "10px 22px", cursor: "pointer",
+                }}
+              >Done</button>
+            )}
+          </div>
+        ) : (
+          // Render a couple beneath the top card for depth, top card last (on top).
+          remaining.slice(0, 3).map((card, i) => {
+            const isTop = i === 0;
+            return (
+              <div key={card.id} style={{ position: "absolute", inset: 0, zIndex: 10 - i, pointerEvents: isTop ? "auto" : "none" }}>
+                <SparqCard
+                  career={card}
+                  isTop={isTop}
+                  onSwipe={dir => act(dir)}
+                  onOpen={() => onOpenCareer(card, index)}
+                />
+              </div>
+            );
+          }).reverse()
+        )}
+      </div>
+
+      {/* Controls */}
+      {!done && (
+        <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+          <button
+            onClick={() => act("left")}
+            title="Skip (never show again)"
+            style={{
+              width: 58, height: 58, borderRadius: "50%", cursor: "pointer",
+              background: T.bgCard, border: `2px solid #EF4444`, color: "#EF4444",
+              fontSize: 24, lineHeight: 1, display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+          >✕</button>
+          <button
+            onClick={() => act("right")}
+            title="Save to Shortlist"
+            style={{
+              width: 58, height: 58, borderRadius: "50%", cursor: "pointer",
+              background: T.bgCard, border: `2px solid #22C55E`, color: "#22C55E",
+              fontSize: 24, lineHeight: 1, display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+          >★</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── AppContent ────────────────────────────────────────────────────────────────
 
 function AppContent({ signOut }) {
@@ -1048,6 +1435,16 @@ function AppContent({ signOut }) {
   const [prevScreen, setPrevScreen] = useState(null);
   const [allCareers, setAllCareers] = useState([]);
   const [careersLoading, setCareersLoading] = useState(true);
+
+  // Sparq Mode — swipeable discovery deck (see buildSparqDeck / SparqModeOverlay)
+  const [sparqOpen, setSparqOpen] = useState(false);
+  const [sparqCards, setSparqCards] = useState([]);
+  const [sparqStartIndex, setSparqStartIndex] = useState(0); // card to (re)open on
+  const [careerFromSparq, setCareerFromSparq] = useState(false); // did we open the career page from Sparq Mode?
+  // The user's saved "Your Worlds" (profiles.industries). Distinct from the
+  // sidebar's selectedIndustries filter — Sparq Mode reads THIS, so it reflects
+  // the profile the user set up in onboarding/quiz, not the page-level filter.
+  const [profileIndustries, setProfileIndustries] = useState(() => normalizeIndustries(ls("ce_profile_industries", [])));
 
   const [starredIds, setStarredIds] = useState(new Set());
 
@@ -1161,6 +1558,12 @@ function AppContent({ signOut }) {
         const valid = data.industries.filter(i => validNames.has(i));
         setSelected(valid);
         lsSet("ce_industries", valid);
+        // Cache the saved profile worlds separately — this is Sparq Mode's source
+        // of truth and must NOT be affected by later sidebar filter changes.
+        // Normalize because the profile stores slugs, not full names.
+        const worlds = normalizeIndustries(data.industries);
+        setProfileIndustries(worlds);
+        lsSet("ce_profile_industries", worlds);
         localStorage.setItem("ce_landing_seen", "1");
         setScreen(prev => prev === "pick" ? "home" : prev);
       }
@@ -1203,6 +1606,9 @@ function AppContent({ signOut }) {
   function goTo(s) { setPrevScreen(screen); setScreen(s); }
 
   function handleViewCareer(career, color) {
+    // Default origin is the normal grid; handleSparqOpenCareer re-sets this to
+    // true after calling in, so Sparq's Back behavior only applies from Sparq.
+    setCareerFromSparq(false);
     if (screen !== "career") savedScrollY.current = window.scrollY;
     window.scrollTo(0, 0);
     const normalized = (career.title && !career.name) ? career : {
@@ -1228,12 +1634,134 @@ function AppContent({ signOut }) {
 
   function handleToggleIndustry(name) {
     setSelected(prev => {
-      const next = prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name];
+      const wasSelected = prev.includes(name);
+      const next = wasSelected ? prev.filter(n => n !== name) : [...prev, name];
       lsSet("ce_industries", next);
+      // Tally selections (not deselections) to weight Sparq Mode's profile picks.
+      if (!wasSelected) {
+        const clicks = ls(SPARQ_KEYS.clicks, {});
+        clicks[name] = (clicks[name] || 0) + 1;
+        lsSet(SPARQ_KEYS.clicks, clicks);
+      }
       return next;
     });
     // Toggling an industry only updates filter state — it never changes the
     // current screen. The active screen re-renders with the new filter applied.
+  }
+
+  // Open Sparq Mode. Reads the user's worlds DIRECTLY from profiles.industries
+  // (the exact source the profile modal writes) at open time, so it can never go
+  // stale relative to a cached React state. Reuses today's deck only if it's a
+  // non-empty set; a previously-cached EMPTY deck is regenerated.
+  async function openSparqMode() {
+    setSparqStartIndex(0); // fresh open always starts at the first card
+    const today = sparqToday();
+    const byId = new Map(allCareers.map(c => [c.id, c]));
+    const skipped = ls(SPARQ_KEYS.skipped, []);
+    const skipSet = new Set(skipped);
+
+    // Live read of the same Supabase column the profile modal uses.
+    let rawIndustries = null;
+    let worlds = profileIndustries;
+    if (user) {
+      const { data, error } = await supabase.from("profiles").select("industries").eq("id", user.id).single();
+      rawIndustries = data?.industries ?? null;
+      if (!error && data) {
+        worlds = normalizeIndustries(data.industries);
+        setProfileIndustries(worlds);
+        lsSet("ce_profile_industries", worlds);
+      }
+    }
+
+    // Reuse today's deck only if it exists AND is non-empty (guards a poisoned
+    // empty cache from an earlier open when worlds hadn't loaded yet).
+    const daily = ls(SPARQ_KEYS.daily, null);
+    let ids = null;
+    if (daily && daily.date === today && Array.isArray(daily.ids) && daily.ids.length) {
+      ids = daily.ids.filter(id => byId.has(id) && !skipSet.has(id));
+    }
+    if (!ids || ids.length === 0) {
+      const nicheTags = new Set();
+      starredIds.forEach(id => {
+        const c = byId.get(id);
+        if (!c) return;
+        toTagList(c.keywords).forEach(t => nicheTags.add(t));
+        toTagList(c.traits).forEach(t => nicheTags.add(t));
+      });
+      const recentMap = ls(SPARQ_KEYS.recent, {});
+      ids = buildSparqDeck(allCareers, {
+        profileIndustries: worlds,
+        industryClicks: ls(SPARQ_KEYS.clicks, {}),
+        skipped,
+        recentMap,
+        nicheTags,
+        todayStr: today,
+      });
+      // Only persist / stamp a real (non-empty) deck, so an empty result doesn't
+      // lock the user out for the rest of the day.
+      if (ids.length) {
+        lsSet(SPARQ_KEYS.daily, { date: today, ids });
+        ids.forEach(id => { recentMap[id] = today; });
+        lsSet(SPARQ_KEYS.recent, recentMap);
+      }
+    }
+
+    if (import.meta.env.DEV) {
+      console.log("[sparq] raw profiles.industries (what the modal writes):", rawIndustries);
+      console.log("[sparq] normalized worlds Sparq uses:", worlds);
+      console.log("[sparq] ce_profile_industries cache:", ls("ce_profile_industries", "<<missing>>"));
+      console.log("[sparq] sparq_daily_set cache:", ls(SPARQ_KEYS.daily, "<<missing>>"));
+      console.log("[sparq] eligible careers with profile primary_industry:",
+        allCareers.filter(c => new Set(worlds).has(c.primary_industry)).length);
+      console.log("[sparq] deck ids:", ids);
+    }
+
+    setSparqCards(ids.map(id => byId.get(id)).filter(Boolean));
+    setSparqOpen(true);
+  }
+
+  // Swipe right → save to Shortlist (never un-stars); swipe left → permanent skip.
+  function handleSparqSwipe(dir, career) {
+    if (!career) return;
+    if (dir === "right") {
+      if (!starredIds.has(career.id)) toggleStar(career.id);
+    } else {
+      const skipped = ls(SPARQ_KEYS.skipped, []);
+      if (!skipped.includes(career.id)) {
+        skipped.push(career.id);
+        lsSet(SPARQ_KEYS.skipped, skipped);
+      }
+    }
+  }
+
+  function handleSparqOpenCareer(career, index) {
+    setSparqStartIndex(index || 0); // resume here when Back is pressed
+    setSparqOpen(false);
+    handleViewCareer(career, getConfig(career.primary_industry).color);
+    setCareerFromSparq(true); // after handleViewCareer, which resets it to false
+  }
+
+  // Back from a career page: if we arrived from Sparq Mode, reopen the deck at
+  // the same card; otherwise fall back to Explore Careers as before.
+  function handleCareerBack() {
+    if (careerFromSparq) {
+      setCareerFromSparq(false);
+      setScreen("home");
+      setSparqOpen(true); // remounts overlay at initialIndex={sparqStartIndex}
+    } else {
+      setScreen("home");
+    }
+  }
+
+  // Re-pull saved "Your Worlds" from the profile (e.g. after the user edits it),
+  // keeping Sparq Mode's source of truth current without a full reload.
+  function refreshProfileIndustries() {
+    if (!user) return;
+    supabase.from("profiles").select("industries").eq("id", user.id).single().then(({ data }) => {
+      const worlds = normalizeIndustries(data?.industries);
+      setProfileIndustries(worlds);
+      lsSet("ce_profile_industries", worlds);
+    });
   }
 
   return (
@@ -1274,8 +1802,19 @@ function AppContent({ signOut }) {
       )}
       {showProfile && (
         <ProfilePage
-          onClose={() => setShowProfile(false)}
+          onClose={() => { setShowProfile(false); refreshProfileIndustries(); }}
           onRetakeQuiz={() => { setShowProfile(false); setShowQuiz(true); }}
+        />
+      )}
+
+      {sparqOpen && (
+        <SparqModeOverlay
+          cards={sparqCards}
+          initialIndex={sparqStartIndex}
+          onClose={() => setSparqOpen(false)}
+          onSwipe={handleSparqSwipe}
+          onOpenCareer={handleSparqOpenCareer}
+          onOpenProfile={() => { setSparqOpen(false); setShowProfile(true); }}
         />
       )}
 
@@ -1307,7 +1846,7 @@ function AppContent({ signOut }) {
             allCareers={allCareers}
             loading={careersLoading}
             onViewCareer={handleViewCareer}
-            onChangeIndustries={() => setScreen("pick")}
+            onSparqMode={openSparqMode}
             workStyleActive={workStyleActive}
             setWorkStyleActive={setWorkStyleActive}
             pathActive={pathActive}
@@ -1325,7 +1864,7 @@ function AppContent({ signOut }) {
           <CareerTimeline
             career={activeCareer}
             industryColor={activeCareerColor}
-            onBack={() => setScreen("home")}
+            onBack={handleCareerBack}
             onViewCareer={handleViewCareer}
             onExploreIndustry={(industryName) => {
               if (industryName) setSelected([industryName]);
