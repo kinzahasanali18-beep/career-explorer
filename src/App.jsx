@@ -1428,6 +1428,16 @@ function SparqModeOverlay({ cards, initialIndex = 0, onClose, onSwipe, onOpenCar
         )}
       </div>
 
+      {/* First-card affordance — faint, only on card 1, fades out once they engage */}
+      {!done && index === 0 && (
+        <div style={{
+          fontSize: 12, color: T.textMid, opacity: 0.6, marginBottom: 12,
+          textAlign: "center", letterSpacing: "0.02em",
+        }}>
+          ‹ Swipe the card, or tap ✕ / ★ ›
+        </div>
+      )}
+
       {/* Controls */}
       {!done && (
         <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
