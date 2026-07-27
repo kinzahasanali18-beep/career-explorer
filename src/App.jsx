@@ -237,10 +237,7 @@ function CareerCard({ career, onClick, isStarred, onToggleStar }) {
       onClick={onClick}
       style={{
         background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 16,
-        // Subtle left accent in the card's primary-industry color. Inset shadow
-        // (not a border) so the hover border-color toggle below can't erase it.
-        boxShadow: `inset 3px 0 0 ${primaryCfg.color}`,
-        padding: "14px 14px 14px 16px", cursor: "pointer", transition: "border-color 0.15s",
+        padding: "14px", cursor: "pointer", transition: "border-color 0.15s",
       }}
       onMouseEnter={e => { e.currentTarget.style.borderColor = primaryCfg.color; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; }}
