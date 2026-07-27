@@ -383,6 +383,24 @@ function FilterGroup({ label, chips, isActive, onToggle, color }) {
   );
 }
 
+// Relevance score for a career against a search query. Weighted so a title
+// match beats a keyword match beats a description match, and a full-phrase hit
+// in the title (the exact role someone typed) ranks above scattered token hits.
+function searchScore(c, tokens, fullQuery) {
+  const name = (c.name || "").toLowerCase();
+  const desc = (c.description || c.desc || "").toLowerCase();
+  const keywords = (c.keywords || []).map(k => String(k).toLowerCase());
+  let score = 0;
+  if (name.includes(fullQuery)) score += 100;
+  if (desc.includes(fullQuery)) score += 15;
+  for (const t of tokens) {
+    if (name.includes(t)) score += 10;
+    if (keywords.some(k => k.includes(t))) score += 6;
+    if (desc.includes(t)) score += 2;
+  }
+  return score;
+}
+
 function CareerGridScreen({
   selectedIndustries, allCareers, loading, onViewCareer, onSparqMode,
   workStyleActive, setWorkStyleActive, pathActive, setPathActive,
@@ -401,12 +419,25 @@ function CareerGridScreen({
     });
   }
 
-  const q = searchQuery.trim().toLowerCase();
+  // Debounce the search input so we filter/rank the (large) dataset at most
+  // once per pause in typing rather than on every keystroke. The input stays
+  // bound to `searchQuery` for responsiveness; `debouncedQuery` drives results.
+  const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQuery(searchQuery), 250);
+    return () => clearTimeout(id);
+  }, [searchQuery]);
+
+  const q = debouncedQuery.trim().toLowerCase();
+  const hasSearch = q.length > 0;
+  const searchTokens = q.split(/\s+/).filter(Boolean);
 
   // "All industries" (nothing selected) is intentionally an empty state — the
   // full unfiltered set is 6,000+ cards, so we prompt the user to pick an
-  // industry instead of dumping everything.
+  // industry instead of dumping everything. But an active search overrides this:
+  // it queries the whole dataset, so we show results even with no industry set.
   const noIndustrySelected = selectedIndustries.length === 0;
+  const showEmptyState = noIndustrySelected && !hasSearch;
 
   // Accent color for the search focus ring: the selected industry's color (the
   // most recently selected, if several), or the neutral brand accent when none.
@@ -414,15 +445,28 @@ function CareerGridScreen({
     ? getConfig(selectedIndustries[selectedIndustries.length - 1]).color
     : T.accent;
 
-  const displayed = allCareers
+  // When searching, rank the whole dataset by relevance so the exact match
+  // floats to the top and related roles (shared keywords / same terms) follow.
+  // When not searching, keep the dataset in its natural order.
+  const base = hasSearch
+    ? allCareers
+        .map(c => ({ c, score: searchScore(c, searchTokens, q) }))
+        .filter(x => x.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(x => x.c)
+    : allCareers;
+
+  // Industry (and the other chip filters) apply on top of the search results.
+  const displayed = base
     .filter(c => selectedIndustries.length === 0 || selectedIndustries.includes(c.primary_industry))
     .filter(c => matchesWorkStyle(c.work_style, workStyleActive))
     .filter(c => !pathActive || (c.degree_required || "").toLowerCase() === pathActive.toLowerCase())
-    .filter(c => matchesVibe(c, vibeActive))
-    .filter(c => !q ||
-      (c.name || "").toLowerCase().includes(q) ||
-      (c.description || c.desc || "").toLowerCase().includes(q)
-    );
+    .filter(c => matchesVibe(c, vibeActive));
+
+  // The literal text the user typed (trimmed) and the selected industries'
+  // display names — used in the zero-results messaging below.
+  const queryText = debouncedQuery.trim();
+  const selectedIndustryNames = selectedIndustries.map(id => getConfig(id).name).join(", ");
 
   return (
     <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
@@ -501,8 +545,8 @@ function CareerGridScreen({
         color="#A78BFA"
       />
 
-      {/* Count — hidden until an industry is chosen (see empty state below) */}
-      {!noIndustrySelected && (
+      {/* Count — hidden only for the initial "pick an industry" empty state */}
+      {!showEmptyState && (
         <div style={{ fontSize: 11, color: T.textDim, marginBottom: 14, marginTop: 4 }}>
           {loading ? "Finding careers…" : `${displayed.length} career${displayed.length !== 1 ? "s" : ""}`}
         </div>
@@ -511,7 +555,7 @@ function CareerGridScreen({
       {/* No industry selected — prompt to pick one instead of showing all 6,000+.
           Not gated on `loading`: with no industry we never show cards, so this
           should render immediately on first load, before careers finish fetching. */}
-      {noIndustrySelected && (
+      {showEmptyState && (
         <div style={{ textAlign: "center", padding: "48px 20px" }}>
           <div style={{
             fontSize: 44, marginBottom: 12, lineHeight: 1, display: "inline-block",
@@ -525,7 +569,7 @@ function CareerGridScreen({
       )}
 
       {/* Grid */}
-      {noIndustrySelected ? null : loading ? (
+      {showEmptyState ? null : loading ? (
         <div className="career-card-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} style={{
@@ -553,11 +597,28 @@ function CareerGridScreen({
         </div>
       )}
 
-      {!loading && !noIndustrySelected && displayed.length === 0 && (
+      {!loading && !showEmptyState && displayed.length === 0 && (
         <div style={{ textAlign: "center", padding: "48px 20px" }}>
-          <div style={{ fontSize: 36, marginBottom: 12 }}>◎</div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>No careers match</div>
-          <div style={{ fontSize: 13, color: T.textMid }}>Try removing a filter or selecting different worlds.</div>
+          {hasSearch ? (
+            <div style={{
+              fontSize: 44, marginBottom: 12, lineHeight: 1, display: "inline-block",
+              background: "linear-gradient(135deg, #7F77DD, #38BDF8)",
+              WebkitBackgroundClip: "text", backgroundClip: "text",
+              WebkitTextFillColor: "transparent", color: "transparent",
+            }}>◈</div>
+          ) : (
+            <div style={{ fontSize: 36, marginBottom: 12 }}>◎</div>
+          )}
+          <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>
+            {hasSearch ? "No careers found" : "No careers match"}
+          </div>
+          <div style={{ fontSize: 13, color: T.textMid }}>
+            {hasSearch
+              ? (noIndustrySelected
+                  ? `No careers found for "${queryText}" — try browsing an industry instead.`
+                  : `No careers found for "${queryText}" in ${selectedIndustryNames} — try clearing the filter or browsing a different industry.`)
+              : "Try removing a filter or selecting different worlds."}
+          </div>
         </div>
       )}
     </div>
