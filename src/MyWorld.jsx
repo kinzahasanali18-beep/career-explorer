@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "./supabaseClient";
 import { useAuth } from "./AuthContext";
+import SalaryNote from "./SalaryNote";
 
 const T = {
   bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
@@ -631,7 +632,12 @@ export default function MyWorld({ onBack, onViewCareer }) {
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 10, color: getColor(selectedCareer.primary_industry), fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>{selectedCareer.primary_industry}</div>
               <div style={{ fontSize: 20, fontWeight: 800, color: T.text }}>{selectedCareer.name}</div>
-              {selectedCareer.salary_range && <div style={{ fontSize: 13, color: T.accent1, marginTop: 4, fontWeight: 600 }}>{selectedCareer.salary_range}</div>}
+              {selectedCareer.salary_range && (
+                <>
+                  <div style={{ fontSize: 13, color: T.accent1, marginTop: 4, fontWeight: 600 }}>{selectedCareer.salary_range}</div>
+                  <SalaryNote style={{ marginTop: 3 }} />
+                </>
+              )}
             </div>
             <button onClick={() => setSelectedCareer(null)} style={{ background: "none", border: "none", color: T.textDim, fontSize: 24, cursor: "pointer", padding: 0, lineHeight: 1 }}>×</button>
           </div>

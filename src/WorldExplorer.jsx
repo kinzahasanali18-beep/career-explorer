@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "./supabaseClient";
 import { useAuth } from "./AuthContext";
+import SalaryNote from "./SalaryNote";
 
 const SCENES = [
   { industryName: "Tech & Engineering",            label: "Tech",          slug: "tech",            color: "#7F77DD", skyTop: "#0e0d1a", skyBottom: "#13112a", groundColor: "#0c0b17", accentColor: "#A89EFF" },
@@ -636,7 +637,10 @@ function CareerCardModal({ career, sceneColor, isSaved, onSave, onClose, onKeywo
           </div>
           <div style={{ fontSize: 22, fontWeight: 800, color: "#E0E8FF", lineHeight: 1.25 }}>{career.name}</div>
           {career.salary_range && (
-            <div style={{ fontSize: 13, color: sceneColor, marginTop: 5, fontWeight: 600 }}>{career.salary_range}</div>
+            <>
+              <div style={{ fontSize: 13, color: sceneColor, marginTop: 5, fontWeight: 600 }}>{career.salary_range}</div>
+              <SalaryNote style={{ marginTop: 3 }} />
+            </>
           )}
         </div>
         <button onClick={onClose} style={{ background: "none", border: "none", color: "#4A4D66", fontSize: 24, cursor: "pointer", lineHeight: 1, padding: 0 }}>×</button>

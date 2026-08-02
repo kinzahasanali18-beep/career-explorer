@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import SalaryNote from "./SalaryNote";
 
 function hexToRgba(hex, alpha) {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -269,7 +270,8 @@ export default function BubbleScreen({ selectedIndustries, onBack, onViewCareer,
               animation: "cardIn 0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards",
             }}>
               <div style={{ fontSize: 15, fontWeight: 700, color: "#E0E8FF", marginBottom: 3 }}>{activeCareer.title}</div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: activeInd.color, marginBottom: 6 }}>{activeCareer.salary}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: activeInd.color, marginBottom: activeCareer.salary ? 2 : 6 }}>{activeCareer.salary}</div>
+              {activeCareer.salary && <SalaryNote style={{ marginBottom: 6 }} />}
               <div style={{ fontSize: 12, color: "#8B8FA8", lineHeight: 1.6, marginBottom: 10 }}>{activeCareer.desc}</div>
               {activeCareer.school && (
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>

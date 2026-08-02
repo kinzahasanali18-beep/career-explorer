@@ -10,6 +10,7 @@ import OnboardingQuiz from "./OnboardingQuiz";
 import SparqGuide from "./pages/SparqGuide";
 import WhenToApply, { WORLD_COLORS as DEADLINE_WORLD_COLORS } from "./pages/WhenToApply";
 import HiddenGems from "./pages/HiddenGems";
+import SalaryNote from "./SalaryNote";
 
 const T = {
   bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
@@ -1363,8 +1364,11 @@ function SparqCard({ career, onExit, onOpen, isTop, command }) {
           </div>
         )}
         {career.salary_range || career.salary ? (
-          <div style={{ fontSize: 12, fontWeight: 600, color: T.textMid, marginBottom: 12 }}>
-            💰 {career.salary_range || career.salary}
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: T.textMid }}>
+              💰 {career.salary_range || career.salary}
+            </div>
+            <SalaryNote style={{ marginTop: 3 }} />
           </div>
         ) : null}
         {desc && (

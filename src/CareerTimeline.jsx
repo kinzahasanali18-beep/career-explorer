@@ -1,5 +1,6 @@
 import { useState, useEffect, useLayoutEffect } from "react";
 import { supabase } from "./supabaseClient";
+import SalaryNote from "./SalaryNote";
 
 const STAGE_COLORS = ["#F472B6", "#C084FC", "#818CF8", "#38BDF8"];
 const STAGE_VIBES  = ["Education & Training", "Entry Level", "Mid Career", "Senior Level"];
@@ -323,7 +324,10 @@ function DiscoveryCard({ career: c, accentColor, sharedKeywords, onViewCareer })
     >
       <div style={{ fontSize: 12, fontWeight: 700, color: "#F9FAFB", marginBottom: 3, lineHeight: 1.3 }}>{title}</div>
       {salary && (
-        <div style={{ fontSize: 10, fontWeight: 700, color: accentColor, marginBottom: 5 }}>{salary}</div>
+        <>
+          <div style={{ fontSize: 10, fontWeight: 700, color: accentColor, marginBottom: 2 }}>{salary}</div>
+          <SalaryNote style={{ fontSize: 9, marginBottom: 5 }} />
+        </>
       )}
       {truncDesc && (
         <div style={{ fontSize: 11, color: "#8B8FA8", lineHeight: 1.5, marginBottom: sharedKeywords?.length ? 7 : 0 }}>{truncDesc}</div>
@@ -482,6 +486,7 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
           >{isStarred ? "★ Starred" : "☆ Star"}</button>
         )}
       </div>
+      {salary && <SalaryNote style={{ marginTop: -8, marginBottom: 14 }} />}
 
       {/* Education bar */}
       <div style={{
