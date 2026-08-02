@@ -329,6 +329,22 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
             }}>
               {saving ? 'Saving…' : saved ? '✓ Saved' : 'Save Changes'}
             </button>
+
+            {/* Second close button so users don't have to scroll back up to the
+                top ✕. Functionally identical: type="button" (never submits) and
+                calls the same onClose handler. */}
+            <button type="button" onClick={onClose} style={{
+              width: '100%', padding: '13px', marginTop: 10,
+              background: 'transparent',
+              border: `1px solid ${T.border}`, borderRadius: 10,
+              color: T.textMid, fontSize: 15, fontWeight: 700, cursor: 'pointer',
+              transition: 'border-color 0.2s, color 0.2s',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = T.textMid; e.currentTarget.style.color = T.text; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.textMid; }}
+            >
+              Close
+            </button>
           </form>
         )}
 
