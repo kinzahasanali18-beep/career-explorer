@@ -300,11 +300,36 @@ export default function OnboardingQuiz({ onComplete, isRetake = false }) {
   function selectAge(t) {
     setTier(t);
     setPhase('quiz');
+    // Start the quiz cleanly — matters when the user returns to the age screen
+    // via "Back" and re-picks (tier changes the question set entirely).
+    setCurrentQ(0);
+    setAnswers([]);
+    setSelected(null);
     setAnimKey(k => k + 1);
   }
 
   function handleAnswer(optionIdx) {
     setSelected(optionIdx);
+  }
+
+  function handleBack() {
+    // First question goes back to the age picker (the flow's first screen);
+    // nothing has been committed yet, so just switch phases. The age button
+    // for the current tier stays highlighted so the user can review it.
+    if (currentQ === 0) {
+      setSelected(null);
+      setPhase('age');
+      setAnimKey(k => k + 1);
+      return;
+    }
+    // Otherwise step back to the previous question, drop its recorded answer,
+    // and re-select it so the previous choice shows highlighted.
+    const prevIdx = currentQ - 1;
+    const prevAnswer = answers[prevIdx];
+    setAnswers(answers.slice(0, prevIdx));
+    setSelected(prevAnswer ? prevAnswer.optionIdx : null);
+    setCurrentQ(prevIdx);
+    setAnimKey(k => k + 1);
   }
 
   function handleNext() {
@@ -367,13 +392,14 @@ export default function OnboardingQuiz({ onComplete, isRetake = false }) {
                   key={t}
                   onClick={() => selectAge(t)}
                   style={{
-                    width: '100%', padding: '16px', background: T.bgCard,
-                    border: `1px solid ${T.border}`, borderRadius: 14,
+                    width: '100%', padding: '16px',
+                    background: tier === t ? `${T.accentPurple}18` : T.bgCard,
+                    border: `1px solid ${tier === t ? T.accentPurple : T.border}`, borderRadius: 14,
                     color: T.text, fontSize: 15, fontWeight: 600, cursor: 'pointer',
                     transition: 'all 0.15s',
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = T.accentPurple; e.currentTarget.style.background = T.bgDeep; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = T.bgCard; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = tier === t ? T.accentPurple : T.border; e.currentTarget.style.background = tier === t ? `${T.accentPurple}18` : T.bgCard; }}
                 >
                   {label}
                 </button>
@@ -438,6 +464,19 @@ export default function OnboardingQuiz({ onComplete, isRetake = false }) {
               }}
             >
               {currentQ + 1 === TIERS[tier].questions.length ? 'See my results ✦' : 'Next →'}
+            </button>
+
+            {/* Back — returns to the previous question (or the age screen from
+                the first question) with the earlier answer still highlighted. */}
+            <button
+              onClick={handleBack}
+              style={{
+                width: '100%', padding: '10px', marginTop: 10,
+                background: 'transparent', border: 'none',
+                color: T.textMid, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+              }}
+            >
+              ← Back
             </button>
           </div>
         )}
