@@ -422,7 +422,16 @@ function CareerGridScreen({
   // bound to `searchQuery` for responsiveness; `debouncedQuery` drives results.
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
   useEffect(() => {
-    const id = setTimeout(() => setDebouncedQuery(searchQuery), 250);
+    const id = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+      // Record career searches so Sparq Mode can weight recommendations toward
+      // what the user has looked for (newest first, de-duped, capped).
+      const term = searchQuery.trim().toLowerCase();
+      if (term.length >= 3) {
+        const hist = ls(SPARQ_KEYS.searches, []);
+        lsSet(SPARQ_KEYS.searches, [term, ...hist.filter(t => t !== term)].slice(0, 15));
+      }
+    }, 250);
     return () => clearTimeout(id);
   }, [searchQuery]);
 
@@ -1135,10 +1144,12 @@ const SPARQ_KEYS = {
   recent:  "sparq_recently_shown",        // { [id]: "YYYY-MM-DD" } — excluded for 30 days
   clicks:  "sparq_industry_clicks",       // { [industryName]: count } — sidebar-select tally
   daily:   "sparq_daily_set",             // { date: "YYYY-MM-DD", ids: number[] }
+  searches: "sparq_search_terms",         // string[] — recent career-search terms (newest first)
 };
 const SPARQ_DECK_SIZE = 6;
 const SPARQ_PROFILE_CARDS = 3;            // from the user's own worlds
 const SPARQ_RECENT_DAYS = 30;
+const SPARQ_BATCH = 20;                   // cards per "load more" batch after the initial deck
 
 // Local calendar date as YYYY-MM-DD (used for daily-set + recently-shown stamps).
 function sparqToday() {
@@ -1247,6 +1258,67 @@ function buildSparqDeck(allCareers, { profileIndustries, industryClicks, skipped
       .forEach(c => deck.push(take(c)));
   }
   return deck.map(c => c.id);
+}
+
+// Relevance-rank eligible careers for Sparq Mode's continuation batches (cards
+// beyond the initial deck). Same signals as buildSparqDeck — the user's profile
+// worlds, industry adjacency, and niche/skill overlap with their shortlist —
+// PLUS the industries of what they've saved and their recent career searches.
+// Returns career objects, most-relevant first. Careers with no relevance signal
+// are dropped: continuation never falls back to random/unfiltered filler.
+function rankSparqCareers(allCareers, {
+  profileIndustries, industryClicks, shortlistIndustries, nicheTags, searchTerms,
+  skipped, recentMap, todayStr, excludeIds,
+}) {
+  const skipSet = new Set(skipped);
+  const excludeSet = new Set(excludeIds);
+  const profSet = new Set(profileIndustries);
+  const shortSet = new Set(shortlistIndustries);
+  const clicks = industryClicks || {};
+  const terms = (searchTerms || [])
+    .map(t => String(t).trim().toLowerCase())
+    .filter(t => t.length >= 3);
+
+  const scored = [];
+  for (const c of allCareers) {
+    if (c.id == null || skipSet.has(c.id) || excludeSet.has(c.id)) continue;
+    const primary = c.primary_industry;
+    const secs = toSecondaryList(c.secondary_industries);
+    let score = 0;
+
+    // 1) Profile worlds — strongest signal, boosted by how often they're opened.
+    if (profSet.has(primary)) score += 100 + (clicks[primary] || 0) * 5;
+    else if (secs.some(s => profSet.has(s))) score += 45;
+
+    // 2) Shortlist adjacency — same or related industry to something they saved.
+    if (!profSet.has(primary)) {
+      if (shortSet.has(primary)) score += 55;
+      else if (secs.some(s => shortSet.has(s))) score += 30;
+    }
+
+    // 3) Niche/skill overlap with shortlisted careers.
+    const tags = [...toTagList(c.keywords), ...toTagList(c.traits)];
+    let nicheHits = 0;
+    for (const t of tags) if (nicheTags.has(t)) nicheHits++;
+    score += Math.min(nicheHits, 4) * 12;
+
+    // 4) Search history — careers matching what they've searched for.
+    if (terms.length) {
+      const hay = `${c.name || ""} ${tags.join(" ")}`.toLowerCase();
+      let searchHits = 0;
+      for (const term of terms) if (hay.includes(term)) searchHits++;
+      score += Math.min(searchHits, 4) * 20;
+    }
+
+    if (score <= 0) continue; // relevance-only — no random filler
+
+    if (shownRecently(c.id, recentMap, todayStr)) score -= 25; // prefer fresh
+    score += Math.random() * 5; // jitter so equal-score cards vary in order
+
+    scored.push({ c, score });
+  }
+  scored.sort((a, b) => b.score - a.score);
+  return scored.map(s => s.c);
 }
 
 // One swipeable card. Drag past threshold, or an external `command` (X/star
@@ -1384,7 +1456,7 @@ function SparqCard({ career, onExit, onOpen, isTop, command }) {
   );
 }
 
-function SparqModeOverlay({ cards, loading = false, initialIndex = 0, onClose, onSwipe, onOpenCareer, onOpenProfile }) {
+function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMore = false, onLoadMore, onClose, onSwipe, onOpenCareer, onOpenProfile }) {
   const [index, setIndex] = useState(initialIndex);
   const [command, setCommand] = useState(null); // { dir, forIndex } — drives the exit animation
   const remaining = cards.slice(index);
@@ -1458,12 +1530,14 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, onClose, o
           }}>
             <div style={{ fontSize: 40, marginBottom: 14 }}>{empty ? "🧭" : "✨"}</div>
             <div style={{ fontSize: 17, fontWeight: 700, color: T.text, marginBottom: 6 }}>
-              {empty ? "Set up Your Worlds first" : "That's today's set"}
+              {empty ? "Set up Your Worlds first" : canLoadMore ? "Want to keep going?" : "You've seen them all"}
             </div>
             <div style={{ fontSize: 13, color: T.textMid, marginBottom: 20, maxWidth: 300 }}>
               {empty
                 ? "Sparq Mode builds your set from the worlds saved in your profile. Add a few in your profile settings to get started."
-                : "A fresh set of careers unlocks tomorrow. Saved ones are in your Shortlist."}
+                : canLoadMore
+                  ? "Here's a fresh batch of careers picked for you — keep swiping, or call it for now."
+                  : "That's every career we can match to you right now. Saved ones are in your Shortlist."}
             </div>
             {empty && onOpenProfile ? (
               <button
@@ -1473,6 +1547,23 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, onClose, o
                   fontSize: 14, fontWeight: 700, padding: "10px 22px", cursor: "pointer",
                 }}
               >Open profile settings</button>
+            ) : canLoadMore ? (
+              <div style={{ display: "flex", gap: 10 }}>
+                <button
+                  onClick={onLoadMore}
+                  style={{
+                    background: T.accent, border: "none", borderRadius: 12, color: "#fff",
+                    fontSize: 14, fontWeight: 700, padding: "10px 22px", cursor: "pointer",
+                  }}
+                >See more cards</button>
+                <button
+                  onClick={onClose}
+                  style={{
+                    background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 12,
+                    color: T.textMid, fontSize: 14, fontWeight: 700, padding: "10px 22px", cursor: "pointer",
+                  }}
+                >Close</button>
+              </div>
             ) : (
               <button
                 onClick={onClose}
@@ -1480,7 +1571,7 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, onClose, o
                   background: T.accent, border: "none", borderRadius: 12, color: "#fff",
                   fontSize: 14, fontWeight: 700, padding: "10px 22px", cursor: "pointer",
                 }}
-              >Done</button>
+              >Close</button>
             )}
           </div>
         ) : (
@@ -1568,6 +1659,7 @@ function AppContent({ signOut }) {
   const [sparqOpen, setSparqOpen] = useState(false);
   const [sparqLoading, setSparqLoading] = useState(false); // deck being built (waits on careers fetch)
   const [sparqCards, setSparqCards] = useState([]);
+  const [sparqPool, setSparqPool] = useState([]); // relevance-ranked careers queued for "See more" batches
   const [sparqStartIndex, setSparqStartIndex] = useState(0); // card to (re)open on
   const [careerFromSparq, setCareerFromSparq] = useState(false); // did we open the career page from Sparq Mode?
   // The user's saved "Your Worlds" (profiles.industries). Distinct from the
@@ -1785,8 +1877,17 @@ function AppContent({ signOut }) {
   function openSparqMode() {
     setSparqStartIndex(0); // fresh open always starts at the first card
     setSparqCards([]);
+    setSparqPool([]);
     setSparqLoading(true);
     setSparqOpen(true);
+  }
+
+  // "See more cards" — append the next relevance-ranked batch and keep swiping.
+  function loadMoreSparq() {
+    const next = sparqPool.slice(0, SPARQ_BATCH);
+    if (!next.length) return;
+    setSparqCards(cards => [...cards, ...next]);
+    setSparqPool(sparqPool.slice(SPARQ_BATCH));
   }
 
   // Build today's deck. Reads the user's worlds DIRECTLY from profiles.industries
@@ -1811,23 +1912,31 @@ function AppContent({ signOut }) {
       }
     }
 
+    // Relevance signals shared by the initial deck AND every continuation batch:
+    // niche/skill tags and industries drawn from the user's shortlist.
+    const nicheTags = new Set();
+    const shortlistIndustries = new Set();
+    starredIds.forEach(id => {
+      const c = byId.get(id);
+      if (!c) return;
+      if (c.primary_industry) shortlistIndustries.add(c.primary_industry);
+      toTagList(c.keywords).forEach(t => nicheTags.add(t));
+      toTagList(c.traits).forEach(t => nicheTags.add(t));
+    });
+    const recentMap = ls(SPARQ_KEYS.recent, {});
+    const industryClicks = ls(SPARQ_KEYS.clicks, {});
+    const searchTerms = ls(SPARQ_KEYS.searches, []);
+
+    // ── Initial deck (today's 6, cached) ──
     const daily = ls(SPARQ_KEYS.daily, null);
     let ids = null;
     if (daily && daily.date === today && Array.isArray(daily.ids) && daily.ids.length) {
       ids = daily.ids.filter(id => byId.has(id) && !skipSet.has(id));
     }
     if (!ids || ids.length === 0) {
-      const nicheTags = new Set();
-      starredIds.forEach(id => {
-        const c = byId.get(id);
-        if (!c) return;
-        toTagList(c.keywords).forEach(t => nicheTags.add(t));
-        toTagList(c.traits).forEach(t => nicheTags.add(t));
-      });
-      const recentMap = ls(SPARQ_KEYS.recent, {});
       ids = buildSparqDeck(allCareers, {
         profileIndustries: worlds,
-        industryClicks: ls(SPARQ_KEYS.clicks, {}),
+        industryClicks,
         skipped,
         recentMap,
         nicheTags,
@@ -1842,13 +1951,30 @@ function AppContent({ signOut }) {
       }
     }
 
+    // ── Continuation pool (relevance-ranked, same signals + search history) ──
+    // Everything eligible beyond the initial deck, ordered most-relevant first.
+    const poolCards = rankSparqCareers(allCareers, {
+      profileIndustries: worlds,
+      industryClicks,
+      shortlistIndustries: [...shortlistIndustries],
+      nicheTags,
+      searchTerms,
+      skipped,
+      recentMap,
+      todayStr: today,
+      excludeIds: ids,
+    });
+
     if (import.meta.env.DEV) {
       console.log("[sparq] raw profiles.industries (what the modal writes):", rawIndustries);
       console.log("[sparq] normalized worlds Sparq uses:", worlds);
-      console.log("[sparq] deck ids:", ids);
+      console.log("[sparq] initial deck ids:", ids, "continuation pool size:", poolCards.length);
     }
 
-    return ids.map(id => byId.get(id)).filter(Boolean);
+    return {
+      initialCards: ids.map(id => byId.get(id)).filter(Boolean),
+      poolCards,
+    };
   }
 
   // Build the deck once the overlay is open AND the careers fetch has finished.
@@ -1857,9 +1983,15 @@ function AppContent({ signOut }) {
   useEffect(() => {
     if (!sparqOpen || !sparqLoading || careersLoading) return;
     let cancelled = false;
-    computeSparqDeck().then(cards => {
+    computeSparqDeck().then(({ initialCards, poolCards }) => {
       if (cancelled) return;
-      setSparqCards(cards);
+      // Preload the first continuation batch right after the initial deck so the
+      // hand-off from the last initial card to the next is seamless (no prompt,
+      // no screen change). The remaining ranked careers stay in the pool for
+      // subsequent "See more cards" batches.
+      const firstBatch = poolCards.slice(0, SPARQ_BATCH);
+      setSparqCards([...initialCards, ...firstBatch]);
+      setSparqPool(poolCards.slice(SPARQ_BATCH));
       setSparqLoading(false);
     });
     return () => { cancelled = true; };
@@ -1957,6 +2089,8 @@ function AppContent({ signOut }) {
           cards={sparqCards}
           loading={sparqLoading}
           initialIndex={sparqStartIndex}
+          canLoadMore={sparqPool.length > 0}
+          onLoadMore={loadMoreSparq}
           onClose={() => setSparqOpen(false)}
           onSwipe={handleSparqSwipe}
           onOpenCareer={handleSparqOpenCareer}
