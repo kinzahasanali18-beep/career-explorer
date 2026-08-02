@@ -14,7 +14,7 @@ export default function SalaryNote({ style }) {
         fontSize: 10,
         fontStyle: "italic",
         fontWeight: 400,
-        color: "#8B8FA8",
+        color: "var(--textMid)",
         lineHeight: 1.4,
         marginTop: 2,
         ...style,

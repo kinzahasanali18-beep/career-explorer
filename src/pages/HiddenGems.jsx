@@ -2,8 +2,8 @@ import { useState } from "react";
 import { WORLD_COLORS } from "./WhenToApply";
 
 const T = {
-  bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
-  border: "#3D3F55", text: "#E0E8FF", textMid: "#8B8FA8", textDim: "#4A4D66",
+  bg: "var(--bg)", bgCard: "var(--bgCard)", bgDeep: "var(--bgDeep)",
+  border: "var(--border)", text: "var(--text)", textMid: "var(--textMid)", textDim: "var(--textDim)",
   accent: "#7F77DD",
 };
 
@@ -76,7 +76,7 @@ export default function HiddenGems({ hiddenGems = [], loading, selectedIndustrie
               style={{
                 padding: "5px 13px", borderRadius: 20, fontSize: 12, fontWeight: 600,
                 border: `1px solid ${active ? T.text : T.border}`,
-                background: active ? `${T.textMid}22` : "transparent",
+                background: active ? "color-mix(in srgb, var(--textMid) 13%, transparent)" : "transparent",
                 color: active ? T.text : T.textMid,
                 cursor: "pointer", transition: "all 0.15s", whiteSpace: "nowrap",
                 fontFamily: "inherit",

@@ -258,8 +258,8 @@ function SalaryChart({ growth }) {
               background: STAGE_COLORS[i],
               minHeight: 4,
             }} />
-            <div style={{ fontSize: 9, color: "#8B8FA8", textAlign: "center" }}>{step.salary}</div>
-            <div style={{ fontSize: 9, color: "#4A4D66", textAlign: "center" }}>{step.years}</div>
+            <div style={{ fontSize: 9, color: "var(--textMid)", textAlign: "center" }}>{step.salary}</div>
+            <div style={{ fontSize: 9, color: "var(--textDim)", textAlign: "center" }}>{step.years}</div>
           </div>
         );
       })}
@@ -293,12 +293,12 @@ function Stage({ step, index, isLast }) {
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color, marginBottom: 2 }}>{vibe}</div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB" }}>{step.role}</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{step.role}</div>
         </div>
         <div style={{ fontSize: 22, fontWeight: 800, color, textAlign: "right", flexShrink: 0 }}>{step.salary}</div>
       </div>
       {desc && (
-        <div style={{ fontSize: 12, color: "#8B8FA8", lineHeight: 1.6, marginTop: 8, paddingLeft: 48 }}>
+        <div style={{ fontSize: 12, color: "var(--textMid)", lineHeight: 1.6, marginTop: 8, paddingLeft: 48 }}>
           {desc}
         </div>
       )}
@@ -317,12 +317,12 @@ function DiscoveryCard({ career: c, accentColor, sharedKeywords, onViewCareer })
     <div
       onClick={() => onViewCareer && onViewCareer(c, accentColor)}
       style={{
-        minWidth: 160, maxWidth: 180, background: "#272B40",
-        border: "1px solid #3D3F55", borderRadius: 12,
+        minWidth: 160, maxWidth: 180, background: "var(--bgCard)",
+        border: "1px solid var(--border)", borderRadius: 12,
         padding: "10px 12px", cursor: "pointer", flexShrink: 0,
       }}
     >
-      <div style={{ fontSize: 12, fontWeight: 700, color: "#F9FAFB", marginBottom: 3, lineHeight: 1.3 }}>{title}</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text)", marginBottom: 3, lineHeight: 1.3 }}>{title}</div>
       {salary && (
         <>
           <div style={{ fontSize: 10, fontWeight: 700, color: accentColor, marginBottom: 2 }}>{salary}</div>
@@ -330,7 +330,7 @@ function DiscoveryCard({ career: c, accentColor, sharedKeywords, onViewCareer })
         </>
       )}
       {truncDesc && (
-        <div style={{ fontSize: 11, color: "#8B8FA8", lineHeight: 1.5, marginBottom: sharedKeywords?.length ? 7 : 0 }}>{truncDesc}</div>
+        <div style={{ fontSize: 11, color: "var(--textMid)", lineHeight: 1.5, marginBottom: sharedKeywords?.length ? 7 : 0 }}>{truncDesc}</div>
       )}
       {sharedKeywords?.length > 0 && (
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
@@ -430,8 +430,8 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
 
       {/* Back button */}
       <button onClick={onBack} style={{
-        background: "#272B40", border: "1px solid #3D3F55", borderRadius: 20,
-        padding: "5px 14px", fontSize: 12, fontWeight: 600, color: "#8B8FA8",
+        background: "var(--bgCard)", border: "1px solid var(--border)", borderRadius: 20,
+        padding: "5px 14px", fontSize: 12, fontWeight: 600, color: "var(--textMid)",
         cursor: "pointer", marginBottom: 20,
       }}>← Back</button>
 
@@ -440,22 +440,22 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
         <div style={{ fontSize: 10, color: "#F472B6", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, marginBottom: 4 }}>
           Career Roadmap
         </div>
-        <div style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB", marginBottom: 8 }}>{title}</div>
+        <div style={{ fontSize: 22, fontWeight: 800, color: "var(--text)", marginBottom: 8 }}>{title}</div>
         {allTags.length > 0 && (
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}>
             {allTags.map(({ label, isPrimary }) => (
               <span key={label} style={{
                 background: isPrimary ? "#7F77DD22" : "#3D3F5588",
-                border: `1px solid ${isPrimary ? "#7F77DD66" : "#3D3F55"}`,
+                border: `1px solid ${isPrimary ? "#7F77DD66" : "var(--border)"}`,
                 borderRadius: 20, padding: "3px 10px",
                 fontSize: 11, fontWeight: isPrimary ? 700 : 500,
-                color: isPrimary ? "#A89FEE" : "#8B8FA8",
+                color: isPrimary ? "#A89FEE" : "var(--textMid)",
                 letterSpacing: "0.02em",
               }}>{label}</span>
             ))}
           </div>
         )}
-        <div style={{ fontSize: 13, color: "#8B8FA8", lineHeight: 1.6, marginBottom: 14 }}>{desc}</div>
+        <div style={{ fontSize: 13, color: "var(--textMid)", lineHeight: 1.6, marginBottom: 14 }}>{desc}</div>
       </div>
 
       {/* Salary range pill + Echo button */}
@@ -477,9 +477,9 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
             onClick={() => onToggleStar(career.id)}
             style={{
               padding: "4px 14px", borderRadius: 20, fontSize: 13, fontWeight: 700,
-              border: `1px solid ${isStarred ? "#F59E0B55" : "#3D3F55"}`,
-              background: isStarred ? "#F59E0B18" : "#1A1D2E",
-              color: isStarred ? "#F59E0B" : "#8B8FA8",
+              border: `1px solid ${isStarred ? "#F59E0B55" : "var(--border)"}`,
+              background: isStarred ? "#F59E0B18" : "var(--bgDeep)",
+              color: isStarred ? "#F59E0B" : "var(--textMid)",
               cursor: "pointer",
               transition: "all 0.2s",
             }}
@@ -490,34 +490,34 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
 
       {/* Education bar */}
       <div style={{
-        background: "#1A1D2E", border: "1px solid #3D3F55",
+        background: "var(--bgDeep)", border: "1px solid var(--border)",
         borderRadius: 12, padding: "10px 14px",
         display: "flex", alignItems: "center", gap: 10, marginBottom: 14,
         ...anim(100),
       }}>
         <div style={{ fontSize: 20 }}>🎓</div>
         <div>
-          <div style={{ fontSize: 10, color: "#4A4D66", marginBottom: 2, textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700 }}>What you need to get here</div>
-          <div style={{ fontSize: 13, color: "#E0E8FF" }}>{school || generateEducation(career)}</div>
+          <div style={{ fontSize: 10, color: "var(--textDim)", marginBottom: 2, textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700 }}>What you need to get here</div>
+          <div style={{ fontSize: 13, color: "var(--text)" }}>{school || generateEducation(career)}</div>
         </div>
       </div>
 
       {/* Day in the life */}
       {day && (
         <div style={{
-          background: "#272B40", border: "1px solid #3D3F55",
+          background: "var(--bgCard)", border: "1px solid var(--border)",
           borderRadius: 12, padding: "10px 14px", marginBottom: 14,
           ...anim(200),
         }}>
-          <div style={{ fontSize: 10, color: "#4A4D66", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700 }}>A day in the life</div>
-          <div style={{ fontSize: 13, color: "#8B8FA8", lineHeight: 1.6 }}>{day}</div>
+          <div style={{ fontSize: 10, color: "var(--textDim)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700 }}>A day in the life</div>
+          <div style={{ fontSize: 13, color: "var(--textMid)", lineHeight: 1.6 }}>{day}</div>
         </div>
       )}
 
       {/* Salary chart — only when real growth data is present */}
       {growth.length > 0 && (
         <div style={anim(300)}>
-          <div style={{ fontSize: 10, color: "#4A4D66", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700, marginBottom: 8 }}>
+          <div style={{ fontSize: 10, color: "var(--textDim)", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700, marginBottom: 8 }}>
             Salary progression
           </div>
           <SalaryChart growth={growth} />
@@ -528,7 +528,7 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
       <div style={{ height: 1, background: "#2E3148", marginBottom: 14, ...anim(300) }} />
 
       {/* Timeline stages */}
-      <div style={{ fontSize: 10, color: "#4A4D66", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700, marginBottom: 10, ...anim(300) }}>
+      <div style={{ fontSize: 10, color: "var(--textDim)", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700, marginBottom: 10, ...anim(300) }}>
         Your journey
       </div>
       {stages.map((step, i) => (
@@ -538,8 +538,8 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
       ))}
 
       {/* Bottom CTA */}
-      <div style={{ marginTop: 20, background: "#272B40", border: "1px solid #3D3F55", borderRadius: 14, padding: "1rem", textAlign: "center" }}>
-        <div style={{ fontSize: 13, color: "#8B8FA8", marginBottom: 10, lineHeight: 1.5 }}>
+      <div style={{ marginTop: 20, background: "var(--bgCard)", border: "1px solid var(--border)", borderRadius: 14, padding: "1rem", textAlign: "center" }}>
+        <div style={{ fontSize: 13, color: "var(--textMid)", marginBottom: 10, lineHeight: 1.5 }}>
           Curious what this could look like for you specifically?
         </div>
         <button
@@ -558,7 +558,7 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
       {/* More in Industry */}
       {moreCareers.length > 0 && (
         <div style={{ marginTop: 28 }}>
-          <div style={{ fontSize: 10, color: "#4A4D66", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700, marginBottom: 10 }}>
+          <div style={{ fontSize: 10, color: "var(--textDim)", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700, marginBottom: 10 }}>
             More in {career.primary_industry}
           </div>
           <div className="ct-scroll" style={{
@@ -575,7 +575,7 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
       {/* Surprising connections */}
       {connectionCareers.length > 0 && (
         <div style={{ marginTop: 24, marginBottom: 24 }}>
-          <div style={{ fontSize: 10, color: "#4A4D66", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700, marginBottom: 10 }}>
+          <div style={{ fontSize: 10, color: "var(--textDim)", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 700, marginBottom: 10 }}>
             Surprising connections
           </div>
           <div className="ct-scroll" style={{

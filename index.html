@@ -27,6 +27,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
   </head>
   <body>
+    <!-- Apply the saved theme before React mounts to avoid a flash of the wrong
+         palette. Mirrors the default ('dark') in src/ThemeContext.jsx. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('sparq-theme');
+          document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

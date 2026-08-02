@@ -9,18 +9,48 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* ─── Theme tokens (dark — default) ─────────────────────────────────────────
+     Screens reference these via var(--token). Accent/industry colors stay as
+     literal hex because they're identical in both themes (and support the
+     `${accent}22` alpha-append pattern used throughout the app). */
+  --bg: #1E2030;
+  --bgCard: #272B40;
+  --bgDeep: #1A1D2E;
+  --border: #3D3F55;
+  --borderSoft: #2a2d4a;
+  --text: #E0E8FF;
+  --textMid: #8B8FA8;
+  --textDim: #4A4D66;
+  color-scheme: dark;
+}
+
+/* ─── Light theme overrides ───────────────────────────────────────────────────
+   Derived from the same tokens: dark neutrals flip to light equivalents while
+   keeping the same relative contrast steps (card lighter than page, deep/inset
+   slightly darker than page). */
+:root[data-theme="light"] {
+  --bg: #F4F5FA;
+  --bgCard: #FFFFFF;
+  --bgDeep: #E9EBF3;
+  --border: #D7DAE6;
+  --borderSoft: #E6E8F1;
+  --text: #1A1D2E;
+  --textMid: #565B70;
+  --textDim: #9CA0B5;
+  color-scheme: light;
 }
 
 html, body {
   height: 100%;
-  background: #1E2030;
-  color: #E0E8FF;
+  background: var(--bg);
+  color: var(--text);
   font-family: 'Inter', system-ui, sans-serif;
 }
 
 #root {
   min-height: 100%;
-  background: #1E2030;
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar { width: 3px; height: 3px; }
@@ -50,7 +80,7 @@ html, body {
   width: 240px;
   min-width: 240px;
   min-height: 100vh;
-  border-right: 1px solid #3D3F55;
+  border-right: 1px solid var(--border);
   padding: 2rem 1.25rem;
   position: sticky;
   top: 0;
@@ -66,10 +96,10 @@ html, body {
 .sidebar-brand {
   font-size: 17px;
   font-weight: 800;
-  color: #E0E8FF;
+  color: var(--text);
   margin-bottom: 28px;
   padding-bottom: 18px;
-  border-bottom: 1px solid #3D3F55;
+  border-bottom: 1px solid var(--border);
   letter-spacing: -0.01em;
 }
 
@@ -77,7 +107,7 @@ html, body {
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #4A4D66;
+  color: var(--textDim);
   font-weight: 700;
   margin: 16px 0 4px;
   padding: 0 8px;
@@ -92,7 +122,7 @@ html, body {
   border-radius: 10px;
   border: none;
   background: transparent;
-  color: #8B8FA8;
+  color: var(--textMid);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -102,8 +132,8 @@ html, body {
 }
 
 .sidebar-item:hover {
-  background: #272B40;
-  color: #E0E8FF !important;
+  background: var(--bgCard);
+  color: var(--text) !important;
 }
 
 .sidebar-item.active {
@@ -114,7 +144,7 @@ html, body {
 
 .sidebar-divider {
   height: 1px;
-  background: #3D3F55;
+  background: var(--border);
   margin: 10px 0;
   flex-shrink: 0;
 }
@@ -123,9 +153,9 @@ html, body {
   margin-top: auto;
   padding: 8px 10px;
   background: none;
-  border: 1px solid #3D3F55;
+  border: 1px solid var(--border);
   border-radius: 10px;
-  color: #4A4D66;
+  color: var(--textDim);
   font-size: 12px;
   cursor: pointer;
   width: 100%;
@@ -135,8 +165,8 @@ html, body {
 }
 
 .sidebar-start-over:hover {
-  color: #8B8FA8;
-  border-color: #8B8FA8;
+  color: var(--textMid);
+  border-color: var(--textMid);
 }
 
 .main-content {

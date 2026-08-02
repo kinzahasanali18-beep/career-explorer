@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useAuth } from './AuthContext';
 
 const T = {
-  bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
-  border: "#3D3F55",
-  text: "#E0E8FF", textMid: "#8B8FA8", textDim: "#4A4D66",
+  bg: "var(--bg)", bgCard: "var(--bgCard)", bgDeep: "var(--bgDeep)",
+  border: "var(--border)",
+  text: "var(--text)", textMid: "var(--textMid)", textDim: "var(--textDim)",
   accent1: "#06B6D4", accent2: "#3B82F6", accentPurple: "#7F77DD", white: "#FFFFFF",
 };
 

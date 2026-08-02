@@ -168,9 +168,9 @@ export default function BubbleScreen({ selectedIndustries, onBack, onViewCareer,
         @keyframes cardIn { from{opacity:0;transform:scale(0.96) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)} }
       `}</style>
 
-      <button onClick={onBack} style={{ background: "#272B40", border: "1px solid #3D3F55", borderRadius: 20, padding: "5px 14px", fontSize: 12, fontWeight: 600, color: "#8B8FA8", cursor: "pointer", marginBottom: 20 }}>← Back</button>
+      <button onClick={onBack} style={{ background: "var(--bgCard)", border: "1px solid var(--border)", borderRadius: 20, padding: "5px 14px", fontSize: 12, fontWeight: 600, color: "var(--textMid)", cursor: "pointer", marginBottom: 20 }}>← Back</button>
       <div style={{ fontSize: 10, color: "#06B6D4", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, marginBottom: 4 }}>Career Universe</div>
-      <div style={{ fontSize: 12, color: "#4A4D66", marginBottom: 14 }}>Tap an industry bubble to explore its careers</div>
+      <div style={{ fontSize: 12, color: "var(--textDim)", marginBottom: 14 }}>Tap an industry bubble to explore its careers</div>
 
       <div
         ref={canvasRef}
@@ -269,10 +269,10 @@ export default function BubbleScreen({ selectedIndustries, onBack, onViewCareer,
               padding: "1rem 1.1rem",
               animation: "cardIn 0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards",
             }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: "#E0E8FF", marginBottom: 3 }}>{activeCareer.title}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "var(--text)", marginBottom: 3 }}>{activeCareer.title}</div>
               <div style={{ fontSize: 12, fontWeight: 600, color: activeInd.color, marginBottom: activeCareer.salary ? 2 : 6 }}>{activeCareer.salary}</div>
               {activeCareer.salary && <SalaryNote style={{ marginBottom: 6 }} />}
-              <div style={{ fontSize: 12, color: "#8B8FA8", lineHeight: 1.6, marginBottom: 10 }}>{activeCareer.desc}</div>
+              <div style={{ fontSize: 12, color: "var(--textMid)", lineHeight: 1.6, marginBottom: 10 }}>{activeCareer.desc}</div>
               {activeCareer.school && (
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
                 <span style={{ background: `${activeInd.color}20`, border: `1px solid ${activeInd.color}45`, borderRadius: 20, padding: "3px 10px", fontSize: 10, fontWeight: 600, color: activeInd.color }}>

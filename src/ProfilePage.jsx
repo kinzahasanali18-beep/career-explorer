@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import { useAuth } from './AuthContext';
+import { useTheme } from './ThemeContext';
 
 const T = {
-  bg: '#1E2030', bgCard: '#272B40', bgDeep: '#1A1D2E',
-  border: '#3D3F55',
-  text: '#E0E8FF', textMid: '#8B8FA8', textDim: '#4A4D66',
+  bg: 'var(--bg)', bgCard: 'var(--bgCard)', bgDeep: 'var(--bgDeep)',
+  border: 'var(--border)',
+  text: 'var(--text)', textMid: 'var(--textMid)', textDim: 'var(--textDim)',
   accent1: '#06B6D4', accent2: '#3B82F6', accentPurple: '#7F77DD', white: '#FFFFFF',
 };
 
@@ -90,6 +91,7 @@ function IndustryTile({ industry, selected, onToggle }) {
 
 export default function ProfilePage({ onClose, onRetakeQuiz }) {
   const { user } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const [form, setForm] = useState({ name: '', avatar: '🦁' });
   const [selectedIndustries, setSelectedIndustries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -189,6 +191,40 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
             </div>
           </div>
         )}
+
+        {/* Appearance — light/dark theme toggle (persists app-wide) */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          background: T.bgDeep, border: `1px solid ${T.border}`,
+          borderRadius: 10, padding: '12px 14px', marginBottom: 24,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 16 }} aria-hidden="true">{isDark ? '🌙' : '☀️'}</span>
+            <div>
+              <div style={{ fontSize: 13, color: T.text, fontWeight: 600 }}>Appearance</div>
+              <div style={{ fontSize: 11, color: T.textMid }}>{isDark ? 'Dark mode' : 'Light mode'}</div>
+            </div>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={!isDark}
+            aria-label="Toggle light mode"
+            onClick={toggleTheme}
+            style={{
+              position: 'relative', width: 46, height: 26, borderRadius: 999,
+              border: 'none', cursor: 'pointer', flexShrink: 0, padding: 0,
+              background: isDark ? T.border : T.accent1,
+              transition: 'background 0.2s',
+            }}
+          >
+            <span style={{
+              position: 'absolute', top: 3, left: isDark ? 3 : 23,
+              width: 20, height: 20, borderRadius: '50%', background: '#FFFFFF',
+              transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.4)',
+            }} />
+          </button>
+        </div>
 
         {loading ? (
           <div style={{ textAlign: 'center', color: T.textMid, padding: '40px 0' }}>Loading…</div>

@@ -4,8 +4,8 @@ import { useAuth } from "./AuthContext";
 import SalaryNote from "./SalaryNote";
 
 const T = {
-  bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
-  border: "#3D3F55", text: "#E0E8FF", textMid: "#8B8FA8", textDim: "#4A4D66",
+  bg: "var(--bg)", bgCard: "var(--bgCard)", bgDeep: "var(--bgDeep)",
+  border: "var(--border)", text: "var(--text)", textMid: "var(--textMid)", textDim: "var(--textDim)",
   accent1: "#06B6D4", accent2: "#3B82F6",
 };
 
@@ -230,7 +230,7 @@ function drawNameBadge(ctx, x, headTopY, name, color) {
   ctx.strokeStyle = color + "99"; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 4); ctx.stroke();
 
-  ctx.fillStyle = "#E0E8FF";
+  ctx.fillStyle = "var(--text)";
   ctx.fillText(label, x, by + bh / 2);
   ctx.restore();
 }
@@ -578,7 +578,7 @@ export default function MyWorld({ onBack, onViewCareer }) {
       </div>
 
       {/* Sort buttons */}
-      <div style={{ position: "absolute", top: 57, left: 0, right: 0, zIndex: 20, display: "flex", gap: 6, padding: "9px 14px", overflowX: "auto", background: "rgba(22,24,40,0.80)", backdropFilter: "blur(8px)", borderBottom: `1px solid ${T.border}22` }}>
+      <div style={{ position: "absolute", top: 57, left: 0, right: 0, zIndex: 20, display: "flex", gap: 6, padding: "9px 14px", overflowX: "auto", background: "rgba(22,24,40,0.80)", backdropFilter: "blur(8px)", borderBottom: `1px solid color-mix(in srgb, var(--border) 13%, transparent)` }}>
         {SORT_MODES.map(m => (
           <button key={m.id}
             onClick={() => setSortMode(prev => prev === m.id ? null : m.id)}

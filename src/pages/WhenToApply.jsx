@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 const T = {
-  bg: "#1E2030", bgCard: "#272B40", bgDeep: "#1A1D2E",
-  border: "#3D3F55", text: "#E0E8FF", textMid: "#8B8FA8", textDim: "#4A4D66",
+  bg: "var(--bg)", bgCard: "var(--bgCard)", bgDeep: "var(--bgDeep)",
+  border: "var(--border)", text: "var(--text)", textMid: "var(--textMid)", textDim: "var(--textDim)",
   accent: "#7F77DD",
 };
 

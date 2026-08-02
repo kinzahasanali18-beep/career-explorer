@@ -418,14 +418,14 @@ export default function WorldExplorer({ onBack, onViewCareer }) {
 
       <button onClick={onBack} style={{
         position: "absolute", top: 16, left: 16, zIndex: 20,
-        background: "rgba(20,22,36,0.85)", border: "1px solid #3D3F55",
+        background: "rgba(20,22,36,0.85)", border: "1px solid var(--border)",
         borderRadius: 20, padding: "7px 15px", fontSize: 12, fontWeight: 600,
-        color: "#8B8FA8", cursor: "pointer", backdropFilter: "blur(10px)",
+        color: "var(--textMid)", cursor: "pointer", backdropFilter: "blur(10px)",
       }}>← Back</button>
 
       <div style={{
         position: "absolute", top: 17, left: "50%", transform: "translateX(-50%)",
-        zIndex: 20, fontSize: 13, fontWeight: 800, color: "#E0E8FF",
+        zIndex: 20, fontSize: 13, fontWeight: 800, color: "var(--text)",
         letterSpacing: "0.08em", textTransform: "uppercase", whiteSpace: "nowrap",
       }}>World Explorer</div>
 
@@ -456,7 +456,7 @@ export default function WorldExplorer({ onBack, onViewCareer }) {
               borderRadius: 22, border: "none", cursor: "pointer",
               whiteSpace: "nowrap",
               background: sceneIdx === i ? s.color : "transparent",
-              color: sceneIdx === i ? "#fff" : "#8B8FA8",
+              color: sceneIdx === i ? "#fff" : "var(--textMid)",
               transition: "all 0.2s",
             }}
           >{s.label}</button>
@@ -554,7 +554,7 @@ export default function WorldExplorer({ onBack, onViewCareer }) {
           position: "absolute", inset: 0, display: "flex",
           flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8,
         }}>
-          <div style={{ fontSize: 14, color: "#8B8FA8" }}>No careers found in this world yet</div>
+          <div style={{ fontSize: 14, color: "var(--textMid)" }}>No careers found in this world yet</div>
         </div>
       )}
 
@@ -635,7 +635,7 @@ function CareerCardModal({ career, sceneColor, isSaved, onSave, onClose, onKeywo
           <div style={{ fontSize: 10, color: sceneColor, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 4 }}>
             {career.primary_industry}
           </div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: "#E0E8FF", lineHeight: 1.25 }}>{career.name}</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: "var(--text)", lineHeight: 1.25 }}>{career.name}</div>
           {career.salary_range && (
             <>
               <div style={{ fontSize: 13, color: sceneColor, marginTop: 5, fontWeight: 600 }}>{career.salary_range}</div>
@@ -643,18 +643,18 @@ function CareerCardModal({ career, sceneColor, isSaved, onSave, onClose, onKeywo
             </>
           )}
         </div>
-        <button onClick={onClose} style={{ background: "none", border: "none", color: "#4A4D66", fontSize: 24, cursor: "pointer", lineHeight: 1, padding: 0 }}>×</button>
+        <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--textDim)", fontSize: 24, cursor: "pointer", lineHeight: 1, padding: 0 }}>×</button>
       </div>
 
       {career.description && (
-        <p style={{ fontSize: 14, color: "#8B8FA8", lineHeight: 1.75, marginBottom: 14 }}>
+        <p style={{ fontSize: 14, color: "var(--textMid)", lineHeight: 1.75, marginBottom: 14 }}>
           {renderDescription(career.description)}
         </p>
       )}
 
       {traits.length > 0 && (
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 10, color: "#4A4D66", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700, marginBottom: 6 }}>Traits</div>
+          <div style={{ fontSize: 10, color: "var(--textDim)", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700, marginBottom: 6 }}>Traits</div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {traits.map(t => (
               <span key={t} style={{
@@ -668,18 +668,18 @@ function CareerCardModal({ career, sceneColor, isSaved, onSave, onClose, onKeywo
 
       {keywords.length > 0 && (
         <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 10, color: "#4A4D66", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700, marginBottom: 6 }}>
+          <div style={{ fontSize: 10, color: "var(--textDim)", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700, marginBottom: 6 }}>
             Keywords — click to explore
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {keywords.slice(0, 10).map(k => (
               <span key={k} onClick={() => onKeywordClick(k)}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = sceneColor; e.currentTarget.style.color = sceneColor; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "#3D3F55"; e.currentTarget.style.color = "#8B8FA8"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--textMid)"; }}
                 style={{
-                  background: "#1A1D2E", border: "1px solid #3D3F55",
+                  background: "var(--bgDeep)", border: "1px solid var(--border)",
                   borderRadius: 20, padding: "3px 11px", fontSize: 11,
-                  fontWeight: 600, color: "#8B8FA8", cursor: "pointer", transition: "all 0.15s",
+                  fontWeight: 600, color: "var(--textMid)", cursor: "pointer", transition: "all 0.15s",
                 }}
               >{k}</span>
             ))}
@@ -696,9 +696,9 @@ function CareerCardModal({ career, sceneColor, isSaved, onSave, onClose, onKeywo
         }}>View career path →</button>
         <button onClick={onSave} disabled={isSaved} style={{
           padding: "0.8rem 1rem",
-          background: isSaved ? sceneColor + "22" : "#1A1D2E",
-          color: isSaved ? sceneColor : "#8B8FA8",
-          border: `1px solid ${isSaved ? sceneColor + "55" : "#3D3F55"}`,
+          background: isSaved ? sceneColor + "22" : "var(--bgDeep)",
+          color: isSaved ? sceneColor : "var(--textMid)",
+          border: `1px solid ${isSaved ? sceneColor + "55" : "var(--border)"}`,
           borderRadius: 12, fontSize: 14, fontWeight: 700,
           cursor: isSaved ? "default" : "pointer",
           transition: "all 0.2s", minWidth: 110,
