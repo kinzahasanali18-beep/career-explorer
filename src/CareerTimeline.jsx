@@ -419,7 +419,7 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
   });
 
   return (
-    <div className="career-timeline-wrapper" style={{ padding: "1.5rem 1.25rem", fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="career-timeline-wrapper" style={{ padding: "72px 1.25rem 1.5rem", fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{`
         @keyframes fadeSlideUp {
           from { opacity: 0; transform: translateY(20px); }
