@@ -155,7 +155,7 @@ export default function LoginScreen() {
             />
             {error && <div style={{ color: '#F87171', fontSize: 13, marginBottom: 14 }}>{error}</div>}
             <PrimaryBtn type="submit" loading={submitting}>
-              {submitting ? 'Sending…' : 'Send Magic Link'}
+              {submitting ? 'Sending…' : 'Send Code'}
             </PrimaryBtn>
           </form>
         )}
@@ -193,7 +193,7 @@ export default function LoginScreen() {
               {submitting ? 'Verifying…' : 'Verify'}
             </PrimaryBtn>
             <GhostBtn type="button" onClick={() => { setStep('input'); setToken(''); setError(''); }}>
-              Resend email
+              Resend code
             </GhostBtn>
           </form>
         )}
