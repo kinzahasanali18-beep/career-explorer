@@ -354,13 +354,13 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
             <button
               onClick={() => setShowDeleteConfirm(true)}
               style={{
-                width: '100%', padding: '11px', background: 'transparent',
-                border: '1px solid #F8717144', borderRadius: 10,
-                color: '#F87171', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                transition: 'all 0.2s',
+                display: 'inline-block', width: 'auto', padding: '2px 0',
+                background: 'none', border: 'none',
+                color: '#F87171', fontSize: 12, fontWeight: 500, cursor: 'pointer',
+                textDecoration: 'none', opacity: 0.8, transition: 'opacity 0.2s',
               }}
-              onMouseEnter={e => { e.target.style.background = '#F8717111'; }}
-              onMouseLeave={e => { e.target.style.background = 'transparent'; }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = 1; e.currentTarget.style.textDecoration = 'underline'; }}
+              onMouseLeave={e => { e.currentTarget.style.opacity = 0.8; e.currentTarget.style.textDecoration = 'none'; }}
             >
               Delete my account
             </button>
