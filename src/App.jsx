@@ -2210,13 +2210,12 @@ function AppContent({ signOut }) {
     let cancelled = false;
     computeSparqDeck().then(({ initialCards, poolCards }) => {
       if (cancelled) return;
-      // Preload the first continuation batch right after the initial deck so the
-      // hand-off from the last initial card to the next is seamless (no prompt,
-      // no screen change). The remaining ranked careers stay in the pool for
-      // subsequent "See more cards" batches.
-      const firstBatch = poolCards.slice(0, SPARQ_BATCH);
-      setSparqCards([...initialCards, ...firstBatch]);
-      setSparqPool(poolCards.slice(SPARQ_BATCH));
+      // Start with only the initial 6-card daily deck, so Sparq pauses and shows
+      // the "See more cards / Close" prompt after card 6. All ranked continuation
+      // careers stay in the pool and are pulled in SPARQ_BATCH-sized batches when
+      // the user taps "See more cards".
+      setSparqCards(initialCards);
+      setSparqPool(poolCards);
       setSparqLoading(false);
     });
     return () => { cancelled = true; };
