@@ -226,3 +226,11 @@ html, body {
     display: none;
   }
 }
+
+/* Shown only on mobile (< 768px) — e.g. the Explore industry-filter button,
+   which replaces the desktop-only sidebar industry list. Hidden on desktop. */
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none !important;
+  }
+}

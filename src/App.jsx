@@ -371,11 +371,13 @@ function searchScore(c, tokens, fullQuery) {
 }
 
 function CareerGridScreen({
-  selectedIndustries, allCareers, loading, onViewCareer, onSparqMode,
+  selectedIndustries, onToggleIndustry, allCareers, loading, onViewCareer, onSparqMode,
   workStyleActive, setWorkStyleActive, pathActive, setPathActive,
   vibeActive, setVibeActive, searchQuery, setSearchQuery, restoreScrollY,
   starredIds, onToggleStar, onReplayTour,
 }) {
+  // Mobile-only industry picker (the sidebar's industry list is hidden < 768px).
+  const [industryModalOpen, setIndustryModalOpen] = useState(false);
   useLayoutEffect(() => {
     window.scrollTo(0, restoreScrollY || 0);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -499,6 +501,96 @@ function CareerGridScreen({
         >⚡ Sparq Mode</button>
       </div>
 
+      {/* Industry filter — mobile only (the sidebar hosts this on desktop) */}
+      <button
+        className="mobile-only"
+        onClick={() => setIndustryModalOpen(true)}
+        style={{
+          width: "100%", marginBottom: 14,
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8,
+          background: T.bgCard, borderRadius: 12, padding: "10px 14px", cursor: "pointer",
+          border: `1px solid ${selectedIndustries.length ? T.accent : T.border}`,
+          color: selectedIndustries.length ? T.accent : T.textMid,
+          fontSize: 13, fontWeight: 700, fontFamily: "inherit",
+        }}
+      >
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+          Industries
+        </span>
+        {selectedIndustries.length > 0
+          ? <span style={{ background: T.accent, color: "#fff", borderRadius: 20, fontSize: 11, fontWeight: 700, padding: "1px 8px" }}>{selectedIndustries.length}</span>
+          : <span style={{ color: T.textDim, fontSize: 12, fontWeight: 500 }}>All</span>}
+      </button>
+
+      {industryModalOpen && (
+        <div
+          onClick={e => { if (e.target === e.currentTarget) setIndustryModalOpen(false); }}
+          style={{
+            position: "fixed", inset: 0, zIndex: 15000, background: "rgba(10,11,20,0.6)",
+            backdropFilter: "blur(2px)", display: "flex", flexDirection: "column", justifyContent: "flex-end",
+          }}
+        >
+          <div style={{
+            background: T.bgCard, borderTopLeftRadius: 20, borderTopRightRadius: 20,
+            borderTop: `1px solid ${T.border}`, padding: "18px 18px 26px",
+            maxHeight: "78vh", display: "flex", flexDirection: "column",
+            boxShadow: "0 -12px 40px rgba(0,0,0,0.5)",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+              <div style={{ fontSize: 15, fontWeight: 800, color: T.text }}>Filter by industry</div>
+              <button onClick={() => setIndustryModalOpen(false)} style={{ background: "none", border: "none", color: T.textMid, fontSize: 20, lineHeight: 1, cursor: "pointer", padding: "0 2px" }}>✕</button>
+            </div>
+            <div style={{ overflowY: "auto", display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+              {INDUSTRY_CONFIG.map(ind => {
+                const sel = selectedIndustries.includes(ind.name);
+                return (
+                  <button
+                    key={ind.name}
+                    onClick={() => onToggleIndustry(ind.name)}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 6,
+                      padding: "7px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600,
+                      border: `1px solid ${sel ? ind.color : T.border}`,
+                      background: sel ? `${ind.color}22` : "transparent",
+                      color: sel ? ind.color : T.textMid, cursor: "pointer", fontFamily: "inherit",
+                    }}
+                  >
+                    <span style={{ fontSize: 12 }}>{ind.icon}</span>{ind.name}
+                    {sel && <span style={{ fontSize: 10, opacity: 0.8 }}>✓</span>}
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button
+                onClick={() => { [...selectedIndustries].forEach(onToggleIndustry); }}
+                disabled={selectedIndustries.length === 0}
+                style={{
+                  flex: 1, padding: "11px", background: "transparent",
+                  border: `1px solid ${T.border}`, borderRadius: 12,
+                  color: selectedIndustries.length ? T.textMid : T.textDim,
+                  fontSize: 14, fontWeight: 600, fontFamily: "inherit",
+                  cursor: selectedIndustries.length ? "pointer" : "default",
+                  opacity: selectedIndustries.length ? 1 : 0.5,
+                }}
+              >Clear</button>
+              <button
+                onClick={() => setIndustryModalOpen(false)}
+                style={{
+                  flex: 1, padding: "11px",
+                  background: "linear-gradient(135deg, #7F77DD, #38BDF8)",
+                  border: "none", borderRadius: 12, color: "#fff",
+                  fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+                }}
+              >Done</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Search */}
       <div data-tour="search" style={{ position: "relative", marginBottom: 18 }}>
         <svg
@@ -580,7 +672,16 @@ function CareerGridScreen({
             WebkitTextFillColor: "transparent", color: "transparent",
           }}>◈</div>
           <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 6 }}>Start exploring</div>
-          <div style={{ fontSize: 13, color: T.textMid }}>Pick an industry from the sidebar to start exploring careers.</div>
+          <div style={{ fontSize: 13, color: T.textMid, marginBottom: 18 }}>Pick an industry to start exploring careers.</div>
+          <button
+            className="mobile-only"
+            onClick={() => setIndustryModalOpen(true)}
+            style={{
+              display: "block", margin: "0 auto", padding: "11px 24px",
+              background: "linear-gradient(135deg, #7F77DD, #38BDF8)", border: "none",
+              borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer",
+            }}
+          >Choose industries</button>
         </div>
       )}
 
@@ -2242,6 +2343,7 @@ function AppContent({ signOut }) {
         {screen === "home" && (
           <CareerGridScreen
             selectedIndustries={selectedIndustries}
+            onToggleIndustry={handleToggleIndustry}
             allCareers={allCareers}
             loading={careersLoading}
             onViewCareer={handleViewCareer}
