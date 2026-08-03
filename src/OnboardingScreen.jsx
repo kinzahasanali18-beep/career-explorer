@@ -47,8 +47,13 @@ export default function OnboardingScreen({ onComplete, onStartQuiz }) {
         </div>
 
         {/* Subhead */}
-        <div style={{ fontSize: 14, color: T.textMid, lineHeight: 1.6, marginBottom: 28 }}>
+        <div style={{ fontSize: 14, color: T.textMid, lineHeight: 1.6, marginBottom: 14 }}>
           Tap into what you're into, and we'll show you jobs you didn't even know existed.
+        </div>
+
+        {/* Reassurance */}
+        <div style={{ fontSize: 12, color: T.textDim, marginBottom: 28 }}>
+          5 quick questions · takes under a minute
         </div>
 
         {/* Primary CTA — starts the quiz */}
