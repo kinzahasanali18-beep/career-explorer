@@ -13,15 +13,56 @@ import HiddenGems from "./pages/HiddenGems";
 import SalaryNote from "./SalaryNote";
 import Tour from "./Tour";
 
-// First-time walkthrough for the Explore page. Targets are matched by the
-// data-tour attributes on the sidebar, search bar, Sparq button, and filters.
+// First-time walkthroughs. Each step points at an element by its data-tour
+// attribute. Steps intentionally avoid re-teaching repeated patterns (starring,
+// tap-to-expand) on every page — those are taught once and skipped elsewhere.
 const EXPLORE_TOUR_STEPS = [
   { selector: '[data-tour="industries"]', text: "Pick industries to filter what you see.", placement: "right" },
   { selector: '[data-tour="search"]',     text: "Already know what you're looking for? Search here.", placement: "bottom" },
   { selector: '[data-tour="sparq"]',      text: "Swipe through picks made just for you.", placement: "bottom" },
   { selector: '[data-tour="filters"]',    text: "Narrow things down even further.", placement: "bottom" },
 ];
-const EXPLORE_TOUR_KEY = "ce_explore_tour_seen";
+
+const SHORTLIST_TOUR_STEPS = [
+  { selector: '[data-tour="shortlist-tabs"]',    text: "Everything you save lands here — careers, deadlines, and opportunities, each on its own tab.", placement: "bottom" },
+  { selector: '[data-tour="shortlist-groupby"]', text: "Sort your saved careers by industry, salary, experience, and more.", placement: "bottom" },
+  { selector: '[data-tour="shortlist-filters"]', text: "Filter or search inside your saved list to find one fast.", placement: "bottom" },
+];
+
+const GUIDE_TOUR_STEPS = [
+  { selector: '[data-tour="guide-search"]',     text: "Search any term — even the plain-English version of it.", placement: "bottom" },
+  { selector: '[data-tour="guide-categories"]', text: "Jump straight to money, school, or work topics.", placement: "bottom" },
+  { selector: '[data-tour="guide-card"]',       text: "Tap any card for the real talk — plus a tip you can actually use.", placement: "bottom" },
+];
+
+const WHENTOAPPLY_TOUR_STEPS = [
+  { selector: '[data-tour="wta-mode"]',    text: "Flip between College and High School — the whole list retimes itself.", placement: "bottom" },
+  { selector: '[data-tour="wta-urgency"]', text: "More dots = start sooner. Five means plan 12–18 months ahead.", placement: "bottom" },
+  { selector: '[data-tour="wta-star"]',    text: "Star a deadline to track it in your Shortlist.", placement: "bottom" },
+];
+
+const HIDDENGEMS_TOUR_STEPS = [
+  { selector: '[data-tour="gems-age"]',   text: "Filter by who each program's actually for.", placement: "bottom" },
+  { selector: '[data-tour="industries"]', text: "Your industry picks in the sidebar filter these too.", placement: "right" },
+];
+
+const SPARQ_TOUR_STEPS = [
+  { selector: '[data-tour="sparq-card"]',     text: "Swipe right to save it, left to skip. Skips are gone for good.", placement: "bottom" },
+  { selector: '[data-tour="sparq-card"]',     text: "Or just tap a card to open its full roadmap.", placement: "bottom" },
+  { selector: '[data-tour="sparq-controls"]', text: "Not a swiper? These do the same thing.", placement: "bottom" },
+];
+
+// Routed-screen tours, keyed by screen id. Each auto-runs once (its localStorage
+// key) and is replayable via the page's "?" button. The Sparq overlay tour lives
+// inside SparqModeOverlay since it isn't a routed screen.
+const SCREEN_TOURS = {
+  home:            { key: "ce_explore_tour_seen",   steps: EXPLORE_TOUR_STEPS },
+  shortlist:       { key: "ce_shortlist_tour_seen", steps: SHORTLIST_TOUR_STEPS },
+  guide:           { key: "ce_guide_tour_seen",     steps: GUIDE_TOUR_STEPS },
+  "when-to-apply": { key: "ce_wta_tour_seen",       steps: WHENTOAPPLY_TOUR_STEPS },
+  "hidden-gems":   { key: "ce_gems_tour_seen",      steps: HIDDENGEMS_TOUR_STEPS },
+};
+const SPARQ_TOUR_KEY = "ce_sparq_tour_seen";
 
 const T = {
   bg: "var(--bg)", bgCard: "var(--bgCard)", bgDeep: "var(--bgDeep)",
@@ -793,7 +834,7 @@ function OpportunityCard({ item, onUnstar }) {
   );
 }
 
-function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, onGoToExplore, starredWhenItems, onToggleWhenStar, onGoToWhenToApply, starredOpportunities, onToggleOpportunityStar, onGoToHiddenGems }) {
+function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, onGoToExplore, starredWhenItems, onToggleWhenStar, onGoToWhenToApply, starredOpportunities, onToggleOpportunityStar, onGoToHiddenGems, onReplayTour }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [workStyleActive, setWorkStyleActive] = useState(new Set());
   const [pathActive, setPathActive] = useState(null);
@@ -866,8 +907,19 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
             </div>
           )}
         </div>
+        <button
+          onClick={onReplayTour}
+          title="Replay the quick tour"
+          aria-label="Replay the quick tour"
+          style={{
+            width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
+            background: T.bgCard, border: `1px solid ${T.border}`, color: T.textMid,
+            fontSize: 14, fontWeight: 700, cursor: "pointer", lineHeight: 1,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >?</button>
         {activeTab === "careers" && starred.length > 0 && (
-          <div style={{ position: "relative", flexShrink: 0 }}>
+          <div data-tour="shortlist-groupby" style={{ position: "relative", flexShrink: 0 }}>
             <select
               value={groupBy}
               onChange={e => setGroupBy(e.target.value)}
@@ -896,7 +948,7 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
       </div>
 
       {/* Tab bar */}
-      <div style={{ display: "flex", borderBottom: `1px solid ${T.border}`, marginBottom: 20 }}>
+      <div data-tour="shortlist-tabs" style={{ display: "flex", borderBottom: `1px solid ${T.border}`, marginBottom: 20 }}>
         {TABS.map(tab => {
           const active = activeTab === tab.id;
           return (
@@ -941,6 +993,7 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
           )}
           {!loading && starred.length > 0 && (
             <>
+              <div data-tour="shortlist-filters">
               <div style={{ position: "relative", marginBottom: 18 }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                   stroke={T.textDim} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
@@ -979,6 +1032,7 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
               <FilterGroup label="Vibe" chips={VIBE_FILTERS}
                 isActive={id => vibeActive.has(id)}
                 onToggle={id => toggleSet(setVibeActive, id)} color="#A78BFA" />
+              </div>
               <div style={{ fontSize: 11, color: T.textDim, marginBottom: 14, marginTop: 4 }}>
                 {filtered.length} career{filtered.length !== 1 ? "s" : ""}{hasFilters ? " match" : ""}
                 {groupBy && filtered.length > 0 && (
@@ -1461,6 +1515,7 @@ function SparqCard({ career, onExit, onOpen, isTop, command }) {
 function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMore = false, onLoadMore, onClose, onSwipe, onOpenCareer, onOpenProfile }) {
   const [index, setIndex] = useState(initialIndex);
   const [command, setCommand] = useState(null); // { dir, forIndex } — drives the exit animation
+  const [tourOpen, setTourOpen] = useState(false);
   const remaining = cards.slice(index);
 
   // Buttons / keyboard don't advance directly; they ask the top card to fly out.
@@ -1479,6 +1534,7 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMor
 
   useEffect(() => {
     function onKey(e) {
+      if (tourOpen) return; // the walkthrough owns the keyboard while it's open
       if (e.key === "Escape") onClose();
       else if (e.key === "ArrowRight") requestSwipe("right");
       else if (e.key === "ArrowLeft") requestSwipe("left");
@@ -1489,6 +1545,18 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMor
 
   const empty = cards.length === 0;
   const done = index >= cards.length;
+
+  // First-time swipe-deck walkthrough: auto-open once real cards are on screen.
+  useEffect(() => {
+    if (loading || done || cards.length === 0) return;
+    if (localStorage.getItem(SPARQ_TOUR_KEY)) return;
+    const t = setTimeout(() => {
+      if (!document.querySelector('[data-tour="sparq-card"]')) return;
+      setTourOpen(true);
+      try { localStorage.setItem(SPARQ_TOUR_KEY, "1"); } catch { /* ignore */ }
+    }, 500);
+    return () => clearTimeout(t);
+  }, [loading, done, cards.length]);
   const showCount = !loading && cards.length > 0;
 
   return (
@@ -1503,6 +1571,19 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMor
         <div style={{ fontSize: 12, color: T.textMid }}>
           {showCount ? (done ? `${cards.length} of ${cards.length}` : `${index + 1} of ${cards.length}`) : ""}
         </div>
+        {!loading && !done && (
+          <button
+            onClick={() => setTourOpen(true)}
+            title="Replay the quick tour"
+            aria-label="Replay the quick tour"
+            style={{
+              width: 32, height: 32, borderRadius: 10,
+              background: T.bgCard, border: `1px solid ${T.border}`, color: T.textMid,
+              fontSize: 14, fontWeight: 700, lineHeight: 1, cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+          >?</button>
+        )}
         <button
           onClick={onClose}
           style={{
@@ -1581,7 +1662,7 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMor
           remaining.slice(0, 3).map((card, i) => {
             const isTop = i === 0;
             return (
-              <div key={card.id} style={{ position: "absolute", inset: 0, zIndex: 10 - i, pointerEvents: isTop ? "auto" : "none" }}>
+              <div key={card.id} data-tour={isTop ? "sparq-card" : undefined} style={{ position: "absolute", inset: 0, zIndex: 10 - i, pointerEvents: isTop ? "auto" : "none" }}>
                 <SparqCard
                   career={card}
                   isTop={isTop}
@@ -1607,7 +1688,7 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMor
 
       {/* Controls */}
       {!loading && !done && (
-        <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+        <div data-tour="sparq-controls" style={{ display: "flex", alignItems: "center", gap: 22 }}>
           <button
             onClick={() => requestSwipe("left")}
             title="Skip (never show again)"
@@ -1628,6 +1709,10 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMor
           >★</button>
         </div>
       )}
+
+      {tourOpen && (
+        <Tour steps={SPARQ_TOUR_STEPS} onClose={() => setTourOpen(false)} />
+      )}
     </div>
   );
 }
@@ -1639,10 +1724,12 @@ function AppContent({ signOut }) {
   const [showProfile, setShowProfile] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
-  const [tourOpen, setTourOpen] = useState(false);
+  // The screen id whose walkthrough is currently open (or null). Routed-screen
+  // tours only; the Sparq overlay manages its own.
+  const [activeTour, setActiveTour] = useState(null);
   // Whether the initial profile fetch has resolved. The onboarding/quiz decision
   // is made async from that fetch, so the tour must wait for it before it can
-  // safely conclude the user is really on Explore (and not about to onboard).
+  // safely conclude the user is really on a page (and not about to onboard).
   const [profileChecked, setProfileChecked] = useState(false);
 
   // First-run world selection now happens via the quiz (which saves worlds) and
@@ -1802,25 +1889,27 @@ function AppContent({ signOut }) {
     });
   }, [user?.id]);
 
-  // First-time Explore walkthrough: auto-open once the user is actually looking
-  // at Explore with no modal/overlay covering it (so it never appears on top of
-  // the profile modal, onboarding, quiz, or Sparq Mode). Mark it seen as soon as
-  // it opens so it only ever auto-shows once; the "?" button replays it anytime.
+  // First-time walkthrough per routed screen: auto-open once the user is really
+  // on that page with no modal/overlay covering it (so it never appears over the
+  // profile modal, onboarding, quiz, or Sparq Mode). Marked seen as soon as it
+  // opens so it only auto-shows once; each page's "?" button replays it anytime.
   useEffect(() => {
     if (!profileChecked) return; // wait for the onboarding decision before firing
-    if (screen !== "home") return;
     if (showProfile || showOnboarding || showQuiz || sparqOpen) return;
-    if (localStorage.getItem(EXPLORE_TOUR_KEY)) return;
+    const tour = SCREEN_TOURS[screen];
+    if (!tour) return;
+    if (localStorage.getItem(tour.key)) return;
+    // Shortlist only makes sense once something's been saved.
+    if (screen === "shortlist" && starredIds.size === 0) return;
     const t = setTimeout(() => {
-      // Re-verify at fire time: the real Explore UI must be on screen and no
-      // overlay covering it (guards against any last-moment state change).
       if (showProfile || showOnboarding || showQuiz || sparqOpen) return;
-      if (!document.querySelector('[data-tour="sparq"]')) return;
-      setTourOpen(true);
-      try { localStorage.setItem(EXPLORE_TOUR_KEY, "1"); } catch { /* ignore */ }
+      // The page's real UI must be rendered (first anchor present) before firing.
+      if (!document.querySelector(tour.steps[0].selector)) return;
+      setActiveTour(screen);
+      try { localStorage.setItem(tour.key, "1"); } catch { /* ignore */ }
     }, 450); // let the page lay out first
     return () => clearTimeout(t);
-  }, [profileChecked, screen, showProfile, showOnboarding, showQuiz, sparqOpen]);
+  }, [profileChecked, screen, showProfile, showOnboarding, showQuiz, sparqOpen, starredIds]);
 
   // Fetch all careers from Supabase
   useEffect(() => {
@@ -2134,8 +2223,8 @@ function AppContent({ signOut }) {
         />
       )}
 
-      {screen === "home" && tourOpen && (
-        <Tour steps={EXPLORE_TOUR_STEPS} onClose={() => setTourOpen(false)} />
+      {activeTour && screen === activeTour && SCREEN_TOURS[activeTour] && (
+        <Tour steps={SCREEN_TOURS[activeTour].steps} onClose={() => setActiveTour(null)} />
       )}
 
       {/* Sidebar — hidden on the industry picker screen */}
@@ -2168,7 +2257,7 @@ function AppContent({ signOut }) {
             restoreScrollY={savedScrollY.current}
             starredIds={starredIds}
             onToggleStar={toggleStar}
-            onReplayTour={() => setTourOpen(true)}
+            onReplayTour={() => setActiveTour("home")}
           />
         )}
         {screen === "career" && (
@@ -2198,11 +2287,12 @@ function AppContent({ signOut }) {
             starredOpportunities={starredOpportunities}
             onToggleOpportunityStar={toggleOpportunityStar}
             onGoToHiddenGems={() => setScreen("hidden-gems")}
+            onReplayTour={() => setActiveTour("shortlist")}
           />
         )}
-        {screen === "guide" && <SparqGuide />}
+        {screen === "guide" && <SparqGuide onReplayTour={() => setActiveTour("guide")} />}
         {screen === "when-to-apply" && (
-          <WhenToApply starredItems={starredWhenItems} onToggleStar={toggleWhenStar} />
+          <WhenToApply starredItems={starredWhenItems} onToggleStar={toggleWhenStar} onReplayTour={() => setActiveTour("when-to-apply")} />
         )}
         {screen === "hidden-gems" && (
           <HiddenGems
@@ -2211,6 +2301,7 @@ function AppContent({ signOut }) {
             selectedIndustries={selectedIndustries}
             starredItems={starredOpportunities}
             onToggleStar={toggleOpportunityStar}
+            onReplayTour={() => setActiveTour("hidden-gems")}
           />
         )}
       </div>

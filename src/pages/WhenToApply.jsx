@@ -173,7 +173,7 @@ export const highSchoolData = [
     url: "" },
 ];
 
-export default function WhenToApply({ starredItems, onToggleStar }) {
+export default function WhenToApply({ starredItems, onToggleStar, onReplayTour }) {
   const [mode, setMode] = useState("college");
   const [expanded, setExpanded] = useState(null);
   const [activeWorld, setActiveWorld] = useState(null);
@@ -189,15 +189,28 @@ export default function WhenToApply({ starredItems, onToggleStar }) {
     <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
 
       {/* Header */}
-      <div style={{ marginBottom: 22 }}>
-        <div style={{ fontSize: 22, fontWeight: 800, color: T.text, marginBottom: 6 }}>When to Apply</div>
-        <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.55 }}>
-          Most internships are the END of a 12–18 month process, not a spring scramble. Here's when each industry actually moves — and how far ahead you need to be.
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 22 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: T.text, marginBottom: 6 }}>When to Apply</div>
+          <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.55 }}>
+            Most internships are the END of a 12–18 month process, not a spring scramble. Here's when each industry actually moves — and how far ahead you need to be.
+          </div>
         </div>
+        <button
+          onClick={onReplayTour}
+          title="Replay the quick tour"
+          aria-label="Replay the quick tour"
+          style={{
+            width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
+            background: T.bgCard, border: `1px solid ${T.border}`, color: T.textMid,
+            fontSize: 14, fontWeight: 700, cursor: "pointer", lineHeight: 1,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >?</button>
       </div>
 
       {/* Mode toggle */}
-      <div style={{ display: "inline-flex", gap: 0, marginBottom: 18, background: T.bgDeep, borderRadius: 12, padding: 3 }}>
+      <div data-tour="wta-mode" style={{ display: "inline-flex", gap: 0, marginBottom: 18, background: T.bgDeep, borderRadius: 12, padding: 3 }}>
         {[["college", "College"], ["highschool", "High School"]].map(([val, label]) => (
           <button
             key={val}
@@ -261,7 +274,7 @@ export default function WhenToApply({ starredItems, onToggleStar }) {
       </div>
 
       {/* Cards */}
-      {sorted.map(item => {
+      {sorted.map((item, idx) => {
         const isOpen = expanded === item.n;
         const wc = worldColor(item.world);
         const isStarred = starredItems.has(item.n);
@@ -306,7 +319,7 @@ export default function WhenToApply({ starredItems, onToggleStar }) {
 
               {/* Right: urgency dots + star + chevron */}
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, flexShrink: 0, paddingTop: 2 }}>
-                <div style={{ display: "flex", gap: 3 }} title={URGENCY_LABELS[item.urgency]}>
+                <div data-tour={idx === 0 ? "wta-urgency" : undefined} style={{ display: "flex", gap: 3 }} title={URGENCY_LABELS[item.urgency]}>
                   {[1, 2, 3, 4, 5].map(i => (
                     <div key={i} style={{
                       width: 7, height: 7, borderRadius: "50%",
@@ -316,6 +329,7 @@ export default function WhenToApply({ starredItems, onToggleStar }) {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <button
+                    data-tour={idx === 0 ? "wta-star" : undefined}
                     onClick={e => { e.stopPropagation(); onToggleStar(item); }}
                     style={{
                       background: "none", border: "none", cursor: "pointer",

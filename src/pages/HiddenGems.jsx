@@ -44,7 +44,7 @@ function matchesAge(gem, ageFilter) {
   return true;
 }
 
-export default function HiddenGems({ hiddenGems = [], loading, selectedIndustries = [], starredItems, onToggleStar }) {
+export default function HiddenGems({ hiddenGems = [], loading, selectedIndustries = [], starredItems, onToggleStar, onReplayTour }) {
   const [expanded, setExpanded] = useState(null);
   const [ageFilter, setAgeFilter] = useState("all");
 
@@ -58,15 +58,28 @@ export default function HiddenGems({ hiddenGems = [], loading, selectedIndustrie
     <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
 
       {/* Header */}
-      <div style={{ marginBottom: 22 }}>
-        <div style={{ fontSize: 22, fontWeight: 800, color: T.text, marginBottom: 6 }}>Hidden Gems</div>
-        <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.55 }}>
-          The wait-that's-real programs most students never hear about — curated, not crowdsourced.
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 22 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: T.text, marginBottom: 6 }}>Hidden Gems</div>
+          <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.55 }}>
+            The wait-that's-real programs most students never hear about — curated, not crowdsourced.
+          </div>
         </div>
+        <button
+          onClick={onReplayTour}
+          title="Replay the quick tour"
+          aria-label="Replay the quick tour"
+          style={{
+            width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
+            background: T.bgCard, border: `1px solid ${T.border}`, color: T.textMid,
+            fontSize: 14, fontWeight: 700, cursor: "pointer", lineHeight: 1,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >?</button>
       </div>
 
       {/* Age group filter row — page-specific; industry filtering lives in the sidebar */}
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 18 }}>
+      <div data-tour="gems-age" style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 18 }}>
         {AGE_FILTERS.map(f => {
           const active = ageFilter === f.id;
           return (

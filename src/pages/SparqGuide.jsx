@@ -153,7 +153,7 @@ const glossary = [
   },
 ];
 
-export default function SparqGuide() {
+export default function SparqGuide({ onReplayTour }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [expandedTerm, setExpandedTerm] = useState(null);
   const [search, setSearch] = useState("");
@@ -171,18 +171,31 @@ export default function SparqGuide() {
     <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
 
       {/* Header */}
-      <div style={{ marginBottom: 22 }}>
-        <div style={{ fontSize: 10, color: T.accent, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, marginBottom: 6 }}>
-          The Big Sister Guide
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 22 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 10, color: T.accent, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700, marginBottom: 6 }}>
+            The Big Sister Guide
+          </div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: T.text, marginBottom: 6 }}>The Guide</div>
+          <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.5 }}>
+            Things nobody told you about — internships, recruiting, money, and more.
+          </div>
         </div>
-        <div style={{ fontSize: 22, fontWeight: 800, color: T.text, marginBottom: 6 }}>The Guide</div>
-        <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.5 }}>
-          Things nobody told you about — internships, recruiting, money, and more.
-        </div>
+        <button
+          onClick={onReplayTour}
+          title="Replay the quick tour"
+          aria-label="Replay the quick tour"
+          style={{
+            width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
+            background: T.bgCard, border: `1px solid ${T.border}`, color: T.textMid,
+            fontSize: 14, fontWeight: 700, cursor: "pointer", lineHeight: 1,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >?</button>
       </div>
 
       {/* Search bar */}
-      <div style={{ position: "relative", marginBottom: 18 }}>
+      <div data-tour="guide-search" style={{ position: "relative", marginBottom: 18 }}>
         <svg
           width="14" height="14" viewBox="0 0 24 24" fill="none"
           stroke={T.textDim} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
@@ -218,7 +231,7 @@ export default function SparqGuide() {
       </div>
 
       {/* Category chips */}
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 18 }}>
+      <div data-tour="guide-categories" style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 18 }}>
         {categories.map(cat => (
           <button
             key={cat.id}
@@ -250,11 +263,12 @@ export default function SparqGuide() {
       )}
 
       {/* Glossary cards */}
-      {filtered.map(item => {
+      {filtered.map((item, idx) => {
         const isOpen = expandedTerm === item.term;
         return (
           <div
             key={item.term}
+            data-tour={idx === 0 ? "guide-card" : undefined}
             onClick={() => setExpandedTerm(isOpen ? null : item.term)}
             style={{
               background: T.bgCard,
