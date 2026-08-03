@@ -417,6 +417,9 @@ function CareerGridScreen({
     });
   }
 
+  // Current page in the paginated career list (see PAGE_SIZE below).
+  const [page, setPage] = useState(0);
+
   // Debounce the search input so we filter/rank the (large) dataset at most
   // once per pause in typing rather than on every keystroke. The input stays
   // bound to `searchQuery` for responsiveness; `debouncedQuery` drives results.
@@ -474,6 +477,26 @@ function CareerGridScreen({
   // display names — used in the zero-results messaging below.
   const queryText = debouncedQuery.trim();
   const selectedIndustryNames = selectedIndustries.map(id => getConfig(id).name).join(", ");
+
+  // ── Pagination ──────────────────────────────────────────────────────────────
+  // Break the (potentially huge) list into fixed pages with a light "Page X of Y"
+  // control, so scrolling has a defined end instead of running on forever.
+  const PAGE_SIZE = 15;
+  const totalPages = Math.max(1, Math.ceil(displayed.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages - 1); // guard against a stale page after filters shrink the list
+  const pageItems = displayed.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
+
+  // Reset to the first page whenever the result set changes (industry, filters,
+  // or search) so the user never lands on an out-of-range page.
+  useEffect(() => {
+    setPage(0);
+  }, [selectedIndustries, workStyleActive, pathActive, vibeActive, q]);
+
+  function goToPage(p) {
+    const clamped = Math.max(0, Math.min(p, totalPages - 1));
+    setPage(clamped);
+    window.scrollTo({ top: 0, behavior: "smooth" }); // bring the card list back to the top
+  }
 
   return (
     <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
@@ -552,10 +575,11 @@ function CareerGridScreen({
         color="#A78BFA"
       />
 
-      {/* Count — hidden only for the initial "pick an industry" empty state */}
-      {!showEmptyState && (
+      {/* Loading hint. We intentionally do NOT show a total career count — some
+          industries have hundreds/thousands; page position is shown instead. */}
+      {!showEmptyState && loading && (
         <div style={{ fontSize: 11, color: T.textDim, marginBottom: 14, marginTop: 4 }}>
-          {loading ? "Finding careers…" : `${displayed.length} career${displayed.length !== 1 ? "s" : ""}`}
+          Finding careers…
         </div>
       )}
 
@@ -592,7 +616,7 @@ function CareerGridScreen({
         </div>
       ) : (
         <div className="career-card-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-          {displayed.map(c => (
+          {pageItems.map(c => (
             <CareerCard
               key={c.id || c.name}
               career={c}
@@ -601,6 +625,40 @@ function CareerGridScreen({
               onToggleStar={onToggleStar}
             />
           ))}
+        </div>
+      )}
+
+      {/* Page control — light "‹ Prev · Page X of Y · Next ›", no total count. */}
+      {!loading && !showEmptyState && displayed.length > 0 && totalPages > 1 && (
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "center",
+          gap: 16, marginTop: 22,
+        }}>
+          <button
+            onClick={() => goToPage(safePage - 1)}
+            disabled={safePage === 0}
+            style={{
+              background: "none", border: "none", padding: "6px 8px",
+              color: safePage === 0 ? T.textDim : T.textMid,
+              fontSize: 13, fontWeight: 600, fontFamily: "inherit",
+              cursor: safePage === 0 ? "default" : "pointer",
+              opacity: safePage === 0 ? 0.5 : 1,
+            }}
+          >‹ Prev</button>
+          <span style={{ fontSize: 12, color: T.textMid, letterSpacing: "0.02em", whiteSpace: "nowrap" }}>
+            Page {safePage + 1} of {totalPages}
+          </span>
+          <button
+            onClick={() => goToPage(safePage + 1)}
+            disabled={safePage >= totalPages - 1}
+            style={{
+              background: "none", border: "none", padding: "6px 8px",
+              color: safePage >= totalPages - 1 ? T.textDim : T.textMid,
+              fontSize: 13, fontWeight: 600, fontFamily: "inherit",
+              cursor: safePage >= totalPages - 1 ? "default" : "pointer",
+              opacity: safePage >= totalPages - 1 ? 0.5 : 1,
+            }}
+          >Next ›</button>
         </div>
       )}
 
