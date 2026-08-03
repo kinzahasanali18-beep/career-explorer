@@ -30,12 +30,17 @@ export default function OnboardingScreen({ onComplete, onStartQuiz }) {
         textAlign: 'center',
         animation: 'fadeSlideUp 0.5s ease forwards',
       }}>
-        {/* Brand wordmark */}
-        <div style={{
-          fontSize: 34, fontWeight: 900, letterSpacing: -1,
-          color: T.text, marginBottom: 22,
-        }}>
-          sparq
+        {/* Brand lockup: bolt logo + wordmark — matches the Login screen */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, marginBottom: 22 }}>
+          <img src="/favicon.svg" alt="" width="30" height="29" style={{ display: 'block', flexShrink: 0 }} />
+          <span style={{
+            fontSize: 34, fontWeight: 900, letterSpacing: -1, lineHeight: 1,
+            background: `linear-gradient(135deg, ${T.accent1}, ${T.accent2})`,
+            WebkitBackgroundClip: 'text', backgroundClip: 'text',
+            WebkitTextFillColor: 'transparent', color: 'transparent',
+          }}>
+            sparq
+          </span>
         </div>
 
         {/* Headline */}

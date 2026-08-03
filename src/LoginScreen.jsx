@@ -122,14 +122,21 @@ export default function LoginScreen() {
       }}>
         {/* Brand */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{
-            fontSize: 38,
-            fontWeight: 900,
-            letterSpacing: -1,
-            color: T.text,
-            marginBottom: 6,
-          }}>
-            sparq
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 6 }}>
+            <img src="/favicon.svg" alt="" width="34" height="33" style={{ display: 'block', flexShrink: 0 }} />
+            <span style={{
+              fontSize: 38,
+              fontWeight: 900,
+              letterSpacing: -1,
+              lineHeight: 1,
+              background: `linear-gradient(135deg, ${T.accent1}, ${T.accent2})`,
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              color: 'transparent',
+            }}>
+              sparq
+            </span>
           </div>
           <div style={{ color: T.textMid, fontSize: 14 }}>
             Sign in to explore your career path
