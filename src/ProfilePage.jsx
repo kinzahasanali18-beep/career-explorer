@@ -108,7 +108,7 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
   const completenessLabel = completenessPercent === 100 ? 'Profile complete ✦' : completenessPercent >= 66 ? 'Almost there' : completenessPercent >= 33 ? 'Getting somewhere' : 'Just getting started';
 
   useEffect(() => {
-    supabase.from('profiles').select('*').eq('id', user.id).single()
+    supabase.from('profiles').select('*').eq('id', user.id).maybeSingle()
       .then(({ data }) => {
         if (data) {
           setForm({ name: data.name || '', avatar: data.avatar || '🦁' });

@@ -1966,7 +1966,7 @@ function AppContent({ signOut }) {
   // Load saved profile preferences
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("industries").eq("id", user.id).single().then(({ data, error }) => {
+    supabase.from("profiles").select("industries").eq("id", user.id).maybeSingle().then(({ data, error }) => {
       // Onboarding is gated on whether the user has saved industries — the quiz
       // saves those, so completing it counts as onboarded. (Gating on `name`
       // re-prompted users who finished the quiz but never saved the Profile.)
@@ -2128,7 +2128,7 @@ function AppContent({ signOut }) {
     let rawIndustries = null;
     let worlds = profileIndustries;
     if (user) {
-      const { data, error } = await supabase.from("profiles").select("industries").eq("id", user.id).single();
+      const { data, error } = await supabase.from("profiles").select("industries").eq("id", user.id).maybeSingle();
       rawIndustries = data?.industries ?? null;
       if (!error && data) {
         worlds = normalizeIndustries(data.industries);
@@ -2260,8 +2260,11 @@ function AppContent({ signOut }) {
   // a full reload. Does NOT touch the sidebar filter — that's exploration-only.
   function refreshProfileIndustries() {
     if (!user) return;
-    supabase.from("profiles").select("industries").eq("id", user.id).single().then(({ data }) => {
-      const worlds = normalizeIndustries(data?.industries);
+    supabase.from("profiles").select("industries").eq("id", user.id).maybeSingle().then(({ data, error }) => {
+      // Don't clobber the cached worlds on a failed/empty read — only overwrite
+      // when we actually got a row back.
+      if (error || !data) return;
+      const worlds = normalizeIndustries(data.industries);
       setProfileIndustries(worlds);
       lsSet("ce_profile_industries", worlds);
     });
