@@ -193,10 +193,6 @@ function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndust
           })}
         </>
       )}
-
-      <button className="sidebar-start-over" onClick={() => onNavigate("pick")}>
-        ↩ Change worlds
-      </button>
     </div>
   );
 }
@@ -282,83 +278,6 @@ function CareerCard({ career, onClick, isStarred, onToggleStar }) {
 }
 
 // ─── Screens ──────────────────────────────────────────────────────────────────
-
-function IndustryPickerScreen({ initialSelected, onDone }) {
-  const [selected, setSelected] = useState(new Set(initialSelected || []));
-
-  function toggle(name) {
-    setSelected(prev => {
-      const next = new Set(prev);
-      next.has(name) ? next.delete(name) : next.add(name);
-      return next;
-    });
-  }
-
-  return (
-    <div style={{ minHeight: "100vh", background: T.bg, fontFamily: "'Inter',system-ui,sans-serif" }}>
-      <div className="pick-screen-inner">
-        <div style={{ fontSize: 28, fontWeight: 800, color: T.text, marginBottom: 6, lineHeight: 1.2 }}>
-          What world pulls you in?
-        </div>
-        <div style={{ fontSize: 14, color: T.textMid, marginBottom: 28, lineHeight: 1.5 }}>
-          Pick as many as you like — the more you choose, the more personalized your results.
-        </div>
-
-        <div className="industry-pick-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 28 }}>
-          {INDUSTRY_CONFIG.map(ind => {
-            const sel = selected.has(ind.name);
-            return (
-              <div
-                key={ind.name}
-                onClick={() => toggle(ind.name)}
-                style={{
-                  background: sel ? ind.bg : T.bgCard,
-                  border: `${sel ? 2 : 1}px solid ${sel ? ind.color : T.border}`,
-                  borderRadius: 14, padding: "14px 14px 12px",
-                  cursor: "pointer", transition: "all 0.12s", position: "relative",
-                }}
-              >
-                {sel && (
-                  <div style={{
-                    position: "absolute", top: 10, right: 10,
-                    width: 20, height: 20, borderRadius: "50%",
-                    background: ind.color, display: "flex",
-                    alignItems: "center", justifyContent: "center",
-                  }}>
-                    <span style={{ color: "#fff", fontSize: 11, fontWeight: 900, lineHeight: 1 }}>✓</span>
-                  </div>
-                )}
-                <div style={{ fontSize: 22, marginBottom: 6 }}>{ind.icon}</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: T.text, lineHeight: 1.3 }}>{ind.name}</div>
-              </div>
-            );
-          })}
-        </div>
-
-        <button
-          onClick={() => onDone(selected.size > 0 ? Array.from(selected) : [])}
-          style={{
-            width: "100%", padding: "1rem",
-            background: "linear-gradient(135deg, #7F77DD, #38BDF8)",
-            color: "#fff", border: "none", borderRadius: 14,
-            fontSize: 15, fontWeight: 700, cursor: "pointer", marginBottom: 12,
-          }}
-        >Find my careers →</button>
-        <button
-          onClick={() => onDone([])}
-          style={{
-            width: "100%", padding: "0.85rem",
-            background: "transparent", color: T.textMid,
-            border: `1px solid ${T.border}`, borderRadius: 14,
-            fontSize: 13, fontWeight: 600, cursor: "pointer",
-          }}
-        >
-          Skip — explore everything
-        </button>
-      </div>
-    </div>
-  );
-}
 
 function FilterGroup({ label, chips, isActive, onToggle, color }) {
   return (
@@ -682,7 +601,7 @@ function CareerGridScreen({
               ? (noIndustrySelected
                   ? `No careers found for "${queryText}" — try browsing an industry instead.`
                   : `No careers found for "${queryText}" in ${selectedIndustryNames} — try clearing the filter or browsing a different industry.`)
-              : "Try removing a filter or selecting different worlds."}
+              : "Try removing a filter or selecting different industries."}
           </div>
         </div>
       )}
@@ -1190,7 +1109,7 @@ function BottomNav({ screen, onNavigate }) {
 
 // ─── State helpers ─────────────────────────────────────────────────────────────
 
-const RESTORABLE = new Set(["pick", "home", "shortlist", "guide", "when-to-apply", "hidden-gems"]);
+const RESTORABLE = new Set(["home", "shortlist", "guide", "when-to-apply", "hidden-gems"]);
 function ls(key, fallback) { try { const v = localStorage.getItem(key); return v != null ? JSON.parse(v) : fallback; } catch { return fallback; } }
 function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
 
@@ -1588,11 +1507,11 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMor
           }}>
             <div style={{ fontSize: 40, marginBottom: 14 }}>{empty ? "🧭" : "✨"}</div>
             <div style={{ fontSize: 17, fontWeight: 700, color: T.text, marginBottom: 6 }}>
-              {empty ? "Set up Your Worlds first" : canLoadMore ? "Want to keep going?" : "You've seen them all"}
+              {empty ? "Set up your industries first" : canLoadMore ? "Want to keep going?" : "You've seen them all"}
             </div>
             <div style={{ fontSize: 13, color: T.textMid, marginBottom: 20, maxWidth: 300 }}>
               {empty
-                ? "Sparq Mode builds your set from the worlds saved in your profile. Add a few in your profile settings to get started."
+                ? "Sparq Mode builds your set from the industries saved in your profile. Add a few in your profile settings to get started."
                 : canLoadMore
                   ? "Here's a fresh batch of careers picked for you — keep swiping, or call it for now."
                   : "That's every career we can match to you right now. Saved ones are in your Shortlist."}
@@ -1696,11 +1615,12 @@ function AppContent({ signOut }) {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
 
+  // First-run world selection now happens via the quiz (which saves worlds) and
+  // then inline through the sidebar on Explore — there's no standalone picker
+  // screen anymore, so new users land on "home" (Explore).
   const [screen, setScreen] = useState(() => {
-    const seen = localStorage.getItem("ce_landing_seen") !== null;
-    if (!seen) return "pick";
-    const s = ls("ce_screen", "pick");
-    return RESTORABLE.has(s) ? s : "pick";
+    const s = ls("ce_screen", "home");
+    return RESTORABLE.has(s) ? s : "home";
   });
   const [selectedIndustries, setSelected] = useState(() => {
     const saved = ls("ce_industries", []);
@@ -1838,13 +1758,12 @@ function AppContent({ signOut }) {
         setSelected(valid);
         lsSet("ce_industries", valid);
         // Cache the saved profile worlds separately — this is Sparq Mode's source
-        // of truth and must NOT be affected by later sidebar filter changes.
+        // of truth and must NOT be affected by sidebar filter changes.
         // Normalize because the profile stores slugs, not full names.
         const worlds = normalizeIndustries(data.industries);
         setProfileIndustries(worlds);
         lsSet("ce_profile_industries", worlds);
         localStorage.setItem("ce_landing_seen", "1");
-        setScreen(prev => prev === "pick" ? "home" : prev);
       }
     });
   }, [user?.id]);
@@ -1909,8 +1828,12 @@ function AppContent({ signOut }) {
   }
 
   const showNav = screen === "home" || screen === "shortlist" || screen === "guide" || screen === "when-to-apply" || screen === "hidden-gems";
-  const showSidebar = screen !== "pick";
+  const showSidebar = true; // the standalone picker screen is gone; the sidebar is always available
 
+  // The sidebar is an EXPLORATION-ONLY filter: toggling only changes which
+  // careers are visible on Explore (and the local click tally that lightly
+  // weights Sparq Mode). It never writes to the profile — the Profile page's
+  // worlds editor is the single place that saves permanent world selections.
   function handleToggleIndustry(name) {
     setSelected(prev => {
       const wasSelected = prev.includes(name);
@@ -2088,8 +2011,9 @@ function AppContent({ signOut }) {
     }
   }
 
-  // Re-pull saved "Your Worlds" from the profile (e.g. after the user edits it),
-  // keeping Sparq Mode's source of truth current without a full reload.
+  // Re-pull saved "Your Worlds" from the profile (e.g. after the user edits it
+  // in the Profile modal), keeping Sparq Mode's source of truth current without
+  // a full reload. Does NOT touch the sidebar filter — that's exploration-only.
   function refreshProfileIndustries() {
     if (!user) return;
     supabase.from("profiles").select("industries").eq("id", user.id).single().then(({ data }) => {
@@ -2168,16 +2092,6 @@ function AppContent({ signOut }) {
 
       {/* Main content */}
       <div className={showSidebar ? "main-content" : ""}>
-        {screen === "pick" && (
-          <IndustryPickerScreen
-            initialSelected={selectedIndustries}
-            onDone={ids => {
-              setSelected(ids);
-              localStorage.setItem("ce_landing_seen", "1");
-              setScreen("home");
-            }}
-          />
-        )}
         {screen === "home" && (
           <CareerGridScreen
             selectedIndustries={selectedIndustries}

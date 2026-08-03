@@ -266,9 +266,9 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
             {/* Industry tiles */}
             <div style={{ marginBottom: 18 }}>
               <label style={labelStyle}>
-                Your Worlds
+                Your Industries
                 <span style={{ color: T.textDim, fontWeight: 400, marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>
-                  — pick everything that pulls you in
+                  — pick every industry that pulls you in
                 </span>
               </label>
               <div style={{

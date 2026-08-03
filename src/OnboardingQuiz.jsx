@@ -489,7 +489,7 @@ export default function OnboardingQuiz({ onComplete, isRetake = false }) {
               Here's what we found
             </div>
             <div style={{ fontSize: 24, fontWeight: 800, color: T.text, lineHeight: 1.2, marginBottom: 8 }}>
-              Your top worlds
+              Your top industries
             </div>
             <div style={{ fontSize: 14, color: T.textMid, marginBottom: 28, lineHeight: 1.6 }}>
               Based on your answers we pre-selected these for you. You can always change them on your profile.
