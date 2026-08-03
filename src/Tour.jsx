@@ -23,12 +23,16 @@ export default function Tour({ steps, onClose }) {
   const isLast = i === steps.length - 1;
 
   const measure = useCallback(() => {
-    const el = step && document.querySelector(step.selector);
-    if (el) {
-      const r = el.getBoundingClientRect();
-      if (r.width > 0 && r.height > 0) { setRect(r); return; }
+    if (step) {
+      // A selector can match multiple elements — e.g. the desktop sidebar and
+      // the mobile-only "Industries" button both use data-tour="industries".
+      // Spotlight the first one that's actually visible at this viewport width.
+      for (const el of document.querySelectorAll(step.selector)) {
+        const r = el.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) { setRect(r); return; }
+      }
     }
-    setRect(null); // target absent/hidden → centered callout, no spotlight
+    setRect(null); // no visible target → centered callout, no spotlight
   }, [step]);
 
   useLayoutEffect(() => { measure(); }, [measure]);

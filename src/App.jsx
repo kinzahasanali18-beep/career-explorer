@@ -501,8 +501,11 @@ function CareerGridScreen({
         >⚡ Sparq Mode</button>
       </div>
 
-      {/* Industry filter — mobile only (the sidebar hosts this on desktop) */}
+      {/* Industry filter — mobile only (the sidebar hosts this on desktop).
+          Shares the "industries" tour anchor so the tour spotlights whichever
+          of the two (sidebar vs. this button) is visible at the current width. */}
       <button
+        data-tour="industries"
         className="mobile-only"
         onClick={() => setIndustryModalOpen(true)}
         style={{
