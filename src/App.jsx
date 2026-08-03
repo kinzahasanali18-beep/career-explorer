@@ -1778,18 +1778,20 @@ function AppContent({ signOut }) {
   // Load saved profile preferences
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("name, industries").eq("id", user.id).single().then(({ data, error }) => {
-      if (error || !data || !data.name) {
+    supabase.from("profiles").select("industries").eq("id", user.id).single().then(({ data, error }) => {
+      // Onboarding is gated on whether the user has saved industries — the quiz
+      // saves those, so completing it counts as onboarded. (Gating on `name`
+      // re-prompted users who finished the quiz but never saved the Profile.)
+      if (error || !data || !data.industries?.length) {
         setShowOnboarding(true);
-      } else if (data.industries?.length) {
-        // Only accept industries that match current full-name config; discard old slugs
+      } else {
+        // Returning user with saved industries — seed the Explore filter and
+        // Sparq Mode's source. Only accept names that match the current config;
+        // normalize because the profile stores slugs, not full names.
         const validNames = new Set(INDUSTRY_CONFIG.map(c => c.name));
         const valid = data.industries.filter(i => validNames.has(i));
         setSelected(valid);
         lsSet("ce_industries", valid);
-        // Cache the saved profile worlds separately — this is Sparq Mode's source
-        // of truth and must NOT be affected by sidebar filter changes.
-        // Normalize because the profile stores slugs, not full names.
         const worlds = normalizeIndustries(data.industries);
         setProfileIndustries(worlds);
         lsSet("ce_profile_industries", worlds);
