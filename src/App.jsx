@@ -11,6 +11,17 @@ import SparqGuide from "./pages/SparqGuide";
 import WhenToApply, { WORLD_COLORS as DEADLINE_WORLD_COLORS } from "./pages/WhenToApply";
 import HiddenGems from "./pages/HiddenGems";
 import SalaryNote from "./SalaryNote";
+import Tour from "./Tour";
+
+// First-time walkthrough for the Explore page. Targets are matched by the
+// data-tour attributes on the sidebar, search bar, Sparq button, and filters.
+const EXPLORE_TOUR_STEPS = [
+  { selector: '[data-tour="industries"]', text: "Pick industries to filter what you see.", placement: "right" },
+  { selector: '[data-tour="search"]',     text: "Already know what you're looking for? Search here.", placement: "bottom" },
+  { selector: '[data-tour="sparq"]',      text: "Swipe through picks made just for you.", placement: "bottom" },
+  { selector: '[data-tour="filters"]',    text: "Narrow things down even further.", placement: "bottom" },
+];
+const EXPLORE_TOUR_KEY = "ce_explore_tour_seen";
 
 const T = {
   bg: "var(--bg)", bgCard: "var(--bgCard)", bgDeep: "var(--bgDeep)",
@@ -170,7 +181,7 @@ function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndust
       <div className="sidebar-divider" />
 
       {showIndustries && (
-        <>
+        <div data-tour="industries" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <div className="sidebar-section-label">Industries</div>
           {INDUSTRY_CONFIG.map(ind => {
             const sel = selectedIndustries.includes(ind.name);
@@ -191,7 +202,7 @@ function DesktopSidebar({ screen, selectedIndustries, onNavigate, onToggleIndust
               </button>
             );
           })}
-        </>
+        </div>
       )}
     </div>
   );
@@ -322,7 +333,7 @@ function CareerGridScreen({
   selectedIndustries, allCareers, loading, onViewCareer, onSparqMode,
   workStyleActive, setWorkStyleActive, pathActive, setPathActive,
   vibeActive, setVibeActive, searchQuery, setSearchQuery, restoreScrollY,
-  starredIds, onToggleStar,
+  starredIds, onToggleStar, onReplayTour,
 }) {
   useLayoutEffect(() => {
     window.scrollTo(0, restoreScrollY || 0);
@@ -420,9 +431,21 @@ function CareerGridScreen({
   return (
     <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }}>
         <div style={{ fontSize: 22, fontWeight: 800, color: T.text, flex: 1 }}>Explore Careers</div>
         <button
+          onClick={onReplayTour}
+          title="Replay the quick tour"
+          aria-label="Replay the quick tour"
+          style={{
+            width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
+            background: T.bgCard, border: `1px solid ${T.border}`, color: T.textMid,
+            fontSize: 14, fontWeight: 700, cursor: "pointer", lineHeight: 1,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >?</button>
+        <button
+          data-tour="sparq"
           onClick={onSparqMode}
           title="Swipe through a fresh set of careers"
           style={{
@@ -436,7 +459,7 @@ function CareerGridScreen({
       </div>
 
       {/* Search */}
-      <div style={{ position: "relative", marginBottom: 18 }}>
+      <div data-tour="search" style={{ position: "relative", marginBottom: 18 }}>
         <svg
           width="14" height="14" viewBox="0 0 24 24" fill="none"
           stroke={T.textDim} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
@@ -472,27 +495,29 @@ function CareerGridScreen({
       </div>
 
       {/* Filters */}
-      <FilterGroup
-        label="Work Style"
-        chips={WORK_STYLE_FILTERS}
-        isActive={id => workStyleActive.has(id)}
-        onToggle={id => toggleSet(setWorkStyleActive, id)}
-        color="#38BDF8"
-      />
-      <FilterGroup
-        label="Path"
-        chips={PATH_FILTERS}
-        isActive={id => pathActive === id}
-        onToggle={id => setPathActive(p => p === id ? null : id)}
-        color="#22C55E"
-      />
-      <FilterGroup
-        label="Vibe"
-        chips={VIBE_FILTERS}
-        isActive={id => vibeActive.has(id)}
-        onToggle={id => toggleSet(setVibeActive, id)}
-        color="#A78BFA"
-      />
+      <div data-tour="filters">
+        <FilterGroup
+          label="Work Style"
+          chips={WORK_STYLE_FILTERS}
+          isActive={id => workStyleActive.has(id)}
+          onToggle={id => toggleSet(setWorkStyleActive, id)}
+          color="#38BDF8"
+        />
+        <FilterGroup
+          label="Path"
+          chips={PATH_FILTERS}
+          isActive={id => pathActive === id}
+          onToggle={id => setPathActive(p => p === id ? null : id)}
+          color="#22C55E"
+        />
+        <FilterGroup
+          label="Vibe"
+          chips={VIBE_FILTERS}
+          isActive={id => vibeActive.has(id)}
+          onToggle={id => toggleSet(setVibeActive, id)}
+          color="#A78BFA"
+        />
+      </div>
 
       {/* Loading hint. We intentionally do NOT show a total career count — some
           industries have hundreds/thousands; page position is shown instead. */}
@@ -1614,6 +1639,11 @@ function AppContent({ signOut }) {
   const [showProfile, setShowProfile] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
+  // Whether the initial profile fetch has resolved. The onboarding/quiz decision
+  // is made async from that fetch, so the tour must wait for it before it can
+  // safely conclude the user is really on Explore (and not about to onboard).
+  const [profileChecked, setProfileChecked] = useState(false);
 
   // First-run world selection now happens via the quiz (which saves worlds) and
   // then inline through the sidebar on Explore — there's no standalone picker
@@ -1765,8 +1795,30 @@ function AppContent({ signOut }) {
         lsSet("ce_profile_industries", worlds);
         localStorage.setItem("ce_landing_seen", "1");
       }
+      // The onboarding decision (if any) is now made — the tour may consider firing.
+      setProfileChecked(true);
     });
   }, [user?.id]);
+
+  // First-time Explore walkthrough: auto-open once the user is actually looking
+  // at Explore with no modal/overlay covering it (so it never appears on top of
+  // the profile modal, onboarding, quiz, or Sparq Mode). Mark it seen as soon as
+  // it opens so it only ever auto-shows once; the "?" button replays it anytime.
+  useEffect(() => {
+    if (!profileChecked) return; // wait for the onboarding decision before firing
+    if (screen !== "home") return;
+    if (showProfile || showOnboarding || showQuiz || sparqOpen) return;
+    if (localStorage.getItem(EXPLORE_TOUR_KEY)) return;
+    const t = setTimeout(() => {
+      // Re-verify at fire time: the real Explore UI must be on screen and no
+      // overlay covering it (guards against any last-moment state change).
+      if (showProfile || showOnboarding || showQuiz || sparqOpen) return;
+      if (!document.querySelector('[data-tour="sparq"]')) return;
+      setTourOpen(true);
+      try { localStorage.setItem(EXPLORE_TOUR_KEY, "1"); } catch { /* ignore */ }
+    }, 450); // let the page lay out first
+    return () => clearTimeout(t);
+  }, [profileChecked, screen, showProfile, showOnboarding, showQuiz, sparqOpen]);
 
   // Fetch all careers from Supabase
   useEffect(() => {
@@ -2080,6 +2132,10 @@ function AppContent({ signOut }) {
         />
       )}
 
+      {screen === "home" && tourOpen && (
+        <Tour steps={EXPLORE_TOUR_STEPS} onClose={() => setTourOpen(false)} />
+      )}
+
       {/* Sidebar — hidden on the industry picker screen */}
       {showSidebar && (
         <DesktopSidebar
@@ -2110,6 +2166,7 @@ function AppContent({ signOut }) {
             restoreScrollY={savedScrollY.current}
             starredIds={starredIds}
             onToggleStar={toggleStar}
+            onReplayTour={() => setTourOpen(true)}
           />
         )}
         {screen === "career" && (
