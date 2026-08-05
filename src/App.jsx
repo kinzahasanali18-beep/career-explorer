@@ -2406,6 +2406,7 @@ function AppContent({ signOut }) {
             hiddenGems={hiddenGems}
             loading={hiddenGemsLoading}
             selectedIndustries={selectedIndustries}
+            onToggleIndustry={handleToggleIndustry}
             starredItems={starredOpportunities}
             onToggleStar={toggleOpportunityStar}
             onReplayTour={() => setActiveTour("hidden-gems")}
