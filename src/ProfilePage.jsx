@@ -128,9 +128,15 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
 
   async function handleSave(e) {
     e.preventDefault();
+    // Display name is required — validate before saving (inline error, matching
+    // the app's existing form-error pattern). Only blocks the Save action.
+    if (!form.name?.trim()) {
+      setError('Add a name so we know what to call you');
+      return;
+    }
     setSaving(true); setError('');
     const { error: err } = await supabase.from('profiles')
-      .upsert({ id: user.id, ...form, industries: selectedIndustries });
+      .upsert({ id: user.id, ...form, name: form.name.trim(), industries: selectedIndustries });
     setSaving(false);
     if (err) { setError(err.message); }
     else { setSaved(true); setTimeout(() => setSaved(false), 2500); }
