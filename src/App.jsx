@@ -477,7 +477,7 @@ function CareerGridScreen({
   }
 
   return (
-    <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
+    <div className="sparq-screen" style={{ padding: "18px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }}>
         <div style={{ fontSize: 22, fontWeight: 800, color: T.text, flex: 1 }}>Explore Careers</div>
@@ -994,7 +994,7 @@ function ShortlistScreen({ allCareers, starredIds, onViewCareer, onToggleStar, o
   ];
 
   return (
-    <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
+    <div className="sparq-screen" style={{ padding: "18px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 16 }}>
@@ -2283,25 +2283,6 @@ function AppContent({ signOut }) {
 
   return (
     <div className={showSidebar ? "app-shell" : ""} style={{ minHeight: "100vh", background: T.bg, fontFamily: "'Inter',system-ui,sans-serif" }}>
-      {/* Top-right buttons — only on non-pick screens */}
-      {showSidebar && (
-        <div style={{ position: "fixed", top: 14, right: 16, zIndex: 9999, display: "flex", gap: 8 }}>
-          <button
-            onClick={() => setShowProfile(true)}
-            title="Profile"
-            style={{ padding: "6px 10px", background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 8, color: T.textMid, cursor: "pointer", display: "flex", alignItems: "center" }}
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-            </svg>
-          </button>
-          <button
-            onClick={signOut}
-            style={{ padding: "6px 14px", background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 8, color: T.textMid, fontSize: 12, cursor: "pointer" }}
-          >Sign out</button>
-        </div>
-      )}
-
       {showOnboarding && (
         <OnboardingScreen
           onComplete={() => setShowOnboarding(false)}
@@ -2355,6 +2336,30 @@ function AppContent({ signOut }) {
 
       {/* Main content */}
       <div className={showSidebar ? "main-content" : ""}>
+        {/* Account bar. Sticky rather than fixed so it occupies real layout
+            space: screens no longer need a hard-coded top padding to dodge it,
+            and it spans the content column, leaving the desktop sidebar clear.
+            Opaque so content scrolls cleanly underneath instead of showing
+            through between two floating buttons. */}
+        {showSidebar && (
+          <div className="sparq-topbar">
+            <button
+              onClick={() => setShowProfile(true)}
+              title="Profile"
+              aria-label="Open your profile"
+              style={{ padding: "6px 10px", background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 8, color: T.textMid, cursor: "pointer", display: "flex", alignItems: "center" }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
+            </button>
+            <button
+              onClick={signOut}
+              style={{ padding: "6px 14px", background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 8, color: T.textMid, fontSize: 12, cursor: "pointer" }}
+            >Sign out</button>
+          </div>
+        )}
+
         {screen === "home" && (
           <CareerGridScreen
             selectedIndustries={selectedIndustries}
