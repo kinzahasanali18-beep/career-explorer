@@ -1977,16 +1977,24 @@ function AppContent({ signOut }) {
       if (error || !data || !data.industries?.length) {
         setShowOnboarding(true);
       } else {
-        // Returning user with saved industries — seed the Explore filter and
-        // Sparq Mode's source. Only accept names that match the current config;
-        // normalize because the profile stores slugs, not full names.
-        const validNames = new Set(INDUSTRY_CONFIG.map(c => c.name));
-        const valid = data.industries.filter(i => validNames.has(i));
-        setSelected(valid);
-        lsSet("ce_industries", valid);
+        // Returning user with saved industries. profiles.industries holds
+        // SLUGS ("tech"), so normalize to the full names INDUSTRY_CONFIG and
+        // careers.primary_industry use before either consumer sees them —
+        // comparing the raw slugs against full names matches nothing.
         const worlds = normalizeIndustries(data.industries);
+
+        // Sparq Mode's source of truth: always the profile.
         setProfileIndustries(worlds);
         lsSet("ce_profile_industries", worlds);
+
+        // Explore's filter is only SEEDED from the profile. Once the user has
+        // a sidebar selection of their own (restored from ce_industries in
+        // this state's initializer) that wins, so narrowing the filter
+        // survives a reload. An empty selection is just the "pick an industry"
+        // empty state, so it re-seeds rather than sticking. The effect that
+        // mirrors selectedIndustries into ce_industries persists the result.
+        setSelected(prev => (prev.length ? prev : worlds));
+
         localStorage.setItem("ce_landing_seen", "1");
       }
       // The onboarding decision (if any) is now made — the tour may consider firing.
