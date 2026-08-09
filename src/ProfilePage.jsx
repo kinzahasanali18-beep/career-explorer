@@ -100,6 +100,9 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
   const [error, setError] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  // Kept separate from `error` (the save-form error) so the message renders
+  // beside the delete button rather than up in the form, off-screen.
+  const [deleteError, setDeleteError] = useState('');
 
   const userIdentifier = user?.email || user?.phone || '';
 
@@ -142,9 +145,34 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
     else { setSaved(true); setTimeout(() => setSaved(false), 2500); }
   }
 
+  // Deleting an account can't be done from the browser: removing the
+  // auth.users row needs the service_role key, which bypasses RLS for everyone
+  // and must never ship in the client bundle. So this calls the delete-account
+  // Edge Function, which verifies the caller's JWT and deletes their
+  // saved_careers rows, profile and auth record server-side.
+  // (The previous client-side profiles delete removed nothing at all —
+  // public.profiles has no DELETE policy, so RLS denied it and PostgREST
+  // reported a successful no-op.)
   async function handleDeleteAccount() {
     setDeleting(true);
-    await supabase.from('profiles').delete().eq('id', user.id);
+    setDeleteError('');
+    const { error: fnError } = await supabase.functions.invoke('delete-account', { method: 'POST' });
+
+    if (fnError) {
+      // invoke() reports a generic "non-2xx status code"; the function's own
+      // message is on the attached Response, so read that when it's there.
+      let message = '';
+      try {
+        const body = await fnError.context?.json?.();
+        if (body?.error) message = body.error;
+      } catch { /* non-JSON body — fall through to the generic message */ }
+      setDeleteError(message || "Couldn't delete your account. Please try again.");
+      setDeleting(false);
+      return;
+    }
+
+    // Account is gone. Sign out to drop the now-orphaned local session; that
+    // fires SIGNED_OUT, which clears this user's device data (userStorage.js).
     await supabase.auth.signOut();
   }
 
@@ -376,6 +404,11 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
               <div style={{ fontSize: 12, color: T.textMid, marginBottom: 16, lineHeight: 1.5 }}>
                 This will permanently delete your account and all your data. This cannot be undone.
               </div>
+              {deleteError && (
+                <div role="alert" style={{ fontSize: 12, color: '#F87171', marginBottom: 12, lineHeight: 1.5 }}>
+                  {deleteError}
+                </div>
+              )}
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
                   onClick={handleDeleteAccount}
@@ -390,11 +423,14 @@ export default function ProfilePage({ onClose, onRetakeQuiz }) {
                   {deleting ? 'Deleting…' : 'Yes, delete everything'}
                 </button>
                 <button
-                  onClick={() => setShowDeleteConfirm(false)}
+                  onClick={() => { setShowDeleteConfirm(false); setDeleteError(''); }}
+                  disabled={deleting}
                   style={{
                     flex: 1, padding: '10px', background: 'transparent',
                     border: `1px solid ${T.border}`, borderRadius: 8,
-                    color: T.textMid, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                    color: T.textMid, fontSize: 13, fontWeight: 600,
+                    cursor: deleting ? 'not-allowed' : 'pointer',
+                    opacity: deleting ? 0.7 : 1,
                   }}
                 >
                   Cancel
