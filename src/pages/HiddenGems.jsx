@@ -61,7 +61,7 @@ export default function HiddenGems({ hiddenGems = [], loading, selectedIndustrie
     .filter(g => matchesAge(g, ageFilter));
 
   return (
-    <div className="sparq-screen" style={{ padding: "72px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
+    <div className="sparq-screen" style={{ padding: "18px 1.25rem 90px", fontFamily: "'Inter',system-ui,sans-serif" }}>
 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 22 }}>
