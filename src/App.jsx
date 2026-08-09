@@ -12,6 +12,10 @@ import WhenToApply, { WORLD_COLORS as DEADLINE_WORLD_COLORS } from "./pages/When
 import HiddenGems from "./pages/HiddenGems";
 import SalaryNote from "./SalaryNote";
 import Tour from "./Tour";
+import {
+  ls, lsSet, userLs, userLsSet, userKey,
+  STARRED_KEYS, SPARQ_KEYS, TOUR_KEYS,
+} from "./userStorage";
 
 // First-time walkthroughs. Each step points at an element by its data-tour
 // attribute. Steps intentionally avoid re-teaching repeated patterns (starring,
@@ -53,16 +57,17 @@ const SPARQ_TOUR_STEPS = [
 ];
 
 // Routed-screen tours, keyed by screen id. Each auto-runs once (its localStorage
-// key) and is replayable via the page's "?" button. The Sparq overlay tour lives
-// inside SparqModeOverlay since it isn't a routed screen.
+// key, namespaced per user — see userStorage.js) and is replayable via the
+// page's "?" button. The Sparq overlay tour lives inside SparqModeOverlay since
+// it isn't a routed screen.
 const SCREEN_TOURS = {
-  home:            { key: "ce_explore_tour_seen",   steps: EXPLORE_TOUR_STEPS },
-  shortlist:       { key: "ce_shortlist_tour_seen", steps: SHORTLIST_TOUR_STEPS },
-  guide:           { key: "ce_guide_tour_seen",     steps: GUIDE_TOUR_STEPS },
-  "when-to-apply": { key: "ce_wta_tour_seen",       steps: WHENTOAPPLY_TOUR_STEPS },
-  "hidden-gems":   { key: "ce_gems_tour_seen",      steps: HIDDENGEMS_TOUR_STEPS },
+  home:            { key: TOUR_KEYS.home,            steps: EXPLORE_TOUR_STEPS },
+  shortlist:       { key: TOUR_KEYS.shortlist,       steps: SHORTLIST_TOUR_STEPS },
+  guide:           { key: TOUR_KEYS.guide,           steps: GUIDE_TOUR_STEPS },
+  "when-to-apply": { key: TOUR_KEYS["when-to-apply"], steps: WHENTOAPPLY_TOUR_STEPS },
+  "hidden-gems":   { key: TOUR_KEYS["hidden-gems"],  steps: HIDDENGEMS_TOUR_STEPS },
 };
-const SPARQ_TOUR_KEY = "ce_sparq_tour_seen";
+const SPARQ_TOUR_KEY = TOUR_KEYS.sparq;
 
 const T = {
   bg: "var(--bg)", bgCard: "var(--bgCard)", bgDeep: "var(--bgDeep)",
@@ -374,7 +379,7 @@ function CareerGridScreen({
   selectedIndustries, onToggleIndustry, allCareers, loading, onViewCareer, onSparqMode,
   workStyleActive, setWorkStyleActive, pathActive, setPathActive,
   vibeActive, setVibeActive, searchQuery, setSearchQuery, restoreScrollY,
-  starredIds, onToggleStar, onReplayTour,
+  starredIds, onToggleStar, onReplayTour, userId,
 }) {
   // Mobile-only industry picker (the sidebar's industry list is hidden < 768px).
   const [industryModalOpen, setIndustryModalOpen] = useState(false);
@@ -404,12 +409,12 @@ function CareerGridScreen({
       // what the user has looked for (newest first, de-duped, capped).
       const term = searchQuery.trim().toLowerCase();
       if (term.length >= 3) {
-        const hist = ls(SPARQ_KEYS.searches, []);
-        lsSet(SPARQ_KEYS.searches, [term, ...hist.filter(t => t !== term)].slice(0, 15));
+        const hist = userLs(userId, SPARQ_KEYS.searches, []);
+        userLsSet(userId, SPARQ_KEYS.searches, [term, ...hist.filter(t => t !== term)].slice(0, 15));
       }
     }, 250);
     return () => clearTimeout(id);
-  }, [searchQuery]);
+  }, [searchQuery, userId]);
 
   const q = debouncedQuery.trim().toLowerCase();
   const hasSearch = q.length > 0;
@@ -1293,19 +1298,11 @@ function BottomNav({ screen, onNavigate }) {
 // ─── State helpers ─────────────────────────────────────────────────────────────
 
 const RESTORABLE = new Set(["home", "shortlist", "guide", "when-to-apply", "hidden-gems"]);
-function ls(key, fallback) { try { const v = localStorage.getItem(key); return v != null ? JSON.parse(v) : fallback; } catch { return fallback; } }
-function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
 
 // ─── Sparq Mode ────────────────────────────────────────────────────────────────
 // Swipeable, one-card-at-a-time discovery deck. All persistence uses the same
-// localStorage-JSON pattern as the starred/saved items above.
-const SPARQ_KEYS = {
-  skipped: "sparq_skipped_careers",       // number[] — swiped-left ids, excluded forever
-  recent:  "sparq_recently_shown",        // { [id]: "YYYY-MM-DD" } — excluded for 30 days
-  clicks:  "sparq_industry_clicks",       // { [industryName]: count } — sidebar-select tally
-  daily:   "sparq_daily_set",             // { date: "YYYY-MM-DD", ids: number[] }
-  searches: "sparq_search_terms",         // string[] — recent career-search terms (newest first)
-};
+// localStorage-JSON pattern as the starred/saved items above, scoped to the
+// signed-in user via userLs/userLsSet (see userStorage.js for the key registry).
 const SPARQ_DECK_SIZE = 6;
 const SPARQ_PROFILE_CARDS = 3;            // from the user's own worlds
 const SPARQ_RECENT_DAYS = 30;
@@ -1616,7 +1613,7 @@ function SparqCard({ career, onExit, onOpen, isTop, command }) {
   );
 }
 
-function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMore = false, onLoadMore, onClose, onSwipe, onOpenCareer, onOpenProfile }) {
+function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMore = false, onLoadMore, onClose, onSwipe, onOpenCareer, onOpenProfile, userId }) {
   const [index, setIndex] = useState(initialIndex);
   const [command, setCommand] = useState(null); // { dir, forIndex } — drives the exit animation
   const [tourOpen, setTourOpen] = useState(false);
@@ -1653,14 +1650,14 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMor
   // First-time swipe-deck walkthrough: auto-open once real cards are on screen.
   useEffect(() => {
     if (loading || done || cards.length === 0) return;
-    if (localStorage.getItem(SPARQ_TOUR_KEY)) return;
+    if (localStorage.getItem(userKey(SPARQ_TOUR_KEY, userId))) return;
     const t = setTimeout(() => {
       if (!document.querySelector('[data-tour="sparq-card"]')) return;
       setTourOpen(true);
-      try { localStorage.setItem(SPARQ_TOUR_KEY, "1"); } catch { /* ignore */ }
+      try { localStorage.setItem(userKey(SPARQ_TOUR_KEY, userId), "1"); } catch { /* ignore */ }
     }, 500);
     return () => clearTimeout(t);
-  }, [loading, done, cards.length]);
+  }, [loading, done, cards.length, userId]);
   const showCount = !loading && cards.length > 0;
 
   return (
@@ -1825,6 +1822,10 @@ function SparqModeOverlay({ cards, loading = false, initialIndex = 0, canLoadMor
 
 function AppContent({ signOut }) {
   const { user } = useAuth();
+  // Scopes every per-user localStorage key below. AppContent only renders with
+  // a signed-in user, and it unmounts on sign-out, so the useState
+  // initializers that read these keys always run against the current user.
+  const userId = user?.id ?? null;
   const [showProfile, setShowProfile] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -1870,7 +1871,7 @@ function AppContent({ signOut }) {
 
   const [starredWhenItems, setStarredWhenItems] = useState(() => {
     try {
-      const s = localStorage.getItem("sparq_when_starred");
+      const s = localStorage.getItem(userKey(STARRED_KEYS.deadlines, userId));
       if (!s) return new Map();
       const parsed = JSON.parse(s);
       const map = new Map();
@@ -1889,7 +1890,7 @@ function AppContent({ signOut }) {
       } else {
         next.set(item.n, { type: "deadline", n: item.n, world: item.world, timing: item.timing, one: item.one, url: item.url || "" });
       }
-      try { localStorage.setItem("sparq_when_starred", JSON.stringify([...next.values()])); } catch {}
+      try { localStorage.setItem(userKey(STARRED_KEYS.deadlines, userId), JSON.stringify([...next.values()])); } catch {}
       return next;
     });
   }
@@ -1908,7 +1909,7 @@ function AppContent({ signOut }) {
   // Starred opportunities (Hidden Gems) — same mechanic as deadlines, tagged type "opportunity"
   const [starredOpportunities, setStarredOpportunities] = useState(() => {
     try {
-      const s = localStorage.getItem("sparq_opportunities_starred");
+      const s = localStorage.getItem(userKey(STARRED_KEYS.opportunities, userId));
       if (!s) return new Map();
       const parsed = JSON.parse(s);
       const map = new Map();
@@ -1936,7 +1937,7 @@ function AppContent({ signOut }) {
           cost_note: gem.cost_note || "",
         });
       }
-      try { localStorage.setItem("sparq_opportunities_starred", JSON.stringify([...next.values()])); } catch {}
+      try { localStorage.setItem(userKey(STARRED_KEYS.opportunities, userId), JSON.stringify([...next.values()])); } catch {}
       return next;
     });
   }
@@ -2002,7 +2003,7 @@ function AppContent({ signOut }) {
     if (showProfile || showOnboarding || showQuiz || sparqOpen) return;
     const tour = SCREEN_TOURS[screen];
     if (!tour) return;
-    if (localStorage.getItem(tour.key)) return;
+    if (localStorage.getItem(userKey(tour.key, userId))) return;
     // Shortlist only makes sense once something's been saved.
     if (screen === "shortlist" && starredIds.size === 0) return;
     const t = setTimeout(() => {
@@ -2010,10 +2011,10 @@ function AppContent({ signOut }) {
       // The page's real UI must be rendered (first anchor present) before firing.
       if (!document.querySelector(tour.steps[0].selector)) return;
       setActiveTour(screen);
-      try { localStorage.setItem(tour.key, "1"); } catch { /* ignore */ }
+      try { localStorage.setItem(userKey(tour.key, userId), "1"); } catch { /* ignore */ }
     }, 450); // let the page lay out first
     return () => clearTimeout(t);
-  }, [profileChecked, screen, showProfile, showOnboarding, showQuiz, sparqOpen, starredIds]);
+  }, [profileChecked, screen, showProfile, showOnboarding, showQuiz, sparqOpen, starredIds, userId]);
 
   // Fetch all careers from Supabase
   useEffect(() => {
@@ -2088,9 +2089,9 @@ function AppContent({ signOut }) {
       lsSet("ce_industries", next);
       // Tally selections (not deselections) to weight Sparq Mode's profile picks.
       if (!wasSelected) {
-        const clicks = ls(SPARQ_KEYS.clicks, {});
+        const clicks = userLs(userId, SPARQ_KEYS.clicks, {});
         clicks[name] = (clicks[name] || 0) + 1;
-        lsSet(SPARQ_KEYS.clicks, clicks);
+        userLsSet(userId, SPARQ_KEYS.clicks, clicks);
       }
       return next;
     });
@@ -2125,7 +2126,7 @@ function AppContent({ signOut }) {
   async function computeSparqDeck() {
     const today = sparqToday();
     const byId = new Map(allCareers.map(c => [c.id, c]));
-    const skipped = ls(SPARQ_KEYS.skipped, []);
+    const skipped = userLs(userId, SPARQ_KEYS.skipped, []);
     const skipSet = new Set(skipped);
 
     let rawIndustries = null;
@@ -2151,12 +2152,12 @@ function AppContent({ signOut }) {
       toTagList(c.keywords).forEach(t => nicheTags.add(t));
       toTagList(c.traits).forEach(t => nicheTags.add(t));
     });
-    const recentMap = ls(SPARQ_KEYS.recent, {});
-    const industryClicks = ls(SPARQ_KEYS.clicks, {});
-    const searchTerms = ls(SPARQ_KEYS.searches, []);
+    const recentMap = userLs(userId, SPARQ_KEYS.recent, {});
+    const industryClicks = userLs(userId, SPARQ_KEYS.clicks, {});
+    const searchTerms = userLs(userId, SPARQ_KEYS.searches, []);
 
     // ── Initial deck (today's 6, cached) ──
-    const daily = ls(SPARQ_KEYS.daily, null);
+    const daily = userLs(userId, SPARQ_KEYS.daily, null);
     let ids = null;
     if (daily && daily.date === today && Array.isArray(daily.ids) && daily.ids.length) {
       ids = daily.ids.filter(id => byId.has(id) && !skipSet.has(id));
@@ -2173,9 +2174,9 @@ function AppContent({ signOut }) {
       // Only persist / stamp a real (non-empty) deck, so an empty result doesn't
       // lock the user out for the rest of the day.
       if (ids.length) {
-        lsSet(SPARQ_KEYS.daily, { date: today, ids });
+        userLsSet(userId, SPARQ_KEYS.daily, { date: today, ids });
         ids.forEach(id => { recentMap[id] = today; });
-        lsSet(SPARQ_KEYS.recent, recentMap);
+        userLsSet(userId, SPARQ_KEYS.recent, recentMap);
       }
     }
 
@@ -2230,10 +2231,10 @@ function AppContent({ signOut }) {
     if (dir === "right") {
       if (!starredIds.has(career.id)) toggleStar(career.id);
     } else {
-      const skipped = ls(SPARQ_KEYS.skipped, []);
+      const skipped = userLs(userId, SPARQ_KEYS.skipped, []);
       if (!skipped.includes(career.id)) {
         skipped.push(career.id);
-        lsSet(SPARQ_KEYS.skipped, skipped);
+        userLsSet(userId, SPARQ_KEYS.skipped, skipped);
       }
     }
   }
@@ -2326,6 +2327,7 @@ function AppContent({ signOut }) {
           onSwipe={handleSparqSwipe}
           onOpenCareer={handleSparqOpenCareer}
           onOpenProfile={() => { setSparqOpen(false); setShowProfile(true); }}
+          userId={userId}
         />
       )}
 
@@ -2365,6 +2367,7 @@ function AppContent({ signOut }) {
             starredIds={starredIds}
             onToggleStar={toggleStar}
             onReplayTour={() => setActiveTour("home")}
+            userId={userId}
           />
         )}
         {screen === "career" && (
