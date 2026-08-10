@@ -290,28 +290,77 @@ function snapSalary(raw) {
   return best;
 }
 
+// ─── Duplicate detection ─────────────────────────────────────────────────────
+//
+// Deduplication used to compare raw lowercased names, which only ever caught
+// character-identical titles. Everything that differs by a parenthetical
+// qualifier, a hyphen or a plural slipped through, and the table accumulated
+// 1,875 rows (27%) that collapse into 583 groups once normalised — 28 variants
+// of "Fact Checker", 17 of "Social Media Manager", 17 of "Interaction Designer".
+//
+// Normalising strips parenthetical qualifiers, punctuation and trailing plurals
+// so "Fact Checker (News Outlet)", "Fact-Checker (Journalism)" and "Fact
+// Checkers" all reduce to "fact checker" and only the first survives.
+function normalizeName(n) {
+  const s = String(n == null ? "" : n)
+    .toLowerCase()
+    .replace(/\([^)]*\)/g, " ")     // drop "(News Outlet)" style qualifiers
+    .replace(/[^a-z0-9]+/g, " ")    // punctuation and hyphens -> space
+    .replace(/\s+/g, " ")
+    .trim();
+  // Crude de-pluralisation: enough for "Checkers" vs "Checker".
+  return s.split(" ").map(w => (w.length > 3 && w.endsWith("s") ? w.slice(0, -1) : w)).join(" ");
+}
+
+// Split TARGET across industries: an even base share, with the remainder going
+// to the least-populated industries first.
+//
+// The old prompt asked for "~6-7 careers per industry" in a single call and got
+// nothing of the sort — the table ranges from 706 rows (Entrepreneurship) to 18
+// (Architecture & Urban Planning). Allocating explicitly makes the spread a
+// property of the code rather than a request the model may ignore.
+function allocateQuotas(industries, countsByIndustry, target) {
+  const base = Math.floor(target / industries.length);
+  const quotas = new Map(industries.map(i => [i, base]));
+  let remainder = target - base * industries.length;
+  const smallestFirst = [...industries].sort(
+    (a, b) => (countsByIndustry.get(a) || 0) - (countsByIndustry.get(b) || 0)
+  );
+  for (let i = 0; remainder > 0; i = (i + 1) % smallestFirst.length, remainder--) {
+    quotas.set(smallestFirst[i], quotas.get(smallestFirst[i]) + 1);
+  }
+  return quotas;
+}
+
 // ─── Supabase helpers ─────────────────────────────────────────────────────────
 
-async function fetchExistingNames() {
+// Fetch every existing career's name AND industry. The industry is needed so
+// each generation call can be shown the names that already exist in the industry
+// it is generating for, rather than an arbitrary slice of the whole table.
+//
+// Note the explicit ORDER BY: paginating with LIMIT/OFFSET and no ordering has
+// no stability guarantee in Postgres, so pages could silently overlap or skip
+// rows — and a skipped name is a name that would pass the duplicate check.
+async function fetchExistingCareers() {
   console.log("📋 Fetching existing careers...");
-  const names = [];
+  const rows = [];
   const limit = 1000;
   let offset = 0;
 
   while (true) {
-    const url = `${SUPABASE_URL}/rest/v1/careers?select=name&limit=${limit}&offset=${offset}`;
+    const url = `${SUPABASE_URL}/rest/v1/careers?select=name,primary_industry&order=id.asc&limit=${limit}&offset=${offset}`;
     const r = await fetch(url, {
       headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY },
     });
     if (!r.ok) { console.error("Supabase error:", await r.text()); process.exit(1); }
     const data = await r.json();
-    names.push(...data.map(row => row.name).filter(Boolean));
+    rows.push(...data.filter(row => row.name));
     if (data.length < limit) break;
     offset += limit;
   }
 
-  console.log(`   ${names.length} existing careers found.\n`);
-  return names;
+  console.log(`   ${rows.length} existing careers found.\n`);
+  return rows;
 }
 
 async function createRecord(fields) {
@@ -349,51 +398,70 @@ function parseJSON(text) {
   return JSON.parse(text.replace(/```json|```/gi, "").trim());
 }
 
-// ─── Step 1: Generate career names ───────────────────────────────────────────
-
-async function generateCareerNames(existingNames, count) {
-  console.log(`🤖 Generating ${count} new career names...`);
-  const avoid = existingNames.length > 400
-    ? existingNames.slice(0, 400).join(", ") + " ... (truncated)"
-    : existingNames.join(", ");
+// ─── Step 1: Generate career names, one industry at a time ───────────────────
+//
+// Previously this was a single call for all 100 names, and the "do not duplicate
+// these" list was truncated to the first 400 of 7,000+ names. The model was
+// therefore blind to ~94% of the table, confidently proposed careers that
+// already existed, and the (correct) duplicate check discarded them: the last
+// run generated 105 names and kept 8. Yield fell from 37/day to 22/day as the
+// table grew, because the visible fraction kept shrinking.
+//
+// Generating per industry lets each call see that industry's COMPLETE existing
+// name list — 18 to 706 names, a few thousand tokens at worst — instead of an
+// arbitrary slice of everything. It also makes the spread across industries
+// explicit rather than a request the model may ignore.
+async function generateNamesForIndustry(industry, existingInIndustry, count, rejectStats, seenNorm, allNorm) {
+  // Ask for extra: some will be duplicates or unmappable.
+  const ask = Math.max(count + 3, Math.ceil(count * 1.6));
+  const avoid = existingInIndustry.length
+    ? existingInIndustry.join(", ")
+    : "(none yet — this industry is empty)";
 
   const text = await claude(`
 You are building a career discovery database for students (ages 11-22).
 
-EXISTING careers (do NOT include these or near-duplicates):
+Generate exactly ${ask} new career titles for the industry: "${industry}"
+
+Careers ALREADY in this industry — do not repeat these, and do not produce a
+variant that differs only by a parenthetical, a hyphen or a plural:
 ${avoid}
 
-Generate exactly ${count} new, specific, real career titles spread across ALL of these industries:
-${VALID_INDUSTRIES.join(", ")}
-
 Rules:
-- Spread evenly: ~6-7 careers per industry
+- Every career must genuinely belong to "${industry}"
 - Be specific ("Orthodontist" not "Doctor", "Site Reliability Engineer" not "Tech Worker")
-- Include emerging/modern roles, overlooked careers, and niche specialties
-- No near-duplicates of existing careers
+- A qualifier in brackets does NOT make a career new: if "Fact Checker" exists,
+  "Fact Checker (Sports)" is a duplicate. Propose a distinct job, not a variant.
+- Favour emerging, overlooked and niche roles over obvious ones
 
 Return ONLY a valid JSON array, no markdown:
-[{"name":"Career Title","primary_industry":"Exact industry from the list above"},...]
-`, 4096);
+[{"name":"Career Title"},...]
+`, 2048);
 
-  let careers = parseJSON(text);
-
-  // Remap and filter industries
-  const existingLower = new Set(existingNames.map(n => n.toLowerCase().trim()));
-  const seen = new Set();
-  const valid = [];
-
-  for (const c of careers) {
-    const mapped = mapIndustry(c.primary_industry);
-    if (!mapped) { console.warn(`   ⚠ Skipping "${c.name}" — unmappable industry: ${c.primary_industry}`); continue; }
-    const key = (c.name || "").toLowerCase().trim();
-    if (!key || existingLower.has(key) || seen.has(key)) continue;
-    seen.add(key);
-    valid.push({ name: c.name, primary_industry: mapped });
+  let proposed;
+  try {
+    proposed = parseJSON(text);
+  } catch (e) {
+    console.log(`   ⚠ ${industry}: unparseable response (${e.message})`);
+    rejectStats.unparseable++;
+    return [];
   }
+  if (!Array.isArray(proposed)) { rejectStats.unparseable++; return []; }
 
-  console.log(`   Generated ${careers.length}, valid after dedup: ${valid.length}\n`);
-  return valid;
+  const accepted = [];
+  for (const c of proposed) {
+    if (accepted.length >= count) break;
+    const name = (c && typeof c.name === "string" ? c.name : "").trim();
+    if (!name) { rejectStats.empty++; continue; }
+    const norm = normalizeName(name);
+    if (!norm) { rejectStats.empty++; continue; }
+    if (allNorm.has(norm)) { rejectStats.duplicateExisting++; continue; }
+    if (seenNorm.has(norm)) { rejectStats.duplicateInRun++; continue; }
+    seenNorm.add(norm);
+    accepted.push({ name, primary_industry: industry });
+  }
+  rejectStats.proposed += proposed.length;
+  return accepted;
 }
 
 // ─── Step 2: Generate all fields for one career in a single Claude call ───────
@@ -450,25 +518,51 @@ async function main() {
   const startTime = Date.now();
   console.log(`\n🚀 Sparq Daily Career Generator — ${new Date().toISOString()}\n`);
 
-  // Step 1: Fetch existing names
-  const existingNames = await fetchExistingNames();
+  // Step 1: Fetch every existing career with its industry
+  const existing = await fetchExistingCareers();
+  const namesByIndustry = new Map(VALID_INDUSTRIES.map(i => [i, []]));
+  for (const row of existing) {
+    if (namesByIndustry.has(row.primary_industry)) namesByIndustry.get(row.primary_industry).push(row.name);
+  }
+  const countsByIndustry = new Map([...namesByIndustry].map(([i, n]) => [i, n.length]));
+  // Every existing name, normalised — the duplicate check runs against all of it.
+  const allNorm = new Set(existing.map(r => normalizeName(r.name)));
 
-  // Step 2: Generate career names (request a few extra in case some are duped/filtered)
-  let careers = await generateCareerNames(existingNames, Math.ceil(TARGET * 1.15));
+  // Step 2: Allocate the run across industries, then generate per industry so
+  // each call sees that industry's complete existing name list.
+  const quotas = allocateQuotas(VALID_INDUSTRIES, countsByIndustry, TARGET);
+  const rejectStats = { proposed: 0, duplicateExisting: 0, duplicateInRun: 0, empty: 0, unparseable: 0 };
+  const seenNorm = new Set();
+  const perIndustry = [];
+  const careers = [];
 
-  // Supplemental batch if we got too few
-  if (careers.length < TARGET) {
-    console.log(`   ⚠ Only ${careers.length} names — running supplemental batch...`);
-    const extra = await generateCareerNames(
-      [...existingNames, ...careers.map(c => c.name)],
-      TARGET - careers.length + 15
+  console.log(`🤖 Generating names across ${VALID_INDUSTRIES.length} industries (target ${TARGET})...\n`);
+  for (const industry of [...VALID_INDUSTRIES].sort(
+    (a, b) => (countsByIndustry.get(a) || 0) - (countsByIndustry.get(b) || 0)
+  )) {
+    const quota = quotas.get(industry);
+    if (!quota) continue;
+    const got = await generateNamesForIndustry(
+      industry, namesByIndustry.get(industry) || [], quota, rejectStats, seenNorm, allNorm
     );
-    careers = [...careers, ...extra];
-    await sleep(1000);
+    careers.push(...got);
+    perIndustry.push({ industry, have: countsByIndustry.get(industry) || 0, quota, got: got.length });
+    console.log(`   ${got.length}/${quota}  ${industry} (${countsByIndustry.get(industry) || 0} existing)`);
+    await sleep(300);
   }
 
+  // Step 2b: report how much was discarded and why — the previous version hid
+  // a 92% rejection rate behind a single "valid after dedup" number.
+  const rejected = rejectStats.proposed - careers.length;
+  const rate = rejectStats.proposed ? (rejected / rejectStats.proposed) : 0;
+  console.log(`\n🔎 Name generation: ${rejectStats.proposed} proposed, ${careers.length} accepted, ${rejected} rejected (${Math.round(rate * 100)}%)`);
+  console.log(`   duplicate of existing career : ${rejectStats.duplicateExisting}`);
+  console.log(`   duplicate within this run    : ${rejectStats.duplicateInRun}`);
+  console.log(`   empty / unusable name        : ${rejectStats.empty}`);
+  console.log(`   unparseable model response   : ${rejectStats.unparseable} industries`);
+
   const toProcess = careers.slice(0, TARGET);
-  console.log(`📝 Processing ${toProcess.length} careers...\n`);
+  console.log(`\n📝 Processing ${toProcess.length} careers...\n`);
 
   // Step 3: For each career, generate all fields then push to Supabase
   let ok = 0, fail = 0;
@@ -505,8 +599,26 @@ async function main() {
   console.log(`\n🎉 Done in ${elapsed}s`);
   console.log(`   ✅ Created: ${ok}`);
   console.log(`   ❌ Failed:  ${fail}`);
-  console.log(`   📊 Total in DB (approx): ${existingNames.length + ok}`);
+  console.log(`   📊 Total in DB (approx): ${existing.length + ok}`);
 
+  const short = perIndustry.filter(p => p.got < p.quota);
+  if (short.length) {
+    console.log(`\n⚠ ${short.length} industries under quota — the model could not find enough genuinely new careers:`);
+    for (const p of short) console.log(`   ${p.got}/${p.quota}  ${p.industry} (${p.have} existing)`);
+  }
+
+  // A run that targets 100 and delivers 22 used to be reported as a success,
+  // because `fail` only ever counted errors. Shortfall is now a failure signal:
+  // the interesting fact is not "did the inserts work" but "are we still finding
+  // new careers". Expect this to trip while the name space stays saturated —
+  // that IS the signal, not a flaw in it.
+  const SHORTFALL_FLOOR = 0.8;
+  if (ok < TARGET * SHORTFALL_FLOOR) {
+    console.error(`\n❌ Shortfall: created ${ok} of a target ${TARGET} (${Math.round(ok / TARGET * 100)}%, floor ${SHORTFALL_FLOOR * 100}%).`);
+    console.error(`   ${rejectStats.duplicateExisting} of ${rejectStats.proposed} proposed names were rejected as duplicates of careers`);
+    console.error(`   that already exist. Either lower TARGET, or dedupe the table to free up name space.`);
+    process.exit(1);
+  }
   if (fail > 0) process.exit(1); // Let GitHub Actions flag the run as failed
 }
 
