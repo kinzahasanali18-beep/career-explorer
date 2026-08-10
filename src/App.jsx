@@ -2048,6 +2048,10 @@ function AppContent({ signOut }) {
           degree_required: c.degree_required ? c.degree_required.trim() : "",
           traits: Array.isArray(c.traits) ? c.traits : (c.traits || "").split(",").map(t => t.trim()).filter(Boolean),
           keywords: Array.isArray(c.keywords) ? c.keywords : (c.keywords || "").split(",").map(k => k.trim()).filter(Boolean),
+          // Carried through so the career page can cite its source. supabase.js
+          // has always fetched this field; it was dropped here, which is why it
+          // was never displayed anywhere.
+          source_url: c.source_url || "",
         })));
         setCareersLoading(false);
       })
@@ -2075,6 +2079,7 @@ function AppContent({ signOut }) {
       growth: [],
       primary_industry: career.primary_industry,
       secondary_industries: career.secondary_industries,
+      source_url: career.source_url || "",
       keywords: Array.isArray(career.keywords) ? career.keywords
         : (career.keywords || "").split(",").map(k => k.trim()).filter(Boolean),
     };

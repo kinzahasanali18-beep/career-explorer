@@ -290,6 +290,43 @@ function snapSalary(raw) {
   return best;
 }
 
+// ─── Source citation ─────────────────────────────────────────────────────────
+//
+// The prompt used to ask for a "Real URL from https://www.bls.gov/ooh/ or
+// https://www.onetonline.org/link/summary/", and nothing checked the answer.
+// 1,625 of 7,038 rows (23%) ended up with a conclusively broken citation: 639
+// with O*NET SOC codes that do not exist, 986 with invented /ooh/<group>/ paths.
+// Of the URLs citing bls.gov, 61% are broken.
+//
+// The model now returns only a SOC code. Everything else about the URL is
+// constructed here, so the only thing it can get wrong is the code — and a code
+// is checkable against the real taxonomy. bls.gov is dropped entirely: it cannot
+// be validated from CI at all (403 to every scripted request) and accounted for
+// most of the breakage. CareerOneStop, also a Department of Labor site, is keyed
+// by the same SOC code and is what the app shows students.
+const ONET_TAXONOMY_URL = "https://www.onetonline.org/find/all";
+let validSocCodes = null;
+
+async function loadSocTaxonomy() {
+  const r = await fetch(ONET_TAXONOMY_URL, {
+    headers: { "User-Agent": "Mozilla/5.0 (compatible; sparq-career-generator)" },
+  });
+  if (!r.ok) throw new Error(`O*NET taxonomy fetch failed: HTTP ${r.status}`);
+  const html = await r.text();
+  const codes = new Set((html.match(/link\/summary\/(\d{2}-\d{4}\.\d{2})/g) || [])
+    .map(m => m.replace("link/summary/", "")));
+  if (codes.size < 900) throw new Error(`O*NET taxonomy looks wrong: only ${codes.size} codes parsed`);
+  return codes;
+}
+
+function isValidSoc(code) {
+  return validSocCodes ? validSocCodes.has(String(code || "").trim()) : false;
+}
+
+function onetUrlFor(code) {
+  return `https://www.onetonline.org/link/summary/${String(code).trim()}`;
+}
+
 // ─── Duplicate detection ─────────────────────────────────────────────────────
 //
 // Deduplication used to compare raw lowercased names, which only ever caught
@@ -481,7 +518,7 @@ Return ONLY valid JSON, no markdown or explanation:
   "traits": "3-4 personality traits comma-separated (e.g. Analytical,Creative,Detail-oriented)",
   "keywords": "4-5 lowercase work-style keywords comma-separated (e.g. data,independent,creative,fast-paced)",
   "salary_range": "Realistic US range like $55k-$90k (hyphen, not dash)",
-  "source_url": "Real URL from https://www.bls.gov/ooh/ or https://www.onetonline.org/link/summary/ for closest occupation",
+  "soc_code": "The O*NET-SOC code of the closest matching occupation, exactly 8 digits in the form NN-NNNN.NN (e.g. 27-1027.00). Use a real code from the O*NET taxonomy. Do NOT invent detail suffixes like .01 unless that exact code exists. Return the code only, not a URL.",
   "secondary_industries": "1-2 other industries this career overlaps (comma-separated, from valid list, exclude primary)",
   "crossover_label": "Short crossover label like 'Tech + Health' or 'Design + Business'",
   "work_style": "Remote or Hybrid or In-person or Field-based",
@@ -502,6 +539,15 @@ Return ONLY valid JSON, no markdown or explanation:
   fields.salary_range = snapSalary(raw);
   if (!fields.salary_range) throw new Error(`unparseable salary_range: ${JSON.stringify(raw)}`);
 
+  // Validate the SOC code against the real taxonomy and build the URL ourselves.
+  // Retrying on a bad code is cheap; storing one is not — an unverifiable
+  // citation shown to a student is worse than no career at all.
+  const soc = String(fields.soc_code || "").trim();
+  delete fields.soc_code;
+  if (!/^\d{2}-\d{4}\.\d{2}$/.test(soc)) throw new Error(`malformed soc_code: ${JSON.stringify(soc)}`);
+  if (!isValidSoc(soc)) throw new Error(`soc_code not in O*NET taxonomy: ${soc}`);
+  fields.source_url = onetUrlFor(soc);
+
   // Validate secondary_industries
   const sec = (fields.secondary_industries || "")
     .split(",")
@@ -517,6 +563,13 @@ Return ONLY valid JSON, no markdown or explanation:
 async function main() {
   const startTime = Date.now();
   console.log(`\n🚀 Sparq Daily Career Generator — ${new Date().toISOString()}\n`);
+
+  // Step 0: Load the O*NET taxonomy once. Every career's citation is validated
+  // against it, so a failure here must stop the run rather than let a night's
+  // worth of unverifiable sources through.
+  console.log("📚 Loading O*NET-SOC taxonomy...");
+  validSocCodes = await loadSocTaxonomy();
+  console.log(`   ${validSocCodes.size} valid SOC codes.\n`);
 
   // Step 1: Fetch every existing career with its industry
   const existing = await fetchExistingCareers();
