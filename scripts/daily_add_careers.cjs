@@ -19,24 +19,49 @@ const TARGET = 100; // careers to add per run
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
+// Must stay in sync with INDUSTRY_CONFIG in src/App.jsx, which is what the app
+// actually renders and filters by. This list previously held only 15 of the 22,
+// so seven industries could never be assigned to a new career: Architecture &
+// Urban Planning, Aviation & Transportation, Cybersecurity, Food & Culinary,
+// Gaming & Esports, Marketing & Communications and Supply Chain & Operations.
+// Those seven app filters were frozen — every row in them was legacy import
+// data — and careers belonging to them were either collapsed into a neighbour
+// or dropped entirely.
+//
+// The vocabulary is still duplicated across App.jsx, CareerTimeline.jsx,
+// WhenToApply.jsx, ProfilePage.jsx, OnboardingQuiz.jsx and here. Unifying it
+// behind one shared module is the proper fix (audit finding #16); until then,
+// changes here need mirroring there.
 const VALID_INDUSTRIES = [
   "Arts & Performance", "Business & Finance", "Design & Creative",
   "Education & Coaching", "Entrepreneurship", "Environment & Sustainability",
   "Fashion & Beauty", "Healthcare & Medicine", "Hospitality & Events",
   "Law & Government", "Media & Journalism", "Science & Research",
   "Social Impact & Nonprofit", "Sports & Fitness", "Tech & Engineering",
+  "Architecture & Urban Planning", "Aviation & Transportation", "Cybersecurity",
+  "Food & Culinary", "Gaming & Esports", "Marketing & Communications",
+  "Supply Chain & Operations",
 ];
 
-// Maps sub-industry names Claude might use → valid Airtable select value
+// Maps sub-industry names the model might use -> a valid industry.
+// Grouped by target so gaps and mis-targets are visible. Several entries used to
+// collapse into the wrong industry because the target did not exist in
+// VALID_INDUSTRIES: cybersecurity -> Tech, architecture -> Design, marketing ->
+// Media & Journalism, supply chain/logistics -> Business & Finance. Those now
+// point at their real industries.
 const INDUSTRY_MAP = {
-  "software engineering":"Tech & Engineering","cybersecurity":"Tech & Engineering",
-  "information technology":"Tech & Engineering","data science":"Tech & Engineering",
-  "artificial intelligence":"Tech & Engineering","ai/ml":"Tech & Engineering",
-  "cloud computing":"Tech & Engineering","devops":"Tech & Engineering",
-  "robotics":"Tech & Engineering","quantum computing":"Tech & Engineering",
-  "fintech":"Tech & Engineering","blockchain":"Tech & Engineering",
-  "game development":"Tech & Engineering","web development":"Tech & Engineering",
-  "telecommunications":"Tech & Engineering","it":"Tech & Engineering",
+  // Tech & Engineering
+  "software engineering":"Tech & Engineering","information technology":"Tech & Engineering",
+  "data science":"Tech & Engineering","artificial intelligence":"Tech & Engineering",
+  "ai/ml":"Tech & Engineering","cloud computing":"Tech & Engineering",
+  "devops":"Tech & Engineering","robotics":"Tech & Engineering",
+  "quantum computing":"Tech & Engineering","fintech":"Tech & Engineering",
+  "blockchain":"Tech & Engineering","web development":"Tech & Engineering",
+  "telecommunications":"Tech & Engineering","engineering":"Tech & Engineering",
+  // Cybersecurity  (was collapsed into Tech & Engineering)
+  "cybersecurity":"Cybersecurity","information security":"Cybersecurity",
+  "infosec":"Cybersecurity","network security":"Cybersecurity",
+  // Healthcare & Medicine
   "healthcare":"Healthcare & Medicine","medicine":"Healthcare & Medicine",
   "medical":"Healthcare & Medicine","nursing":"Healthcare & Medicine",
   "mental health":"Healthcare & Medicine","public health":"Healthcare & Medicine",
@@ -44,65 +69,131 @@ const INDUSTRY_MAP = {
   "optometry":"Healthcare & Medicine","physical therapy":"Healthcare & Medicine",
   "veterinary":"Healthcare & Medicine","veterinary medicine":"Healthcare & Medicine",
   "allied health":"Healthcare & Medicine","nutrition":"Healthcare & Medicine",
+  // Business & Finance
   "finance":"Business & Finance","banking":"Business & Finance",
   "insurance":"Business & Finance","accounting":"Business & Finance",
   "real estate":"Business & Finance","investment":"Business & Finance",
   "actuarial science":"Business & Finance","economics":"Business & Finance",
   "financial services":"Business & Finance","business":"Business & Finance",
-  "human resources":"Business & Finance","supply chain":"Business & Finance",
-  "logistics":"Business & Finance","management":"Business & Finance",
+  "human resources":"Business & Finance","management":"Business & Finance",
+  "consulting":"Business & Finance",
+  // Supply Chain & Operations  (was collapsed into Business & Finance)
+  "supply chain":"Supply Chain & Operations","logistics":"Supply Chain & Operations",
+  "operations":"Supply Chain & Operations","procurement":"Supply Chain & Operations",
+  "warehousing":"Supply Chain & Operations","manufacturing":"Supply Chain & Operations",
+  // Education & Coaching
   "education":"Education & Coaching","coaching":"Education & Coaching",
   "training":"Education & Coaching","teaching":"Education & Coaching",
   "instructional design":"Education & Coaching","e-learning":"Education & Coaching",
+  "higher education":"Education & Coaching",
+  // Arts & Performance
   "arts":"Arts & Performance","performing arts":"Arts & Performance",
   "theater":"Arts & Performance","music":"Arts & Performance",
   "music production":"Arts & Performance","film":"Arts & Performance",
   "television":"Arts & Performance","dance":"Arts & Performance",
   "visual arts":"Arts & Performance",
+  // Design & Creative
   "design":"Design & Creative","graphic design":"Design & Creative",
-  "ux/ui":"Design & Creative","architecture":"Design & Creative",
+  "ux/ui":"Design & Creative","ux":"Design & Creative","user experience":"Design & Creative",
   "interior design":"Design & Creative","photography":"Design & Creative",
   "animation":"Design & Creative","industrial design":"Design & Creative",
+  "product design":"Design & Creative",
+  // Architecture & Urban Planning  (was collapsed into Design & Creative)
+  "architecture":"Architecture & Urban Planning","urban planning":"Architecture & Urban Planning",
+  "urban design":"Architecture & Urban Planning","landscape architecture":"Architecture & Urban Planning",
+  "built environment":"Architecture & Urban Planning",
+  // Gaming & Esports  (was collapsed into Tech & Engineering)
+  "gaming":"Gaming & Esports","esports":"Gaming & Esports",
+  "game development":"Gaming & Esports","game design":"Gaming & Esports",
+  "video games":"Gaming & Esports",
+  // Aviation & Transportation
+  "aviation":"Aviation & Transportation","transportation":"Aviation & Transportation",
+  "airline":"Aviation & Transportation","aeronautics":"Aviation & Transportation",
+  "maritime":"Aviation & Transportation",
+  // Food & Culinary  (was collapsed into Hospitality & Events)
+  "food":"Food & Culinary","culinary":"Food & Culinary","culinary arts":"Food & Culinary",
+  "food service":"Food & Culinary","food science":"Food & Culinary","beverage":"Food & Culinary",
+  // Marketing & Communications  (was collapsed into Media & Journalism)
+  "marketing":"Marketing & Communications","advertising":"Marketing & Communications",
+  "public relations":"Marketing & Communications","communications":"Marketing & Communications",
+  "branding":"Marketing & Communications","brand strategy":"Marketing & Communications",
+  // Media & Journalism
+  "media":"Media & Journalism","journalism":"Media & Journalism",
+  "social media":"Media & Journalism","broadcasting":"Media & Journalism",
+  "publishing":"Media & Journalism","content creation":"Media & Journalism",
+  // Entrepreneurship
   "entrepreneurship":"Entrepreneurship","startup":"Entrepreneurship",
-  "venture capital":"Entrepreneurship",
+  "venture capital":"Entrepreneurship","small business":"Entrepreneurship",
+  // Environment & Sustainability
   "environment":"Environment & Sustainability","environmental":"Environment & Sustainability",
   "sustainability":"Environment & Sustainability","agriculture":"Environment & Sustainability",
   "marine biology":"Environment & Sustainability","forestry":"Environment & Sustainability",
   "conservation":"Environment & Sustainability","ecology":"Environment & Sustainability",
   "renewable energy":"Environment & Sustainability","energy":"Environment & Sustainability",
+  // Fashion & Beauty
   "fashion":"Fashion & Beauty","beauty":"Fashion & Beauty","cosmetics":"Fashion & Beauty",
+  // Law & Government
   "law":"Law & Government","legal":"Law & Government","government":"Law & Government",
   "public policy":"Law & Government","military":"Law & Government",
   "criminal justice":"Law & Government","politics":"Law & Government",
+  "political science":"Law & Government",
+  // Science & Research
   "science":"Science & Research","research":"Science & Research",
   "biology":"Science & Research","chemistry":"Science & Research",
   "physics":"Science & Research","biotech":"Science & Research",
   "biotechnology":"Science & Research","neuroscience":"Science & Research",
   "aerospace":"Science & Research","space technology":"Science & Research",
   "materials science":"Science & Research",
+  // Social Impact & Nonprofit
   "social work":"Social Impact & Nonprofit","nonprofit":"Social Impact & Nonprofit",
   "social impact":"Social Impact & Nonprofit","social services":"Social Impact & Nonprofit",
   "community development":"Social Impact & Nonprofit",
+  // Hospitality & Events
   "hospitality":"Hospitality & Events","events":"Hospitality & Events",
-  "tourism":"Hospitality & Events","food service":"Hospitality & Events",
-  "culinary arts":"Hospitality & Events","hotel management":"Hospitality & Events",
+  "tourism":"Hospitality & Events","hotel management":"Hospitality & Events",
+  "event planning":"Hospitality & Events",
+  // Sports & Fitness
   "sports":"Sports & Fitness","fitness":"Sports & Fitness",
   "sports management":"Sports & Fitness","recreation":"Sports & Fitness",
   "athletics":"Sports & Fitness","exercise science":"Sports & Fitness",
-  "media":"Media & Journalism","journalism":"Media & Journalism",
-  "communications":"Media & Journalism","public relations":"Media & Journalism",
-  "marketing":"Media & Journalism","advertising":"Media & Journalism",
-  "social media":"Media & Journalism","broadcasting":"Media & Journalism",
-  "publishing":"Media & Journalism",
+  "martial arts":"Sports & Fitness",
 };
 
+// ─── Industry resolution ─────────────────────────────────────────────────────
+//
+// The previous implementation fell back to `lower.includes(key)` over an
+// insertion-ordered map, so any alias appearing anywhere inside the input won.
+// Combined with the alias "it" -> Tech & Engineering, that made "Hospitality
+// Management", "Digital Marketing" and "Political Science" all resolve to
+// Tech & Engineering. Even with "it" removed, bare substring matching still
+// collides: "ux" matches inside "luxury", "law" inside "lawn", "arts" inside
+// "martial arts". This is the same defect class as the technology "architect"
+// titles that had to be repaired by hand.
+//
+// Now: case-insensitive exact match, then whole-word alias matching with the
+// longest alias winning, so "social media" beats "media" and "culinary arts"
+// beats "arts". Aliases shorter than 4 characters are only ever matched exactly.
+// Anything unresolved returns null, and the caller logs it rather than the value
+// being quietly forced into a neighbouring industry.
+
+const VALID_BY_LOWER = new Map(VALID_INDUSTRIES.map(i => [i.toLowerCase(), i]));
+const ALIASES_LONGEST_FIRST = Object.keys(INDUSTRY_MAP).sort((a, b) => b.length - a.length);
+
+function normIndustry(s) {
+  return String(s == null ? "" : s).toLowerCase().replace(/\s+/g, " ").replace(/[.,;:]+$/, "").trim();
+}
+
 function mapIndustry(raw) {
-  if (!raw) return null;
-  if (VALID_INDUSTRIES.includes(raw)) return raw;
-  const lower = raw.toLowerCase().trim();
-  if (INDUSTRY_MAP[lower]) return INDUSTRY_MAP[lower];
-  for (const [key, val] of Object.entries(INDUSTRY_MAP)) {
-    if (lower.includes(key)) return val;
+  const s = normIndustry(raw);
+  if (!s) return null;
+  if (VALID_BY_LOWER.has(s)) return VALID_BY_LOWER.get(s);
+  if (INDUSTRY_MAP[s]) return INDUSTRY_MAP[s];
+  for (const key of ALIASES_LONGEST_FIRST) {
+    if (key.length < 4) continue;
+    const esc = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    // Explicit boundaries rather than \b: some aliases contain "/" ("ux/ui"),
+    // where \b semantics are surprising.
+    if (new RegExp(`(^|[^a-z0-9])${esc}([^a-z0-9]|$)`).test(s)) return INDUSTRY_MAP[key];
   }
   return null;
 }
@@ -139,19 +230,59 @@ const SALARY_OPTIONS = [
   "$78k\u2013$126k","$80k\u2013$130k","$80k\u2013$150k","$80k\u2013$160k","$82k\u2013$102k",
   "$82k\u2013$107k","$85k\u2013$150k","$85k\u2013$175k","$89k\u2013$107k","$90k\u2013$175k",
   "$95k\u2013$130k","$95k\u2013$150k","$95k\u2013$165k",
+  // High bands. Without these the list topped out at a $120k floor, so any
+  // genuinely high salary snapped to "$0\u2013$500k+" \u2014 swapping a wrong band for a
+  // $0 floor. Physician/surgeon/specialist ranges need to be representable.
+  "$130k\u2013$200k","$150k\u2013$250k","$180k\u2013$300k","$200k\u2013$350k",
+  "$250k\u2013$450k","$300k\u2013$500k+",
 ];
 
-function parseK(s) { const m = (s || "").match(/\$?(\d+)k/i); return m ? parseInt(m[1]) : 0; }
+// Parse one side of a salary range into thousands.
+//
+// The previous version required a literal "k" and returned 0 otherwise. That
+// silently broke every salary the model wrote in full dollars \u2014 and since the
+// model naturally writes high salaries that way ("$220,000"), both ends parsed
+// to 0 and snapSalary picked the option nearest zero, which is "$30k\u2013$45k", the
+// lowest-sum band in the list. That is why 154 careers, including
+// Anesthesiologist and Cardiac Surgeon, carried the database's lowest salary.
+//
+// Now handles "$55k", "220k", "$220,000", "220000" and "$1.2M", and returns
+// null (not 0) when there is no number at all, so callers can distinguish
+// "unparseable" from a legitimate zero floor.
+function parseK(s) {
+  const t = String(s == null ? "" : s).replace(/,/g, "").trim();
+  const m = t.match(/(\d+(?:\.\d+)?)\s*([kKmM])?/);
+  if (!m) return null;
+  const n = parseFloat(m[1]);
+  const suffix = (m[2] || "").toLowerCase();
+  if (suffix === "k") return Math.round(n);
+  if (suffix === "m") return Math.round(n * 1000);
+  // No suffix: >= 1000 is dollars, below that it is already thousands.
+  return n >= 1000 ? Math.round(n / 1000) : Math.round(n);
+}
 
+// Snap a model-supplied range onto an allowed option.
+// Returns null when the input cannot be parsed, so the caller can retry and
+// then skip the career \u2014 previously an unparseable value was silently given a
+// plausible-looking band, which is how bad data entered the table unnoticed.
 function snapSalary(raw) {
-  if (!raw) return "$45k\u2013$80k";
-  const norm = raw.replace(/[-\u2013\u2014]/g, "\u2013").trim();
+  if (!raw) return null;
+  const norm = String(raw).replace(/[-\u2013\u2014]/g, "\u2013").trim();
   if (SALARY_OPTIONS.includes(norm)) return norm;
-  const parts = raw.split(/[-\u2013\u2014]/);
+
+  const parts = String(raw).split(/[-\u2013\u2014]/);
   const low = parseK(parts[0]);
   const high = parseK(parts[1] || "");
-  let best = SALARY_OPTIONS[0], bestScore = Infinity;
-  for (const opt of SALARY_OPTIONS) {
+  if (low == null || high == null) return null;
+
+  // A parsed floor above zero must never snap onto a $0-floor option: that is
+  // how a $220k surgeon would land on "$0\u2013$500k+".
+  const candidates = low > 0
+    ? SALARY_OPTIONS.filter(opt => parseK(opt.split("\u2013")[0]) > 0)
+    : SALARY_OPTIONS;
+
+  let best = null, bestScore = Infinity;
+  for (const opt of candidates) {
     const op = opt.split("\u2013");
     const score = Math.abs(parseK(op[0]) - low) + Math.abs(parseK(op[1] || "") - high);
     if (score < bestScore) { bestScore = score; best = opt; }
@@ -296,8 +427,12 @@ Return ONLY valid JSON, no markdown or explanation:
   const text = await claude(prompt, 700);
   const fields = parseJSON(text);
 
-  // Snap salary to valid option
-  fields.salary_range = snapSalary(fields.salary_range);
+  // Snap salary to a valid option. Throwing on an unparseable value lets the
+  // retry loop have another go and, failing that, skips the career — better a
+  // visible gap than a row silently stamped with the wrong band.
+  const raw = fields.salary_range;
+  fields.salary_range = snapSalary(raw);
+  if (!fields.salary_range) throw new Error(`unparseable salary_range: ${JSON.stringify(raw)}`);
 
   // Validate secondary_industries
   const sec = (fields.secondary_industries || "")
