@@ -1,0 +1,51 @@
+n,career,industry,cited_code,cited_occupation,verdict,suggested_code,reason
+1,Conference Planning Director,Hospitality & Events,13-1121.00,"Meeting, Convention, and Event Planners",MATCH,,
+2,AI/Machine Learning Research Engineer,Tech & Engineering,15-1255.01,Video Game Designers,MISMATCH,15-2051.00,ML research engineer cited as Video Game Designers
+3,Local News Reporter,Media & Journalism,27-3023.00,"News Analysts, Reporters, and Journalists",MATCH,,
+4,Radio Station Director,Media & Journalism,27-2012.00,Producers and Directors,MATCH,,
+5,Financial Planner (Millennial-Focused),Business & Finance,13-2052.00,Personal Financial Advisors,MATCH,,
+6,Wetlands Consultant,Environment & Sustainability,19-2041.00,"Environmental Scientists and Specialists, Including Health",MATCH,,
+7,Data Scientist (Academic Research),Science & Research,15-1221.00,Computer and Information Research Scientists,CLOSE,15-2051.00,Data Scientists is the exact code; research scientist defensible
+8,Remote Work Platform Founder,Entrepreneurship,11-1011.00,Chief Executives,CLOSE,,"founder on Chief Executives, kept deliberately"
+9,Interior Architecture Technologist,Design & Creative,27-1025.00,Interior Designers,MATCH,,
+10,Physicist (Particle),Science & Research,19-2011.00,Astronomers,MISMATCH,19-2012.00,a particle physicist cited as an Astronomer; O*NET has Physicists
+11,Figure Skating Coach,Sports & Fitness,39-3091.00,Amusement and Recreation Attendants,MISMATCH,27-2022.00,figure skating coach cited as Amusement and Recreation Attendants
+12,Makeup Artistry Instructor,Fashion & Beauty,39-5092.00,Manicurists and Pedicurists,MISMATCH,25-3021.00,makeup instructor cited as Manicurists and Pedicurists
+13,Payment Systems Architect,Cybersecurity,15-1252.00,Software Developers,MATCH,,
+14,Communications Manager (Government),Media & Journalism,27-3031.00,Public Relations Specialists,CLOSE,11-2032.00,a Manager mapped to the specialist code
+15,Hospitality Sustainability Manager,Supply Chain & Operations,13-1199.05,Sustainability Specialists,MATCH,,
+16,Wig Maker (Theater & Entertainment),Fashion & Beauty,39-5092.00,Manicurists and Pedicurists,MISMATCH,39-5091.00,theatrical wig maker cited as Manicurists and Pedicurists
+17,Presentation Designer,Social Impact & Nonprofit,27-1024.00,Graphic Designers,MATCH,,
+18,Research Assistant (Lab),Science & Research,19-4099.01,Quality Control Analysts,MISMATCH,19-4021.00,lab research assistant cited as Quality Control Analysts
+19,Interdisciplinary Artist,Arts & Performance,27-1013.00,"Fine Artists, Including Painters, Sculptors, and Illustrators",MATCH,,
+20,Performance Rights Lawyer,Arts & Performance,23-1011.00,Lawyers,MATCH,,
+21,Museum Learning Facilitator,Education & Coaching,25-4013.00,Museum Technicians and Conservators,MISMATCH,25-3021.00,museum educator cited as Museum Technicians and Conservators
+22,Resort Activities Director,Hospitality & Events,39-9032.00,Recreation Workers,CLOSE,,"director vs worker level, right domain"
+23,Business Incubator Founder,Entrepreneurship,11-1011.00,Chief Executives,CLOSE,,"founder on Chief Executives, kept deliberately"
+24,Luxury Event Decorator,Hospitality & Events,27-1026.00,Merchandise Displayers and Window Trimmers,CLOSE,,event decorating maps to displayers/trimmers by convention
+25,Telecommunications Network Engineer,Tech & Engineering,15-1244.00,Network and Computer Systems Administrators,CLOSE,15-1241.00,Computer Network Architects is the closer code
+26,Makeup Artistry Educator,Fashion & Beauty,25-1199.00,"Postsecondary Teachers, All Other",CLOSE,,teaching at a vocational school is defensible
+27,Corporate Social Responsibility Manager,Environment & Sustainability,11-2011.00,Advertising and Promotions Managers,MISMATCH,13-1199.05,CSR manager cited as Advertising and Promotions Managers
+28,Sports Broadcaster/Commentator,Media & Journalism,27-3011.00,Broadcast Announcers and Radio Disc Jockeys,MATCH,,
+29,Wig Specialist (Theatrical),Fashion & Beauty,39-5092.00,Manicurists and Pedicurists,MISMATCH,39-5091.00,theatrical wig specialist cited as Manicurists and Pedicurists
+30,Compliance and Ethics Officer,Law & Government,13-1041.00,Compliance Officers,MATCH,,
+31,Experience Architect (UX),Design & Creative,27-1014.00,Special Effects Artists and Animators,MISMATCH,15-1255.00,UX architect cited as Special Effects Artists and Animators
+32,Fashion Tech Designer,Fashion & Beauty,27-1021.00,Commercial and Industrial Designers,CLOSE,27-1022.00,Fashion Designers is closer than Commercial/Industrial
+33,Forensic Linguistics Expert,Cybersecurity,19-4061.00,Social Science Research Assistants,MISMATCH,19-3099.00,forensic linguist cited as a Research Assistant
+34,Professional Athlete,Sports & Fitness,27-2021.00,Athletes and Sports Competitors,MATCH,,
+35,Legislative Advocate,Law & Government,11-1021.00,General and Operations Managers,MISMATCH,11-2032.00,MY OWN fallback: 'advocate' swept into General and Operations Managers
+36,Customer Data Platform Manager,Tech & Engineering,15-1242.00,Database Administrators,CLOSE,,data platform work maps to DBA defensibly
+37,Service Design Manager,Design & Creative,27-1027.00,Set and Exhibit Designers,MISMATCH,15-1255.00,service design cited as Set and Exhibit Designers
+38,Social Entrepreneur (Mission-Driven),Social Impact & Nonprofit,11-1011.00,Chief Executives,CLOSE,,"entrepreneur on Chief Executives, kept deliberately"
+39,Behavioral Economist,Business & Finance,19-3094.00,Political Scientists,MISMATCH,19-3011.00,a behavioural economist cited as a Political Scientist
+40,Forest Ecologist,Environment & Sustainability,19-2041.00,"Environmental Scientists and Specialists, Including Health",CLOSE,19-1032.00,Foresters is closer for a forest ecologist
+41,Social Media Manager (Agency),Media & Journalism,27-3031.00,Public Relations Specialists,CLOSE,11-2021.00,social media manager to PR specialist is conventional
+42,Animation Director (Stop Motion),Design & Creative,27-2012.00,Producers and Directors,CLOSE,27-1014.00,animation arguably belongs with animators
+43,Wig Specialist,Fashion & Beauty,39-5092.00,Manicurists and Pedicurists,MISMATCH,39-5091.00,wig specialist cited as Manicurists and Pedicurists
+44,Carbon Offset Auditor,Environment & Sustainability,13-1041.07,Regulatory Affairs Specialists,CLOSE,,auditing carbon claims as regulatory affairs is defensible
+45,Strength Training Programmer,Sports & Fitness,39-9031.00,Exercise Trainers and Group Fitness Instructors,MATCH,,
+46,Sommelier (Hotel/Event),Hospitality & Events,35-1011.00,Chefs and Head Cooks,MISMATCH,35-1012.00,"a sommelier cited as Chefs and Head Cooks; beverage service, not cooking"
+47,Eyebrow Technician (Microblading Specialist),Fashion & Beauty,39-5092.00,Manicurists and Pedicurists,CLOSE,39-5094.00,Skincare Specialists is closer for microblading
+48,Cross-Country Ski Instructor,Sports & Fitness,39-3021.00,Motion Picture Projectionists,MISMATCH,27-2022.00,ski instructor cited as Motion Picture Projectionists
+49,Copyright Researcher,Media & Journalism,23-2011.00,Paralegals and Legal Assistants,MATCH,,
+50,Yoga Studio Owner,Sports & Fitness,11-3051.00,Industrial Production Managers,MISMATCH,11-1011.00,studio owner cited as Industrial Production Managers

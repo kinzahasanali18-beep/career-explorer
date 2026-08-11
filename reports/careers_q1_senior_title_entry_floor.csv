@@ -1,0 +1,325 @@
+career,industry,listed_salary,floor_k,ceiling_k,seniority_tier,expected_min_floor_k,shortfall_k,created
+Cloud Solutions Architect,Architecture & Urban Planning,$30k–$45k,30,45,senior_ic,75,45,2026-04-22T02:52:31.392704+00:00
+Cruise Activities Director,Hospitality & Events,$30k–$45k,30,45,executive,75,45,2026-08-07T02:59:03.764387+00:00
+Editorial Director,Science & Research,$30k–$45k,30,45,executive,75,45,2026-04-22T02:52:33.295118+00:00
+Montessori Directress/Director,Education & Coaching,$30k–$45k,30,45,executive,75,45,2026-07-06T04:06:27.760021+00:00
+Resort Activities Director,Hospitality & Events,$30k–$45k,30,45,executive,75,45,2026-04-22T02:52:31.392704+00:00
+Resort Activity Director,Hospitality & Events,$30k–$45k,30,45,executive,75,45,2026-06-15T02:44:28.273474+00:00
+Youth Soccer Director,Sports & Fitness,$30k–$55k,30,55,executive,75,45,2026-06-19T02:54:58.700382+00:00
+Aquatics Director,Sports & Fitness,$35k–$65k,35,65,executive,75,40,2026-06-22T03:28:03.230604+00:00
+Banquet Director,Hospitality & Events,$35k–$65k,35,65,executive,75,40,2026-04-22T02:52:29.856816+00:00
+Choreography Director,Arts & Performance,$35k–$75k,35,75,executive,75,40,2026-07-16T03:13:56.837893+00:00
+Costume Director,Arts & Performance,$35k–$75k,35,75,executive,75,40,2026-05-02T01:49:21.38929+00:00
+Cruise Ship Director,Supply Chain & Operations,$35k–$65k,35,65,executive,75,40,2026-04-22T02:52:29.856816+00:00
+Ensemble Director,Supply Chain & Operations,$35k–$75k,35,75,executive,75,40,2026-04-22T02:52:33.087307+00:00
+Entertainment Director (Cruise/Resort),Hospitality & Events,$35k–$65k,35,65,executive,75,40,2026-05-18T02:14:18.914248+00:00
+Fitness Director (Gym),Sports & Fitness,$35k–$65k,35,65,executive,75,40,2026-05-14T02:09:21.146335+00:00
+Fitness Director (Gym/Facility),Sports & Fitness,$35k–$65k,35,65,executive,75,40,2026-06-21T02:42:17.061131+00:00
+Hotel Housekeeping Director,Hospitality & Events,$35k–$55k,35,55,executive,75,40,2026-05-14T02:11:28.2681+00:00
+Housekeeping Director,Hospitality & Events,$35k–$65k,35,65,executive,75,40,2026-05-19T02:12:50.623461+00:00
+Improvisation Director (Theater),Arts & Performance,$35k–$65k,35,65,executive,75,40,2026-05-05T01:54:09.383646+00:00
+Marching Arts Director,Arts & Performance,$35k–$75k,35,75,executive,75,40,2026-07-11T03:18:12.760281+00:00
+Outdoor Education Director,Education & Coaching,$35k–$55k,35,55,executive,75,40,2026-04-22T02:52:29.856816+00:00
+Puppet Theater Director,Arts & Performance,$35k–$65k,35,65,executive,75,40,2026-04-22T02:52:31.660242+00:00
+Puppetry Director,Science & Research,$35k–$65k,35,65,executive,75,40,2026-04-22T02:52:33.087307+00:00
+Puppetry Director (Theater),Arts & Performance,$35k–$65k,35,65,executive,75,40,2026-04-29T01:59:39.056107+00:00
+Puppetry Performance Director,Arts & Performance,$35k–$65k,35,65,executive,75,40,2026-07-27T03:39:45.262447+00:00
+Science Camp Director,Education & Coaching,$35k–$65k,35,65,executive,75,40,2026-04-26T06:32:31.240102+00:00
+Ski Patrol Director,Sports & Fitness,$35k–$65k,35,65,executive,75,40,2026-04-22T02:52:30.082186+00:00
+Strength & Conditioning Director,Sports & Fitness,$35k–$75k,35,75,executive,75,40,2026-05-18T02:14:53.945724+00:00
+Strength and Conditioning Director (College),Sports & Fitness,$35k–$65k,35,65,executive,75,40,2026-05-04T01:53:27.242833+00:00
+Theater Director,Science & Research,$35k–$85k,35,85,executive,75,40,2026-04-22T02:52:29.646164+00:00
+Theater Technical Director,Arts & Performance,$35k–$65k,35,65,executive,75,40,2026-04-22T02:52:29.646164+00:00
+Wedding Venue Director,Hospitality & Events,$35k–$65k,35,65,executive,75,40,2026-04-22T02:52:30.082186+00:00
+Youth Athletic Director,Gaming & Esports,$35k–$65k,35,65,executive,75,40,2026-04-22T02:52:33.675655+00:00
+Youth Development Sports Director,Sports & Fitness,$35k–$60k,35,60,executive,75,40,2026-07-05T04:01:27.604379+00:00
+Youth Program Director,Gaming & Esports,$35k–$55k,35,55,executive,75,40,2026-04-22T02:52:30.082186+00:00
+Youth Soccer Academy Director,Sports & Fitness,$35k–$65k,35,65,executive,75,40,2026-04-22T02:52:32.905098+00:00
+Youth Sports Director,Gaming & Esports,$35k–$65k,35,65,executive,75,40,2026-04-22T02:52:34.465719+00:00
+Youth Sports League Director,Sports & Fitness,$35k–$65k,35,65,executive,75,40,2026-05-11T02:06:35.705035+00:00
+Youth Sports Organization Director,Sports & Fitness,$35k–$65k,35,65,executive,75,40,2026-05-04T01:53:30.426049+00:00
+Youth Sports Program Director,Sports & Fitness,$35k–$65k,35,65,executive,75,40,2026-05-18T02:14:50.731876+00:00
+Early Childhood Director,Education & Coaching,$37k–$63k,37,63,executive,75,38,2026-06-04T02:41:03.906449+00:00
+Museum Education Director,Education & Coaching,$37k–$63k,37,63,executive,75,38,2026-07-09T03:51:42.128498+00:00
+Volunteer Programs Director,Gaming & Esports,$37k–$63k,37,63,executive,75,38,2026-04-22T02:52:34.465719+00:00
+Youth Mentoring Program Director,Social Impact & Nonprofit,$37k–$63k,37,63,executive,75,38,2026-05-07T01:57:59.924819+00:00
+Youth Mentorship Program Director,Social Impact & Nonprofit,$37k–$63k,37,63,executive,75,38,2026-04-22T03:27:50.202227+00:00
+Youth Services Director,Social Impact & Nonprofit,$37k–$63k,37,63,executive,75,38,2026-04-28T08:00:19.621663+00:00
+Faith-Based Community Outreach Director,Gaming & Esports,$38k–$58k,38,58,executive,75,37,2026-04-22T02:52:32.271017+00:00
+Youth Mentorship Director,Social Impact & Nonprofit,$38k–$58k,38,58,executive,75,37,2026-05-03T01:52:25.229174+00:00
+Artistic Director (Dance Company),Arts & Performance,$40k–$75k,40,75,executive,75,35,2026-07-01T04:23:37.820995+00:00
+Ballet School Director,Arts & Performance,$40k–$75k,40,75,executive,75,35,2026-06-27T03:58:46.812173+00:00
+Beverage Director,Hospitality & Events,$40k–$75k,40,75,executive,75,35,2026-06-22T02:45:14.254317+00:00
+Early Childhood Education Director,Social Impact & Nonprofit,$40k–$65k,40,65,executive,75,35,2026-04-22T02:52:33.675655+00:00
+Fitness Facility Director,Sports & Fitness,$40k–$65k,40,65,executive,75,35,2026-06-16T02:47:26.974877+00:00
+Fitness Program Director,Gaming & Esports,$40k–$70k,40,70,executive,75,35,2026-04-22T02:52:30.47108+00:00
+Flight Attendant (Chief Purser),Aviation & Transportation,$55k–$85k,55,85,executive,90,35,2026-04-22T02:52:34.239097+00:00
+Gallery Director,Arts & Performance,$40k–$75k,40,75,executive,75,35,2026-06-18T02:38:54.346067+00:00
+Gallery Installation Director,Arts & Performance,$40k–$75k,40,75,executive,75,35,2026-08-08T01:59:37.955849+00:00
+Livestream Director,Media & Journalism,$40k–$75k,40,75,executive,75,35,2026-04-29T02:01:05.774474+00:00
+Opera Lighting Director,Arts & Performance,$40k–$75k,40,75,executive,75,35,2026-04-26T06:31:57.334248+00:00
+Preschool Director,Education & Coaching,$40k–$65k,40,65,executive,75,35,2026-05-14T02:08:45.756172+00:00
+Resort Recreation Director,Entrepreneurship,$40k–$75k,40,75,executive,75,35,2026-04-22T02:52:32.680575+00:00
+Sommelier (Wine Director),Hospitality & Events,$40k–$75k,40,75,executive,75,35,2026-05-25T02:30:20.205671+00:00
+Sports Information Director,Sports & Fitness,$40k–$75k,40,75,executive,75,35,2026-04-22T02:52:30.47108+00:00
+Volunteer Program Director,Social Impact & Nonprofit,$40k–$65k,40,65,executive,75,35,2026-05-23T02:04:03.102397+00:00
+Wine and Beverage Director,Hospitality & Events,$40k–$75k,40,75,executive,75,35,2026-06-16T02:46:54.639781+00:00
+Youth Development Director,Social Impact & Nonprofit,$40k–$65k,40,65,executive,75,35,2026-05-30T02:02:57.83911+00:00
+Youth Development Program Director,Education & Coaching,$40k–$65k,40,65,executive,75,35,2026-06-03T02:45:35.298356+00:00
+Youth Mentor Program Director,Gaming & Esports,$40k–$65k,40,65,executive,75,35,2026-04-22T02:52:33.087307+00:00
+Domestic Violence Shelter Director,Gaming & Esports,$42k–$65k,42,65,executive,75,33,2026-04-22T02:52:29.646164+00:00
+Environmental Education Program Director,Education & Coaching,$42k–$65k,42,65,executive,75,33,2026-05-14T02:10:32.462675+00:00
+LGBTQ+ Community Services Director,Social Impact & Nonprofit,$42k–$65k,42,65,executive,75,33,2026-05-30T02:04:16.514576+00:00
+Account Executive (B2B Sales),Business & Finance,$45k–$120k,45,120,executive,75,30,2026-07-14T02:55:06.288601+00:00
+Adult Education Director,Education & Coaching,$45k–$75k,45,75,executive,75,30,2026-06-20T02:16:04.335879+00:00
+Advocacy Director,Marketing & Communications,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:32.680575+00:00
+Advocacy Director (Nonprofit),Social Impact & Nonprofit,$45k–$75k,45,75,executive,75,30,2026-04-27T08:01:48.714542+00:00
+Architectural Colorist,Design & Creative,$45k–$75k,45,75,senior_ic,75,30,2026-08-07T02:54:48.294763+00:00
+Art Gallery Director,Arts & Performance,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:32.905098+00:00
+Artist Residency Director,Arts & Performance,$45k–$75k,45,75,executive,75,30,2026-04-25T06:08:12.462627+00:00
+Artist Residency Program Director,Arts & Performance,$45k–$75k,45,75,executive,75,30,2026-06-05T02:15:29.512107+00:00
+Artistic Director,Science & Research,$45k–$85k,45,85,executive,75,30,2026-04-22T02:52:31.660242+00:00
+Arts Festival Director,Arts & Performance,$45k–$75k,45,75,executive,75,30,2026-06-06T02:06:04.227308+00:00
+Athletic Director (High School/College),Gaming & Esports,$45k–$85k,45,85,executive,75,30,2026-04-22T02:52:33.087307+00:00
+Attention Director (Film/TV),Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-08-07T02:55:07.556267+00:00
+Ballet Company Director,Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-04-22T02:52:33.295118+00:00
+Broadcast News Director,Media & Journalism,$45k–$95k,45,95,executive,75,30,2026-04-22T06:24:44.632907+00:00
+Broadcasting Director,Science & Research,$45k–$85k,45,85,executive,75,30,2026-04-22T02:52:31.660242+00:00
+Casting Director,Media & Journalism,$45k–$120k,45,120,executive,75,30,2026-04-22T02:52:33.86077+00:00
+Catering Director,Food & Culinary,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:33.86077+00:00
+Circus Arts Director,Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-04-30T01:58:43.129032+00:00
+Cirque Director,Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-05-25T02:31:22.121275+00:00
+Communications Director (Nonprofit),Media & Journalism,$45k–$75k,45,75,executive,75,30,2026-05-10T01:56:29.780776+00:00
+Community Development Director,Gaming & Esports,$45k–$65k,45,65,executive,75,30,2026-04-22T02:52:30.47108+00:00
+Conference Center Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-06-18T02:39:49.197753+00:00
+Conference Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-04-22T06:24:24.863439+00:00
+Conference Event Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:30.264317+00:00
+Conference Operations Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-08-05T02:57:00.369259+00:00
+Conference Services Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-06-22T03:26:55.247158+00:00
+Convention & Visitor Bureau Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-04-27T07:58:54.11349+00:00
+Convention & Visitors Bureau Director,Gaming & Esports,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:33.087307+00:00
+Convention Center Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:34.05043+00:00
+Convention and Visitors Bureau Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-05-12T02:01:23.268159+00:00
+Corporate Events Director,Supply Chain & Operations,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:31.660242+00:00
+Debate Tournament Director,Education & Coaching,$45k–$75k,45,75,executive,75,30,2026-07-05T03:59:38.756714+00:00
+Development Director (Nonprofits),Social Impact & Nonprofit,$45k–$70k,45,70,executive,75,30,2026-04-22T02:52:29.856816+00:00
+Esports Coaching Director,Education & Coaching,$45k–$85k,45,85,executive,75,30,2026-04-24T06:30:27.257218+00:00
+Event Catering Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-07-21T03:20:32.338528+00:00
+Event Security Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-07-24T03:19:29.28006+00:00
+Executive Chef,Hospitality & Events,$45k–$85k,45,85,executive,75,30,2026-04-29T01:59:10.380153+00:00
+Executive Director (Small Nonprofit),Gaming & Esports,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:31.20659+00:00
+Executive Function Coach,Sports & Fitness,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:32.496342+00:00
+Executive Functioning Coach,Education & Coaching,$45k–$75k,45,75,executive,75,30,2026-06-03T02:45:38.32838+00:00
+Experience Architect (Events),Design & Creative,$45k–$75k,45,75,senior_ic,75,30,2026-05-31T02:29:22.000234+00:00
+Faith-Based Organization Director,Gaming & Esports,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:30.264317+00:00
+Festival Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-06-18T02:38:10.265744+00:00
+Fitness Director,Gaming & Esports,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:31.660242+00:00
+Fitness Director (Corporate Wellness),Sports & Fitness,$45k–$75k,45,75,executive,75,30,2026-05-12T02:02:25.201728+00:00
+Fitness Program Director (Corporate Wellness),Sports & Fitness,$45k–$75k,45,75,executive,75,30,2026-04-26T06:31:35.08221+00:00
+Food & Beverage Director (Hospitality),Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-04-26T06:32:59.431126+00:00
+Food Bank Director,Social Impact & Nonprofit,$45k–$70k,45,70,executive,75,30,2026-04-22T02:52:29.422718+00:00
+Food Service Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-04-30T01:59:18.526679+00:00
+Food and Beverage Beverage Director,Food & Culinary,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:34.616352+00:00
+Food and Beverage Director,Supply Chain & Operations,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:31.20659+00:00
+Freelance Creative Director,Marketing & Communications,$45k–$120k,45,120,executive,75,30,2026-04-22T02:52:29.206458+00:00
+Gallery Curation Director,Arts & Performance,$45k–$75k,45,75,executive,75,30,2026-07-10T03:52:28.406507+00:00
+Guest Services Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-06-24T04:06:20.380225+00:00
+Guest Services Director (Hotels),Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-06-22T03:22:51.193994+00:00
+Holiday Event Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-07-05T04:00:25.527162+00:00
+Homeless Services Director,Gaming & Esports,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:33.86077+00:00
+Hotel Sales Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-05-13T02:06:41.460682+00:00
+Housing Advocacy Director,Social Impact & Nonprofit,$45k–$75k,45,75,executive,75,30,2026-07-24T03:19:48.707397+00:00
+Housing First Program Director,Social Impact & Nonprofit,$45k–$65k,45,65,executive,75,30,2026-04-26T06:31:27.158522+00:00
+Immersive Theater Director,Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-05-03T01:52:34.343107+00:00
+Improvisation Director (Film/TV),Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-06-28T04:21:56.410491+00:00
+LGBTQ+ Services Director,Social Impact & Nonprofit,$45k–$65k,45,65,executive,75,30,2026-06-24T04:06:49.586733+00:00
+Live Event Artistic Director,Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-06-24T04:05:11.886864+00:00
+Live Event Director,Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-05-12T02:00:40.107474+00:00
+Live Event Streaming Director,Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-06-12T02:32:31.881917+00:00
+Live Event Video Director,Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-07-10T03:51:32.230417+00:00
+Live Events Artistic Director,Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-04-23T06:29:58.565265+00:00
+Live Streaming Director,Media & Journalism,$45k–$85k,45,85,executive,75,30,2026-05-17T02:02:35.297607+00:00
+Live Streaming Director (Performance),Arts & Performance,$45k–$75k,45,75,executive,75,30,2026-05-10T01:55:30.826787+00:00
+Luxury Cruise Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:29.422718+00:00
+Magazine Editor-in-Chief,Science & Research,$60k–$105k,60,105,executive,90,30,2026-04-22T02:52:30.655222+00:00
+Makeup Artistry Director,Fashion & Beauty,$45k–$95k,45,95,executive,75,30,2026-05-12T02:01:15.785228+00:00
+Marathon Race Director,Gaming & Esports,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:29.856816+00:00
+Mentorship Program Director,Social Impact & Nonprofit,$45k–$70k,45,70,executive,75,30,2026-04-30T01:59:46.86447+00:00
+Montessori School Director,Gaming & Esports,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:32.905098+00:00
+Museum Curation Director,Arts & Performance,$45k–$75k,45,75,executive,75,30,2026-08-02T03:30:20.227977+00:00
+Museum Director,Gaming & Esports,$45k–$85k,45,85,executive,75,30,2026-04-22T02:52:31.660242+00:00
+Music Therapy Director,Education & Coaching,$45k–$65k,45,65,executive,75,30,2026-07-29T03:15:29.731679+00:00
+Music Video Director,Arts & Performance,$45k–$95k,45,95,executive,75,30,2026-07-21T03:19:51.031938+00:00
+Nonprofit Board Development Director,Social Impact & Nonprofit,$45k–$75k,45,75,executive,75,30,2026-06-14T02:38:29.712192+00:00
+Nonprofit Development Director,Social Impact & Nonprofit,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:32.496342+00:00
+Nonprofit Operations Director,Social Impact & Nonprofit,$45k–$75k,45,75,executive,75,30,2026-06-23T04:03:53.004316+00:00
+Obstacle Course Race Director,Sports & Fitness,$45k–$75k,45,75,executive,75,30,2026-04-27T07:59:37.713825+00:00
+Parks & Recreation Director,Law & Government,$45k–$75k,45,75,executive,75,30,2026-07-17T03:17:21.205347+00:00
+Parks and Recreation Director,Gaming & Esports,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:30.082186+00:00
+Performance Video Director,Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-05-03T01:51:21.17392+00:00
+Performing Arts Venue Director,Arts & Performance,$45k–$75k,45,75,executive,75,30,2026-07-23T03:24:39.742707+00:00
+Program Director,Gaming & Esports,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:31.660242+00:00
+Puppetry Artistic Director,Arts & Performance,$45k–$75k,45,75,executive,75,30,2026-06-15T02:41:59.316336+00:00
+Puppetry Director (Commercial Production),Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-07-24T03:18:41.027327+00:00
+Radio News Director,Media & Journalism,$45k–$75k,45,75,executive,75,30,2026-06-22T02:44:18.220352+00:00
+Radio Station Director,Media & Journalism,$45k–$85k,45,85,executive,75,30,2026-05-22T02:13:53.98041+00:00
+Refugee Services Director,Social Impact & Nonprofit,$45k–$65k,45,65,executive,75,30,2026-05-08T02:05:46.497139+00:00
+Renaissance Faire Director,Arts & Performance,$45k–$75k,45,75,executive,75,30,2026-06-21T02:41:26.272573+00:00
+STEM Enrichment Director,Education & Coaching,$45k–$75k,45,75,executive,75,30,2026-07-26T03:32:22.762574+00:00
+Scouts Director (Professional Sports),Sports & Fitness,$45k–$95k,45,95,executive,75,30,2026-07-07T03:58:33.358521+00:00
+Social Justice Program Director,Gaming & Esports,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:31.392704+00:00
+Sports Broadcasting Director,Gaming & Esports,$45k–$95k,45,95,executive,75,30,2026-04-22T02:52:33.86077+00:00
+TV Director,Media & Journalism,$45k–$120k,45,120,executive,75,30,2026-07-14T02:54:39.040755+00:00
+Theater Company Artistic Director,Arts & Performance,$45k–$85k,45,85,executive,75,30,2026-05-11T02:06:46.080221+00:00
+Tourism Board Director,Gaming & Esports,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:33.86077+00:00
+Tourism Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-05-02T01:48:49.937358+00:00
+Tutoring Center Director,Education & Coaching,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:34.239097+00:00
+Tutoring Program Director,Education & Coaching,$45k–$75k,45,75,executive,75,30,2026-06-30T04:07:26.596507+00:00
+University Admissions Director,Education & Coaching,$45k–$75k,45,75,executive,75,30,2026-04-22T02:52:33.477982+00:00
+University Career Services Director,Education & Coaching,$45k–$70k,45,70,executive,75,30,2026-04-22T02:52:31.660242+00:00
+Venue Operations Director,Hospitality & Events,$45k–$75k,45,75,executive,75,30,2026-07-09T03:51:01.996292+00:00
+Veterans Advocacy Director,Social Impact & Nonprofit,$45k–$75k,45,75,executive,75,30,2026-04-22T06:27:29.331269+00:00
+Wellness Director (Corporate),Sports & Fitness,$45k–$75k,45,75,executive,75,30,2026-07-30T02:49:09.612128+00:00
+Wellness Program Director,Sports & Fitness,$45k–$75k,45,75,executive,75,30,2026-06-24T04:06:57.221675+00:00
+Writing Center Director,Gaming & Esports,$45k–$65k,45,65,executive,75,30,2026-04-22T02:52:33.295118+00:00
+Academic Enrichment Director,Education & Coaching,$48k–$77k,48,77,executive,75,27,2026-06-14T02:37:39.264034+00:00
+Adult Education Program Director,Education & Coaching,$48k–$77k,48,77,executive,75,27,2026-06-01T02:40:40.621745+00:00
+Arenas and Stadiums Director,Supply Chain & Operations,$48k–$85k,48,85,executive,75,27,2026-04-22T02:52:33.86077+00:00
+Athletic Training Director,Sports & Fitness,$48k–$77k,48,77,executive,75,27,2026-06-14T02:39:24.045374+00:00
+Conference Planning Director,Hospitality & Events,$48k–$77k,48,77,executive,75,27,2026-05-29T02:08:30.026095+00:00
+Destination Management Company Director,Hospitality & Events,$48k–$77k,48,77,executive,75,27,2026-05-24T02:09:54.856261+00:00
+Education Program Director,Social Impact & Nonprofit,$48k–$77k,48,77,executive,75,27,2026-05-05T01:55:10.659097+00:00
+Experience Architect (Hospitality),Design & Creative,$48k–$85k,48,85,senior_ic,75,27,2026-05-29T02:07:53.669248+00:00
+Food & Beverage Director,Hospitality & Events,$48k–$77k,48,77,executive,75,27,2026-05-18T02:14:15.584532+00:00
+Food Service Director (Corporate),Hospitality & Events,$48k–$77k,48,77,executive,75,27,2026-08-05T02:57:03.975446+00:00
+Guest Experience Director,Hospitality & Events,$48k–$77k,48,77,executive,75,27,2026-05-19T02:12:44.480066+00:00
+Homelessness Services Director,Social Impact & Nonprofit,$48k–$77k,48,77,executive,75,27,2026-05-10T01:55:17.345171+00:00
+Magazine Art Director,Media & Journalism,$48k–$85k,48,85,executive,75,27,2026-08-05T02:57:24.012975+00:00
+Nonprofit Fundraising Director,Social Impact & Nonprofit,$48k–$77k,48,77,executive,75,27,2026-06-03T02:47:14.913468+00:00
+Nonprofit Program Director,Social Impact & Nonprofit,$48k–$77k,48,77,executive,75,27,2026-04-22T03:24:49.006235+00:00
+Social Services Director,Gaming & Esports,$48k–$77k,48,77,executive,75,27,2026-04-22T02:52:32.496342+00:00
+Virtual Performance Director,Arts & Performance,$48k–$85k,48,85,executive,75,27,2026-05-14T02:09:34.128079+00:00
+Advocacy Policy Director,Social Impact & Nonprofit,$50k–$85k,50,85,executive,75,25,2026-06-27T03:59:31.26955+00:00
+Animation Director (Stop Motion),Design & Creative,$50k–$85k,50,85,executive,75,25,2026-05-08T02:03:49.076852+00:00
+Architectural Renderer,Architecture & Urban Planning,$50k–$85k,50,85,senior_ic,75,25,2026-04-22T02:52:29.206458+00:00
+Ballet Company Artistic Director,Arts & Performance,$50k–$85k,50,85,executive,75,25,2026-05-17T02:00:47.000207+00:00
+Child Advocacy Center Director,Social Impact & Nonprofit,$50k–$75k,50,75,executive,75,25,2026-08-04T03:14:52.957499+00:00
+Cruise Director,Hospitality & Events,$50k–$100k,50,100,executive,75,25,2026-04-22T02:52:33.477982+00:00
+Culinary Director (Restaurants),Hospitality & Events,$50k–$85k,50,85,executive,75,25,2026-05-23T02:03:18.146446+00:00
+Editor-in-Chief,Media & Journalism,$65k–$110k,65,110,executive,90,25,2026-04-23T06:29:21.85304+00:00
+Education Advocacy Director,Social Impact & Nonprofit,$50k–$85k,50,85,executive,75,25,2026-06-24T04:05:54.82597+00:00
+Education Nonprofit Director,Social Impact & Nonprofit,$50k–$85k,50,85,executive,75,25,2026-07-22T03:20:02.544715+00:00
+Educational Program Director,Education & Coaching,$50k–$85k,50,85,executive,75,25,2026-05-09T01:56:47.610088+00:00
+Environmental Justice Nonprofit Director,Social Impact & Nonprofit,$50k–$85k,50,85,executive,75,25,2026-05-08T02:02:51.47047+00:00
+Executive Pastry Chef,Hospitality & Events,$50k–$85k,50,85,executive,75,25,2026-05-01T02:00:22.875294+00:00
+Executive Sous Chef,Hospitality & Events,$50k–$85k,50,85,executive,75,25,2026-06-29T04:28:19.500571+00:00
+Faith-Based Nonprofit Director,Gaming & Esports,$50k–$85k,50,85,executive,75,25,2026-04-22T02:52:32.680575+00:00
+Food & Beverage Director (Hotel),Hospitality & Events,$50k–$85k,50,85,executive,75,25,2026-06-22T02:44:07.896958+00:00
+Food & Beverage Director (Hotels),Hospitality & Events,$50k–$85k,50,85,executive,75,25,2026-05-08T02:05:06.233315+00:00
+Food Service Director (Healthcare),Hospitality & Events,$50k–$75k,50,75,executive,75,25,2026-06-08T02:37:47.042906+00:00
+Guest Experience Director (Luxury Hotel),Hospitality & Events,$50k–$85k,50,85,executive,75,25,2026-05-28T02:03:21.476106+00:00
+Hotel Food and Beverage Director,Hospitality & Events,$50k–$85k,50,85,executive,75,25,2026-06-16T02:46:51.742114+00:00
+Interior Architect,Design & Creative,$50k–$85k,50,85,senior_ic,75,25,2026-05-04T01:53:43.120581+00:00
+Interior Architecture Technologist,Design & Creative,$50k–$85k,50,85,senior_ic,75,25,2026-06-03T02:46:37.187124+00:00
+Mental Health Program Director,Social Impact & Nonprofit,$50k–$75k,50,75,executive,75,25,2026-06-08T02:38:09.706701+00:00
+Music Director,Supply Chain & Operations,$50k–$90k,50,90,executive,75,25,2026-04-22T02:52:31.20659+00:00
+News Operations Director,Media & Journalism,$50k–$85k,50,85,executive,75,25,2026-06-23T04:03:42.607538+00:00
+Nonprofit Financial Director,Social Impact & Nonprofit,$50k–$85k,50,85,executive,75,25,2026-04-22T02:52:33.295118+00:00
+Puppetry Director (Animation),Arts & Performance,$50k–$95k,50,95,executive,75,25,2026-04-22T03:25:02.012317+00:00
+Science Museum Director,Science & Research,$50k–$85k,50,85,executive,75,25,2026-07-11T03:19:20.304661+00:00
+Social Justice Nonprofit Director,Social Impact & Nonprofit,$50k–$85k,50,85,executive,75,25,2026-04-27T08:01:52.114479+00:00
+Theme Park Operations Director,Hospitality & Events,$50k–$85k,50,85,executive,75,25,2026-06-05T02:16:15.125573+00:00
+Voice Acting Director,Arts & Performance,$50k–$95k,50,95,executive,75,25,2026-04-24T06:32:01.599918+00:00
+Architectural Lighting Designer,Design & Creative,$52k–$95k,52,95,senior_ic,75,23,2026-08-01T03:29:55.154878+00:00
+Architectural Technologist,Architecture & Urban Planning,$52k–$85k,52,85,senior_ic,75,23,2026-04-22T02:52:30.082186+00:00
+Art Director (Publishing),Design & Creative,$52k–$95k,52,95,executive,75,23,2026-05-20T02:11:25.457+00:00
+Art Director,Marketing & Communications,$55k–$95k,55,95,executive,75,20,2026-04-22T02:52:33.86077+00:00
+Art Director (Advertising),Design & Creative,$55k–$95k,55,95,executive,75,20,2026-04-23T06:30:25.098705+00:00
+Athletic Director (College),Sports & Fitness,$55k–$95k,55,95,executive,75,20,2026-04-22T02:52:29.856816+00:00
+Brand Identity Architect,Marketing & Communications,$55k–$95k,55,95,senior_ic,75,20,2026-04-22T02:52:32.271017+00:00
+Community Foundation Director,Social Impact & Nonprofit,$55k–$90k,55,90,executive,75,20,2026-04-22T02:52:30.47108+00:00
+Fractional CMO (Chief Marketing Officer),Entrepreneurship,$70k–$150k,70,150,executive,90,20,2026-06-23T04:03:14.357438+00:00
+Impact Measurement Director,Social Impact & Nonprofit,$55k–$85k,55,85,executive,75,20,2026-05-23T02:03:53.635639+00:00
+Landscape Architect (Residential),Design & Creative,$55k–$85k,55,85,senior_ic,75,20,2026-04-25T06:06:21.234542+00:00
+Medical Illustration Director,Healthcare & Medicine,$55k–$95k,55,95,executive,75,20,2026-04-22T02:52:29.422718+00:00
+Nonprofit Communications Director,Marketing & Communications,$55k–$90k,55,90,executive,75,20,2026-04-22T02:52:30.655222+00:00
+Nonprofit Finance Director,Social Impact & Nonprofit,$55k–$85k,55,85,executive,75,20,2026-04-22T02:52:30.264317+00:00
+Nonprofit IT Director,Social Impact & Nonprofit,$55k–$85k,55,85,executive,75,20,2026-05-08T02:05:53.107985+00:00
+Nonprofit Technology Director,Social Impact & Nonprofit,$55k–$85k,55,85,executive,75,20,2026-04-22T02:52:30.082186+00:00
+STEM Education Director,Education & Coaching,$55k–$85k,55,85,executive,75,20,2026-04-25T06:08:42.419035+00:00
+STEM Education Program Director,Education & Coaching,$55k–$85k,55,85,executive,75,20,2026-06-18T02:39:11.545414+00:00
+Senior Services Director,Social Impact & Nonprofit,$55k–$85k,55,85,executive,75,20,2026-07-01T04:25:21.96834+00:00
+Senior Video Editor,Media & Journalism,$50k–$85k,50,85,senior_ic,70,20,2026-05-29T02:08:42.430336+00:00
+Social Enterprise Director,Gaming & Esports,$55k–$95k,55,95,executive,75,20,2026-04-22T02:52:34.465719+00:00
+Spa Director,Fashion & Beauty,$55k–$100k,55,100,executive,75,20,2026-04-22T02:52:30.47108+00:00
+Corporate Training Director,Education & Coaching,$58k–$95k,58,95,executive,75,17,2026-04-22T02:52:32.086589+00:00
+Illustration Art Director,Marketing & Communications,$58k–$95k,58,95,executive,75,17,2026-04-22T02:52:29.206458+00:00
+Landscape Architect,Architecture & Urban Planning,$58k–$95k,58,95,senior_ic,75,17,2026-04-22T02:52:32.905098+00:00
+Acoustic Architect,Design & Creative,$60k–$95k,60,95,senior_ic,75,15,2026-08-07T02:54:34.614372+00:00
+Brand Architect,Design & Creative,$60k–$110k,60,110,senior_ic,75,15,2026-06-01T02:38:56.28267+00:00
+Business Incubator Director,Entrepreneurship,$60k–$95k,60,95,executive,75,15,2026-04-30T01:57:43.40219+00:00
+Climate Tech Project Director,Environment & Sustainability,$60k–$105k,60,105,executive,75,15,2026-05-21T02:13:17.275754+00:00
+Communications Director,Media & Journalism,$60k–$95k,60,95,executive,75,15,2026-04-29T01:59:23.004673+00:00
+Experience Architect,Architecture & Urban Planning,$60k–$95k,60,95,senior_ic,75,15,2026-04-22T02:52:30.655222+00:00
+Experience Architect (UX Researcher),Design & Creative,$60k–$95k,60,95,senior_ic,75,15,2026-07-04T03:41:19.019155+00:00
+Fashion Illustration Director,Fashion & Beauty,$60k–$95k,60,95,executive,75,15,2026-08-09T02:07:10.343846+00:00
+Incubator Program Director,Gaming & Esports,$60k–$120k,60,120,executive,75,15,2026-04-22T02:52:29.856816+00:00
+Information Architecture Designer,Design & Creative,$60k–$95k,60,95,senior_ic,75,15,2026-07-05T03:59:32.734405+00:00
+Launch Pad Director (Startup Incubator),Entrepreneurship,$60k–$95k,60,95,executive,75,15,2026-07-04T03:41:43.696623+00:00
+Media Buying Director,Media & Journalism,$60k–$120k,60,120,executive,75,15,2026-05-08T02:02:41.216715+00:00
+Municipal Planning Director,Gaming & Esports,$60k–$95k,60,95,executive,75,15,2026-04-22T02:52:34.239097+00:00
+Museum Architect,Arts & Performance,$60k–$95k,60,95,senior_ic,75,15,2026-07-24T03:18:44.568577+00:00
+Opera House Director,Science & Research,$60k–$95k,60,95,executive,75,15,2026-04-22T02:52:33.86077+00:00
+Performance Capture Director,Arts & Performance,$60k–$110k,60,110,executive,75,15,2026-05-01T01:59:44.296311+00:00
+Podcast Network Director,Media & Journalism,$60k–$95k,60,95,executive,75,15,2026-07-15T02:53:11.244202+00:00
+Public Health Program Director,Healthcare & Medicine,$60k–$95k,60,95,executive,75,15,2026-07-22T03:19:43.244927+00:00
+Research Ethics Board Director,Science & Research,$60k–$95k,60,95,executive,75,15,2026-04-22T02:52:29.856816+00:00
+Special Education Director,Education & Coaching,$60k–$95k,60,95,executive,75,15,2026-05-18T02:14:01.465695+00:00
+Animation Director,Gaming & Esports,$65k–$120k,65,120,executive,75,10,2026-04-22T02:52:31.660242+00:00
+Animation Director (Film/TV),Design & Creative,$65k–$130k,65,130,executive,75,10,2026-07-04T03:41:22.375838+00:00
+City Planning Director,Law & Government,$65k–$110k,65,110,executive,75,10,2026-04-25T06:09:21.665662+00:00
+Computer Network Architect,Tech & Engineering,$65k–$120k,65,120,senior_ic,75,10,2026-04-22T06:27:54.03876+00:00
+Corporate Executive Coach,Education & Coaching,$65k–$150k,65,150,executive,75,10,2026-05-15T02:07:59.424691+00:00
+Corporate Learning Director,Sports & Fitness,$65k–$110k,65,110,executive,75,10,2026-04-22T02:52:31.845128+00:00
+Creative Director (Advertising Agency),Design & Creative,$65k–$120k,65,120,executive,75,10,2026-08-04T03:14:01.914309+00:00
+Creative Director (Advertising),Design & Creative,$65k–$120k,65,120,executive,75,10,2026-04-23T06:28:46.096488+00:00
+Creative Director (Fashion),Fashion & Beauty,$65k–$120k,65,120,executive,75,10,2026-04-22T02:52:30.264317+00:00
+Creative Director (Gaming),Design & Creative,$65k–$130k,65,130,executive,75,10,2026-06-22T03:26:20.840206+00:00
+Emergency Management Director,Gaming & Esports,$65k–$130k,65,130,executive,75,10,2026-04-22T02:52:31.20659+00:00
+Executive Coach,Sports & Fitness,$65k–$120k,65,120,executive,75,10,2026-04-22T02:52:33.295118+00:00
+Executive Director (Education Nonprofit),Education & Coaching,$65k–$120k,65,120,executive,75,10,2026-06-06T02:07:06.486892+00:00
+Experience Architect (Digital Products),Design & Creative,$65k–$110k,65,110,senior_ic,75,10,2026-05-24T02:09:26.393164+00:00
+Experience Architect (Digital),Design & Creative,$65k–$110k,65,110,senior_ic,75,10,2026-04-28T07:57:15.539546+00:00
+Experience Architect (UX Strategy),Design & Creative,$65k–$120k,65,120,senior_ic,75,10,2026-05-14T02:08:35.821973+00:00
+Experience Architect (UX),Design & Creative,$65k–$120k,65,120,senior_ic,75,10,2026-04-22T06:25:53.662995+00:00
+Experience Architect (UX/UI),Design & Creative,$65k–$120k,65,120,senior_ic,75,10,2026-05-26T02:08:50.608297+00:00
+Fractional Chief Marketing Officer,Entrepreneurship,$80k–$150k,80,150,executive,90,10,2026-06-03T02:46:54.968266+00:00
+Fragrance Marketing Director,Fashion & Beauty,$65k–$120k,65,120,executive,75,10,2026-06-23T04:04:34.276132+00:00
+Franchise Architect,Entrepreneurship,$65k–$120k,65,120,senior_ic,75,10,2026-07-28T02:56:25.323996+00:00
+Game Art Director,Gaming & Esports,$65k–$120k,65,120,executive,75,10,2026-04-22T02:52:31.660242+00:00
+Government Affairs Director,Social Impact & Nonprofit,$65k–$120k,65,120,executive,75,10,2026-04-22T02:52:30.655222+00:00
+Green Building Architect,Architecture & Urban Planning,$65k–$130k,65,130,senior_ic,75,10,2026-04-22T02:52:31.392704+00:00
+Housing Authority Director,Law & Government,$65k–$110k,65,110,executive,75,10,2026-04-22T02:52:33.675655+00:00
+Information Architect,Architecture & Urban Planning,$65k–$110k,65,110,senior_ic,75,10,2026-04-22T02:52:32.086589+00:00
+Labor Relations Director (Government),Law & Government,$65k–$110k,65,110,executive,75,10,2026-04-22T02:52:33.675655+00:00
+Medical Laboratory Director,Science & Research,$65k–$120k,65,120,executive,75,10,2026-05-18T02:14:43.820012+00:00
+Metaverse Architect,Architecture & Urban Planning,$65k–$120k,65,120,senior_ic,75,10,2026-04-22T02:52:32.680575+00:00
+Motion Design Director,Design & Creative,$65k–$120k,65,120,executive,75,10,2026-04-23T06:30:17.841034+00:00
+Motion Graphics Art Director,Design & Creative,$65k–$120k,65,120,executive,75,10,2026-05-15T02:07:53.698699+00:00
+Nonprofit Executive Director,Gaming & Esports,$65k–$110k,65,110,executive,75,10,2026-04-22T02:52:30.47108+00:00
+Nonprofit Executive Director Search Consultant,Social Impact & Nonprofit,$65k–$110k,65,110,executive,75,10,2026-04-22T02:52:32.905098+00:00
+Nonprofit Legal Director,Law & Government,$65k–$110k,65,110,executive,75,10,2026-07-07T03:57:36.052463+00:00
+Police Chief,Law & Government,$80k–$130k,80,130,executive,90,10,2026-06-23T04:03:36.586422+00:00
+Publishing Rights Director,Media & Journalism,$65k–$120k,65,120,executive,75,10,2026-07-13T03:33:13.922552+00:00
+State Environmental Policy Director,Law & Government,$65k–$110k,65,110,executive,75,10,2026-06-08T02:37:53.199738+00:00
+Tech Incubator Director,Entrepreneurship,$65k–$120k,65,120,executive,75,10,2026-05-14T02:08:48.844845+00:00
+Virtual Reality Architect,Architecture & Urban Planning,$65k–$110k,65,110,senior_ic,75,10,2026-04-22T02:52:32.086589+00:00
+Athletic Director,Sports & Fitness,$70k–$150k,70,150,executive,75,5,2026-04-22T02:52:34.05043+00:00
+Brand Strategy Director,Marketing & Communications,$70k–$150k,70,150,executive,75,5,2026-04-22T02:52:32.680575+00:00
+Experience Design Director,Design & Creative,$70k–$130k,70,130,executive,75,5,2026-05-14T02:10:00.195732+00:00
+Government Technology Director,Law & Government,$70k–$130k,70,130,executive,75,5,2026-06-17T02:41:28.391159+00:00
+Graphic Design Director,Marketing & Communications,$70k–$130k,70,130,executive,75,5,2026-04-22T02:52:34.05043+00:00
+Lab Director,Science & Research,$70k–$130k,70,130,executive,75,5,2026-04-30T01:59:37.170529+00:00
+Research Data Architect,Science & Research,$70k–$130k,70,130,senior_ic,75,5,2026-08-09T02:07:20.166532+00:00
+Risk Management Director,Hospitality & Events,$70k–$130k,70,130,executive,75,5,2026-04-22T02:52:29.856816+00:00
+Tech Startup Accelerator Director,Entrepreneurship,$70k–$150k,70,150,executive,75,5,2026-04-22T02:52:32.271017+00:00

@@ -1,0 +1,154 @@
+career,industry,listed_salary,floor_k,bls_occupation,bls_p10_k,shortfall_k
+Cardiothoracic Surgeon,Healthcare & Medicine,$0–$500k+,0,Physicians and surgeons,100,100
+Neuroradiologist,Healthcare & Medicine,$0–$500k+,0,Physicians and surgeons,100,100
+Neurosurgeon,Healthcare & Medicine,$0–$500k+,0,Physicians and surgeons,100,100
+Orthopaedic Surgeon,Healthcare & Medicine,$0–$500k+,0,Physicians and surgeons,100,100
+Orthopedic Sports Medicine Physician,Sports & Fitness,$0–$500k+,0,Physicians and surgeons,100,100
+Orthopedic Surgeon,Healthcare & Medicine,$0–$500k+,0,Physicians and surgeons,100,100
+Pediatric Surgeon,Healthcare & Medicine,$0–$500k+,0,Physicians and surgeons,100,100
+Radiologist,Healthcare & Medicine,$0–$500k+,0,Physicians and surgeons,100,100
+Surgeon,Healthcare & Medicine,$0–$500k+,0,Physicians and surgeons,100,100
+Surgeon (Orthopedic),Healthcare & Medicine,$0–$500k+,0,Physicians and surgeons,100,100
+Anesthesiologist,Healthcare & Medicine,$30k–$45k,30,Physicians and surgeons,100,70
+Cardiac Surgeon,Healthcare & Medicine,$30k–$45k,30,Physicians and surgeons,100,70
+Psychiatrist,Healthcare & Medicine,$30k–$45k,30,Physicians and surgeons,100,70
+Urologic Surgeon,Healthcare & Medicine,$30k–$45k,30,Physicians and surgeons,100,70
+Anesthesiology Technician,Healthcare & Medicine,$45k–$70k,45,Physicians and surgeons,100,55
+Bootstrapped Software Developer,Entrepreneurship,$20k–$150k,20,Software developers,71,51
+Aerospace Engineer,Aviation & Transportation,$30k–$45k,30,Aerospace engineers,75,45
+Deputy District Attorney,Law & Government,$30k–$45k,30,Lawyers,73,43
+Real Estate Transaction Attorney,Law & Government,$30k–$45k,30,Lawyers,73,43
+Biomedical Software Engineer,Tech & Engineering,$30k–$45k,30,Software developers,71,41
+Quantum Software Developer,Healthcare & Medicine,$30k–$45k,30,Software developers,71,41
+Veterinary Anesthesiologist,Healthcare & Medicine,$60k–$95k,60,Physicians and surgeons,100,40
+Affiliate Marketing Manager,Marketing & Communications,$45k–$85k,45,Marketing managers,80,35
+Affiliate Marketing Manager (Influencer Brand),Entrepreneurship,$45k–$85k,45,Marketing managers,80,35
+Dental Hygienist,Supply Chain & Operations,$30k–$45k,30,Dental hygienists,65,35
+Destination Marketing Manager,Hospitality & Events,$45k–$75k,45,Marketing managers,80,35
+Event Marketing Manager,Hospitality & Events,$45k–$75k,45,Marketing managers,80,35
+Experiential Marketing Manager,Hospitality & Events,$45k–$75k,45,Marketing managers,80,35
+Nonprofit Financial Manager,Social Impact & Nonprofit,$45k–$75k,45,Financial managers,80,35
+Nonprofit Marketing Manager,Gaming & Esports,$45k–$75k,45,Marketing managers,80,35
+Physical Therapist Assistant,Healthcare & Medicine,$35k–$55k,35,Physical therapists,70,35
+Registered Nurse,Healthcare & Medicine,$30k–$45k,30,Registered nurses,63,33
+Hotel Digital Marketing Manager,Marketing & Communications,$50k–$95k,50,Marketing managers,80,30
+Beauty Brand Marketing Manager,Marketing & Communications,$52k–$85k,52,Marketing managers,80,28
+Immigrant Rights Attorney,Social Impact & Nonprofit,$45k–$75k,45,Lawyers,73,28
+Influencer Marketing Manager,Marketing & Communications,$52k–$85k,52,Marketing managers,80,28
+Legal Aid Attorney,Social Impact & Nonprofit,$45k–$75k,45,Lawyers,73,28
+Lab Animal Veterinarian,Science & Research,$45k–$75k,45,Veterinarians,70,25
+Nurse Midwife,Healthcare & Medicine,$70k–$115k,70,Nurse practitioners,95,25
+Sports Marketing Manager,Marketing & Communications,$55k–$110k,55,Marketing managers,80,25
+Fashion Public Relations Manager,Marketing & Communications,$50k–$85k,50,Public relations managers,73,23
+Nonprofit Attorney,Law & Government,$50k–$85k,50,Lawyers,73,23
+Nonprofit Law Attorney,Law & Government,$50k–$85k,50,Lawyers,73,23
+Social Justice Lawyer,Social Impact & Nonprofit,$50k–$85k,50,Lawyers,73,23
+Certified Nurse Midwife,Healthcare & Medicine,$75k–$120k,75,Nurse practitioners,95,20
+Cosmetic Dentist,Fashion & Beauty,$70k–$150k,70,Dentists,90,20
+Child Advocacy Attorney,Law & Government,$55k–$95k,55,Lawyers,73,18
+Nonprofit Legal Counsel,Law & Government,$55k–$95k,55,Lawyers,73,18
+Public Relations Manager,Media & Journalism,$55k–$95k,55,Public relations managers,73,18
+Social Justice Attorney,Social Impact & Nonprofit,$55k–$95k,55,Lawyers,73,18
+Luxury Brand Marketing Manager,Fashion & Beauty,$65k–$120k,65,Marketing managers,80,15
+Team Physician,Sports & Fitness,$85k–$175k,85,Physicians and surgeons,100,15
+Tech Product Marketing Manager,Tech & Engineering,$65k–$120k,65,Marketing managers,80,15
+Veterinary Dentist,Healthcare & Medicine,$75k–$120k,75,Dentists,90,15
+Veterinary Surgeon,Healthcare & Medicine,$85k–$150k,85,Physicians and surgeons,100,15
+Wildlife Veterinarian,Environment & Sustainability,$55k–$95k,55,Veterinarians,70,15
+Animal Rights Attorney,Law & Government,$60k–$120k,60,Lawyers,73,13
+Immigration Attorney,Social Impact & Nonprofit,$60k–$130k,60,Lawyers,73,13
+Immigration Lawyer,Law & Government,$60k–$130k,60,Lawyers,73,13
+Legislative Staff Attorney,Law & Government,$60k–$95k,60,Lawyers,73,13
+Municipal Attorney,Law & Government,$60k–$105k,60,Lawyers,73,13
+Nonprofit Counsel,Social Impact & Nonprofit,$60k–$95k,60,Lawyers,73,13
+Prosecutor (District Attorney),Law & Government,$60k–$110k,60,Lawyers,73,13
+Research Data Architect,Science & Research,$70k–$130k,70,Database architects,81,11
+Clinical Pharmacist,Healthcare & Medicine,$120k–$175k,120,Pharmacists,130,10
+Clinical Pharmacist (Oncology),Healthcare & Medicine,$120k–$175k,120,Pharmacists,130,10
+Cybersecurity Analyst,Cybersecurity,$60k–$120k,60,Information security analysts,70,10
+Laboratory Animal Veterinarian,Science & Research,$60k–$95k,60,Veterinarians,70,10
+Occupational Therapist (Hand Therapy),Healthcare & Medicine,$55k–$85k,55,Occupational therapists,65,10
+Orthopedic Physical Therapist,Sports & Fitness,$60k–$95k,60,Physical therapists,70,10
+Pharmacist,Healthcare & Medicine,$120k–$175k,120,Pharmacists,130,10
+Pharmacist (Clinical Specialist),Science & Research,$120k–$175k,120,Pharmacists,130,10
+Pharmacist (Clinical Specialization),Healthcare & Medicine,$120k–$175k,120,Pharmacists,130,10
+Pharmacist (Clinical),Healthcare & Medicine,$120k–$175k,120,Pharmacists,130,10
+Physical Therapist,Sports & Fitness,$60k–$95k,60,Physical therapists,70,10
+Physical Therapist (Sports),Sports & Fitness,$60k–$95k,60,Physical therapists,70,10
+Sports Medicine Physical Therapist,Sports & Fitness,$60k–$95k,60,Physical therapists,70,10
+Animal Welfare Attorney,Law & Government,$65k–$120k,65,Lawyers,73,8
+Arts Lawyer,Social Impact & Nonprofit,$65k–$150k,65,Lawyers,73,8
+Civil Rights Attorney,Social Impact & Nonprofit,$65k–$130k,65,Lawyers,73,8
+Compliance Lawyer,Law & Government,$65k–$130k,65,Lawyers,73,8
+Contract Attorney,Law & Government,$65k–$150k,65,Lawyers,73,8
+Criminal Defense Attorney,Social Impact & Nonprofit,$65k–$150k,65,Lawyers,73,8
+Criminal Defense Lawyer,Social Impact & Nonprofit,$65k–$150k,65,Lawyers,73,8
+Defense Attorney,Social Impact & Nonprofit,$65k–$130k,65,Lawyers,73,8
+Elder Law Attorney,Law & Government,$65k–$130k,65,Lawyers,73,8
+Election Protection Attorney,Law & Government,$65k–$120k,65,Lawyers,73,8
+Electrical Engineer,Science & Research,$60k–$105k,60,Electrical engineers,68,8
+Entertainment Attorney,Law & Government,$65k–$150k,65,Lawyers,73,8
+Entertainment Lawyer,Law & Government,$65k–$150k,65,Lawyers,73,8
+Environmental Attorney,Environment & Sustainability,$65k–$130k,65,Lawyers,73,8
+Environmental Compliance Attorney,Law & Government,$65k–$140k,65,Lawyers,73,8
+Environmental Law Attorney,Environment & Sustainability,$65k–$130k,65,Lawyers,73,8
+Environmental Lawyer,Environment & Sustainability,$65k–$130k,65,Lawyers,73,8
+Family Law Attorney,Social Impact & Nonprofit,$65k–$130k,65,Lawyers,73,8
+Government Lawyer (Federal),Law & Government,$65k–$130k,65,Lawyers,73,8
+Human Rights Attorney,Social Impact & Nonprofit,$65k–$130k,65,Lawyers,73,8
+Immigration Litigation Attorney,Law & Government,$65k–$150k,65,Lawyers,73,8
+Labor Attorney,Social Impact & Nonprofit,$65k–$150k,65,Lawyers,73,8
+Mediation Attorney,Law & Government,$65k–$120k,65,Lawyers,73,8
+Municipal Lawyer,Law & Government,$65k–$110k,65,Lawyers,73,8
+Municipal Planning Attorney,Law & Government,$65k–$110k,65,Lawyers,73,8
+Municipal Zoning Attorney,Law & Government,$65k–$130k,65,Lawyers,73,8
+Policy Counsel (Tech Regulation),Law & Government,$65k–$120k,65,Lawyers,73,8
+Public Health Attorney,Food & Culinary,$65k–$120k,65,Lawyers,73,8
+Title Insurance Attorney,Law & Government,$65k–$120k,65,Lawyers,73,8
+Trademark Attorney,Marketing & Communications,$65k–$120k,65,Lawyers,73,8
+Water Rights Attorney,Law & Government,$65k–$130k,65,Lawyers,73,8
+Parole Officer,Law & Government,$35k–$65k,35,Probation officers,42,7
+Database Architect,Architecture & Urban Planning,$75k–$140k,75,Database architects,81,6
+Software Engineer,Science & Research,$65k–$120k,65,Software developers,71,6
+Software Engineer (Frontend),Science & Research,$65k–$125k,65,Software developers,71,6
+Software Engineer (Full Stack),Tech & Engineering,$65k–$150k,65,Software developers,71,6
+Actuary (Life Insurance),Business & Finance,$65k–$120k,65,Actuaries,70,5
+Actuary (Pension Planning),Business & Finance,$65k–$120k,65,Actuaries,70,5
+Actuary (Pension Plans),Business & Finance,$65k–$120k,65,Actuaries,70,5
+Chemical Engineer,Supply Chain & Operations,$65k–$115k,65,Chemical engineers,70,5
+Cybersecurity Analyst (Healthcare),Tech & Engineering,$65k–$120k,65,Information security analysts,70,5
+Cybersecurity Engineer,Cybersecurity,$65k–$120k,65,Information security analysts,70,5
+Occupational Therapist,Healthcare & Medicine,$60k–$85k,60,Occupational therapists,65,5
+Occupational Therapist (Pediatric),Healthcare & Medicine,$60k–$85k,60,Occupational therapists,65,5
+Physician Assistant,Healthcare & Medicine,$95k–$130k,95,Physicians and surgeons,100,5
+Physician Assistant (Orthopedic Surgery),Healthcare & Medicine,$95k–$150k,95,Physicians and surgeons,100,5
+Physician Assistant (PA),Healthcare & Medicine,$95k–$130k,95,Physicians and surgeons,100,5
+Physician Assistant (Pediatrics),Healthcare & Medicine,$95k–$130k,95,Physicians and surgeons,100,5
+Physician Assistant (Specialty),Healthcare & Medicine,$95k–$130k,95,Physicians and surgeons,100,5
+Research Veterinarian,Science & Research,$65k–$120k,65,Veterinarians,70,5
+Sports Medicine Physician Assistant,Sports & Fitness,$95k–$150k,95,Physicians and surgeons,100,5
+Cannabis Industry Compliance Attorney,Law & Government,$70k–$150k,70,Lawyers,73,3
+Cannabis Lawyer,Law & Government,$70k–$150k,70,Lawyers,73,3
+Constitutional Law Attorney,Social Impact & Nonprofit,$70k–$150k,70,Lawyers,73,3
+Customs Attorney,Law & Government,$70k–$150k,70,Lawyers,73,3
+Electrical Engineer (Power Systems),Tech & Engineering,$65k–$115k,65,Electrical engineers,68,3
+Estate Planning Attorney,Law & Government,$70k–$150k,70,Lawyers,73,3
+Franchise Attorney,Entrepreneurship,$70k–$150k,70,Lawyers,73,3
+Insurance Defense Attorney,Law & Government,$70k–$150k,70,Lawyers,73,3
+Municipal Bonds Attorney,Law & Government,$70k–$150k,70,Lawyers,73,3
+Performance Rights Lawyer,Arts & Performance,$70k–$150k,70,Lawyers,73,3
+Registered Nurse (Critical Care),Healthcare & Medicine,$60k–$95k,60,Registered nurses,63,3
+Registered Nurse (Emergency Department),Healthcare & Medicine,$60k–$85k,60,Registered nurses,63,3
+Registered Nurse (ICU),Healthcare & Medicine,$60k–$95k,60,Registered nurses,63,3
+Registered Nurse (Surgical),Healthcare & Medicine,$60k–$105k,60,Registered nurses,63,3
+Regulatory Compliance Counsel,Law & Government,$70k–$130k,70,Lawyers,73,3
+Title Attorney (Real Estate),Law & Government,$70k–$150k,70,Lawyers,73,3
+Zoning Attorney,Law & Government,$70k–$130k,70,Lawyers,73,3
+Backend Software Engineer,Tech & Engineering,$70k–$145k,70,Software developers,71,1
+Research Software Engineer,Science & Research,$70k–$130k,70,Software developers,71,1
+Robotics Software Engineer,Tech & Engineering,$70k–$120k,70,Software developers,71,1
+Security Software Engineer,Tech & Engineering,$70k–$130k,70,Software developers,71,1
+Software Developer,Aviation & Transportation,$70k–$150k,70,Software developers,71,1
+Software Engineer (Backend),Supply Chain & Operations,$70k–$130k,70,Software developers,71,1
+Software Engineer (Healthcare),Tech & Engineering,$70k–$130k,70,Software developers,71,1
+Software Engineer (Mobile Apps),Tech & Engineering,$70k–$150k,70,Software developers,71,1

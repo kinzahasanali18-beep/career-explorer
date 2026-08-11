@@ -1,6 +1,7 @@
 import { useState, useEffect, useLayoutEffect } from "react";
 import { supabase } from "./supabaseClient";
 import SalaryNote from "./SalaryNote";
+import SourceCitation from "./SourceCitation";
 
 const STAGE_COLORS = ["#F472B6", "#C084FC", "#818CF8", "#38BDF8"];
 const STAGE_VIBES  = ["Education & Training", "Entry Level", "Mid Career", "Senior Level"];
@@ -362,7 +363,7 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
     setMoreCareers([]);
     supabase
       .from("careers")
-      .select("id, name, salary_range, description, primary_industry, keywords")
+      .select("id, name, salary_range, description, primary_industry, keywords, source_url")
       .eq("primary_industry", career.primary_industry)
       .neq("id", career.id)
       .limit(6)
@@ -378,7 +379,7 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
     const orFilter = rawKeywords.map(k => `keywords.ilike.%${k}%`).join(",");
     supabase
       .from("careers")
-      .select("id, name, salary_range, description, primary_industry, keywords")
+      .select("id, name, salary_range, description, primary_industry, keywords, source_url")
       .neq("primary_industry", career.primary_industry)
       .or(orFilter)
       .limit(12)
@@ -486,7 +487,12 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
           >{isStarred ? "★ Starred" : "☆ Star"}</button>
         )}
       </div>
-      {salary && <SalaryNote style={{ marginTop: -8, marginBottom: 14 }} />}
+      {salary && <SalaryNote style={{ marginTop: -8, marginBottom: 0 }} />}
+
+      {/* Where this career's data comes from. Renders nothing unless the stored
+          source carries a SOC code that exists in the O*NET taxonomy, so broken
+          and fabricated citations stay hidden rather than being shown as fact. */}
+      <SourceCitation sourceUrl={career.source_url} style={{ marginTop: 10, marginBottom: 14 }} />
 
       {/* Education bar */}
       <div style={{

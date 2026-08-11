@@ -1,0 +1,51 @@
+n,career,cited_code,cited_occupation,verdict,suggested_code,reason
+1,Housing Advocate,21-1094.00,Community Health Workers,CLOSE,,housing advocacy sits in social services; Community Health Workers is adjacent
+2,Branded Content Creator,27-3031.00,Public Relations Specialists,CLOSE,,branded content as PR is conventional
+3,Mental Health Crisis Counselor,21-1015.00,Rehabilitation Counselors,MISMATCH,21-1014.00,crisis counsellor cited as Rehabilitation Counselors; Mental Health Counselors exists
+4,SaaS Metrics Consultant,13-2051.00,Financial and Investment Analysts,CLOSE,,SaaS metrics analysis as financial analysis is defensible
+5,Augmented Reality Developer,15-1252.00,Software Developers,MATCH,,
+6,Academic Advisor,13-1081.00,Logisticians,MISMATCH,21-1012.00,academic advisor cited as a Logistician
+7,Service Designer,27-1024.00,Graphic Designers,MISMATCH,15-1255.00,service design cited as Graphic Designers
+8,Sustainable Fashion Material Sourcer,13-1023.00,"Purchasing Agents, Except Wholesale, Retail, and Farm Products",MATCH,,
+9,Gallery Owner & Curator,27-2011.00,Actors,MISMATCH,25-4012.00,gallery owner/curator cited as an Actor
+10,Circus Performer,27-2011.00,Actors,CLOSE,,circus performer as Actor; no closer performer code in use
+11,Health Services Administrator,11-9111.00,Medical and Health Services Managers,MATCH,,
+12,Grant Underwriter (Nonprofit Finance),13-2061.00,Financial Examiners,CLOSE,,grant underwriting as financial examination is defensible
+13,Tutor (In-Person Tutoring Center),25-3041.00,Tutors,MATCH,,FIXED by the tutor pass
+14,Fabric Quality Inspector,51-6061.00,Textile Bleaching and Dyeing Machine Operators and Tenders,MISMATCH,51-9061.00,fabric inspector cited as a dyeing machine operator
+15,Fitness Program Developer,39-9031.00,Exercise Trainers and Group Fitness Instructors,MATCH,,
+16,Literary Agent,13-1011.00,"Agents and Business Managers of Artists, Performers, and Athletes",MATCH,,
+17,Character Designer,27-1014.00,Special Effects Artists and Animators,MATCH,,
+18,Conference Organizer,13-1121.00,"Meeting, Convention, and Event Planners",MATCH,,
+19,LGBTQ+ Community Services Director,11-9131.00,Postmasters and Mail Superintendents,MISMATCH,11-9151.00,LGBTQ+ services director cited as a Postmaster
+20,Cannabis Lawyer,23-1011.00,Lawyers,MATCH,,
+21,Tattoo Artist,27-1013.00,"Fine Artists, Including Painters, Sculptors, and Illustrators",MATCH,,no tattoo occupation exists; Fine Artists is the standard placement
+22,Event Sponsorship Manager,13-1011.00,"Agents and Business Managers of Artists, Performers, and Athletes",MISMATCH,11-2021.00,sponsorship manager cited as a talent agent
+23,Feature Writer,27-3043.00,Writers and Authors,MATCH,,
+24,Golf Pro,39-3021.00,Motion Picture Projectionists,MISMATCH,27-2022.00,GAP IN MY FIX: 'Golf Pro' has no 'coach' or 'instructor' in the name
+25,Culinary Tour Guide,39-7012.00,Travel Guides,MATCH,,
+26,Cloud Solutions Architect,15-1241.00,Computer Network Architects,MATCH,,
+27,Neuropsychologist,29-1127.00,Speech-Language Pathologists,MISMATCH,19-3039.00,neuropsychologist cited as a Speech-Language Pathologist
+28,Strength and Conditioning Specialist (Youth),39-9031.00,Exercise Trainers and Group Fitness Instructors,CLOSE,,"strength and conditioning as Exercise Trainers, consistent with earlier calls"
+29,Experience Designer (Museums),27-1027.00,Set and Exhibit Designers,MATCH,,museum exhibit design is literally Set and Exhibit Designers
+30,Biogas Production Specialist,51-8099.00,"Plant and System Operators, All Other",CLOSE,,
+31,Renewable Energy Storage Specialist,17-2199.09,Nanosystems Engineers,MISMATCH,17-2071.00,energy storage cited as Nanosystems Engineers
+32,Boxing Trainer,39-3091.00,Amusement and Recreation Attendants,MISMATCH,27-2022.00,GAP IN MY FIX: 'Boxing Trainer' has no 'coach' or 'instructor' in the name
+33,Grant Writing Manager (Media),13-1111.00,Management Analysts,CLOSE,,
+34,Artist Residency Program Director,11-9033.00,"Education Administrators, Postsecondary",CLOSE,,
+35,International Development Worker,19-3041.00,Sociologists,MISMATCH,21-1093.00,development worker cited as a Sociologist
+36,Environmental Policy Advocate,19-3011.00,Economists,MISMATCH,19-2041.00,environmental policy advocate cited as an Economist
+37,Artist Manager (Fine Art),13-1011.00,"Agents and Business Managers of Artists, Performers, and Athletes",MATCH,,
+38,Wig Designer (Medical & Fashion),39-5012.00,"Hairdressers, Hairstylists, and Cosmetologists",MATCH,,FIXED by the beauty pass
+39,Service Design Specialist,27-1027.00,Set and Exhibit Designers,MISMATCH,15-1255.00,service design cited as Set and Exhibit Designers
+40,Guest Services Manager,11-3012.00,Administrative Services Managers,CLOSE,11-9081.00,Lodging Managers is closer for hospitality
+41,Pollution Control Engineer,17-2081.00,Environmental Engineers,MATCH,,
+42,Policy Researcher (Nonprofit Think Tank),19-3094.00,Political Scientists,MATCH,,
+43,Healthcare Compliance Specialist,13-1041.03,Equal Opportunity Representatives and Officers,CLOSE,13-1041.00,"right compliance family, wrong sibling"
+44,Community Land Trust Manager,11-9199.01,Regulatory Affairs Managers,MISMATCH,11-9151.00,land trust manager cited as Regulatory Affairs Managers
+45,Toxicologist,19-1021.00,Biochemists and Biophysicists,CLOSE,19-1042.00,Medical Scientists is closer for a toxicologist
+46,Artist Residency Director,27-2011.00,Actors,MISMATCH,11-9199.00,artist residency director cited as an Actor
+47,Marine Biologist (Ocean Conservation),19-1023.00,Zoologists and Wildlife Biologists,MATCH,,
+48,Fencing Coach,27-2022.00,Coaches and Scouts,MATCH,,
+49,Luxury Goods Authenticator (Business),13-1041.07,Regulatory Affairs Specialists,MISMATCH,13-1041.00,authenticator cited as Regulatory Affairs Specialists
+50,Faith-Based Community Organizer,13-1011.00,"Agents and Business Managers of Artists, Performers, and Athletes",MISMATCH,11-9151.00,community organizer cited as a talent agent

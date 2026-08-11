@@ -1,0 +1,51 @@
+n,career,industry,backfilled,cited_code,cited_occupation,verdict,suggested_code,reason
+1,Nonprofit Operations Manager,Supply Chain & Operations,False,11-1011.00,Chief Executives,MISMATCH,11-9151.00,ops manager mapped to Chief Executives; row #44 uses the right code for the same job
+2,Preschool Director,Education & Coaching,True,25-2011.00,"Preschool Teachers, Except Special Education",MISMATCH,11-9031.00,a Director mapped to the frontline teacher occupation; wages and duties differ
+3,Mine Reclamation Engineer,Environment & Sustainability,True,17-2081.00,Environmental Engineers,MATCH,,mine reclamation is environmental engineering
+4,Virtual Reality Content Creator,Tech & Engineering,False,27-1014.00,Special Effects Artists and Animators,MATCH,,3D immersive world building fits Special Effects Artists and Animators
+5,Coaching Platform Creator,Entrepreneurship,False,15-1299.01,Web Administrators,MISMATCH,15-1252.00,"platform builder/founder mapped to Web Administrators, a maintenance role"
+6,Type Designer (Typography),Design & Creative,False,27-1027.00,Set and Exhibit Designers,MISMATCH,27-1024.00,"typeface design is graphic design, not set and exhibit design"
+7,Comedy Club Booker,Arts & Performance,False,13-1011.00,"Agents and Business Managers of Artists, Performers, and Athletes",MATCH,,booking and contract negotiation for performers
+8,Strength and Conditioning Coach (College),Sports & Fitness,False,39-9031.00,Exercise Trainers and Group Fitness Instructors,CLOSE,27-2022.00,"Coaches and Scouts arguably better for college athletics, but defensible"
+9,Indie Game Studio Owner,Entrepreneurship,False,27-1014.00,Special Effects Artists and Animators,MISMATCH,15-1255.00,O*NET has Video Game Designers; studio owner also implies management
+10,Specialty Coffee Roaster Owner,Entrepreneurship,False,11-1011.00,Chief Executives,CLOSE,,owner-operator mapped to Chief Executives is a common convention
+11,Video Game Journalist,Gaming & Esports,True,27-3023.00,"News Analysts, Reporters, and Journalists",MATCH,,games journalism is journalism
+12,Water Rights Specialist,Environment & Sustainability,False,19-4099.01,Quality Control Analysts,MISMATCH,19-1031.00,"water rights negotiation is policy/resource management, not lab QC"
+13,Nonprofit Researcher (Program Evaluation),Social Impact & Nonprofit,False,19-4061.00,Social Science Research Assistants,MATCH,,program evaluation research
+14,Sustainable Fashion Technologist,Fashion & Beauty,False,17-2199.09,Nanosystems Engineers,MISMATCH,17-2112.00,eco-fabric development is not nanosystems engineering
+15,Special Education Coordinator,Education & Coaching,False,13-1071.00,Human Resources Specialists,MISMATCH,11-9032.00,special education coordination mapped to Human Resources Specialists
+16,Creator Economy Agency Founder,Entrepreneurship,False,11-1011.00,Chief Executives,CLOSE,,agency founder as Chief Executives is defensible
+17,Video Editor (News),Media & Journalism,True,27-1014.00,Special Effects Artists and Animators,MISMATCH,27-4032.00,O*NET has Film and Video Editors; this is a video editor
+18,Business Incubator Associate,Entrepreneurship,False,11-1011.00,Chief Executives,MISMATCH,13-1111.00,an Associate mapped to Chief Executives; wrong seniority entirely
+19,Baker (Specialty/Artisanal),Hospitality & Events,True,51-3011.00,Bakers,MATCH,,artisanal baker
+20,Water Treatment Operator,Environment & Sustainability,True,51-8031.00,Water and Wastewater Treatment Plant and System Operators,MATCH,,exact occupation
+21,Synthetic Biologist,Healthcare & Medicine,True,19-1021.00,Biochemists and Biophysicists,MATCH,,synthetic biology sits under biochemists/biophysicists
+22,Invasive Species Manager,Environment & Sustainability,False,19-4099.01,Quality Control Analysts,MISMATCH,19-1031.00,"invasive species fieldwork is conservation science, not lab QC"
+23,Revenue Manager,Hospitality & Events,False,11-9081.00,Lodging Managers,MATCH,,hotel revenue management under Lodging Managers
+24,Haptic Design Specialist,Design & Creative,False,27-1024.00,Graphic Designers,MISMATCH,17-2199.00,"haptics is hardware/interaction engineering, not graphic design"
+25,Assistant Orchestra Manager,Arts & Performance,False,13-1081.02,Logistics Analysts,MISMATCH,27-2012.00,orchestra management mapped to Logistics Analysts
+26,Data Journalist,Media & Journalism,True,27-3023.00,"News Analysts, Reporters, and Journalists",MATCH,,data journalism is journalism
+27,Strength and Conditioning Specialist (Military),Sports & Fitness,False,39-9031.00,Exercise Trainers and Group Fitness Instructors,CLOSE,27-2022.00,same call as row 8
+28,NFT Creator,Gaming & Esports,False,27-1014.00,Special Effects Artists and Animators,CLOSE,27-1013.00,"Fine Artists arguably better, but digital art fits animators loosely"
+29,Gallery Owner (Fine Art),Arts & Performance,False,27-2011.00,Actors,MISMATCH,11-1011.00,gallery owner mapped to Actors
+30,Wine Service Manager,Education & Coaching,False,35-9011.00,Dining Room and Cafeteria Attendants and Bartender Helpers,MISMATCH,11-9051.00,a Manager mapped to Bartender Helpers; wrong role and wrong level
+31,Gifted Program Specialist,Education & Coaching,False,25-2011.00,"Preschool Teachers, Except Special Education",MISMATCH,25-9031.00,gifted K-12 programs mapped to Preschool Teachers
+32,Intellectual Property Counsel,Law & Government,True,23-1011.00,Lawyers,MATCH,,IP counsel is a lawyer
+33,Platform Engineer,Science & Research,True,15-1252.00,Software Developers,MATCH,,platform engineering is software development
+34,Environmental Data Scientist,Environment & Sustainability,False,15-2051.01,Business Intelligence Analysts,CLOSE,15-2051.00,Data Scientists is the exact sibling code; BI Analysts is one step off
+35,Veterinary Behaviorist,Education & Coaching,False,29-1131.00,Veterinarians,MATCH,,a veterinary behaviorist is a veterinarian
+36,Tutor (Math/Science),Education & Coaching,True,25-2031.00,"Secondary School Teachers, Except Special and Career/Technical Education",MISMATCH,25-3041.00,O*NET has Tutors; a tutor is not a classroom teacher
+37,University Career Counselor,Sports & Fitness,False,21-1012.00,"Educational, Guidance, and Career Counselors and Advisors",MATCH,,exact occupation
+38,Certified Nutrition Specialist,Sports & Fitness,False,29-1031.00,Dietitians and Nutritionists,MATCH,,exact occupation
+39,Architectural Colorist,Design & Creative,False,27-1021.00,Commercial and Industrial Designers,CLOSE,27-1025.00,Interior Designers arguably better for architectural colour work
+40,Luthier (Musical Instrument Maker),Arts & Performance,False,51-9083.00,Ophthalmic Laboratory Technicians,MISMATCH,49-9063.00,luthier mapped to Ophthalmic Laboratory Technicians; O*NET has Musical Instrument Repairers and Tuners
+41,Industrial Design Consultant,Design & Creative,False,27-1021.00,Commercial and Industrial Designers,MATCH,,exact occupation
+42,Independent Film Producer,Arts & Performance,False,27-2012.03,Media Programming Directors,CLOSE,27-2012.01,Producers is the precise sibling; Programming Directors is broadcast-specific
+43,Personal Trainer (Certified),Sports & Fitness,True,39-9031.00,Exercise Trainers and Group Fitness Instructors,MATCH,,exact occupation
+44,Social Services Manager,Social Impact & Nonprofit,True,11-9151.00,Social and Community Service Managers,MATCH,,exact occupation
+45,Mathematics Tutor (Secondary),Education & Coaching,True,25-2031.00,"Secondary School Teachers, Except Special and Career/Technical Education",MISMATCH,25-3041.00,same as row 36
+46,Nonprofit Executive Director Search Consultant,Social Impact & Nonprofit,False,11-1011.03,Chief Sustainability Officers,MISMATCH,13-1071.00,"executive search is recruiting, not a Chief Sustainability Officer"
+47,Municipal Zoning Attorney,Law & Government,True,23-1011.00,Lawyers,MATCH,,zoning attorney is a lawyer
+48,Board Liaison,Social Impact & Nonprofit,False,11-1011.03,Chief Sustainability Officers,MISMATCH,11-9151.00,board liaison mapped to Chief Sustainability Officers
+49,Virtual Assistant Service Owner,Entrepreneurship,False,43-6014.00,"Secretaries and Administrative Assistants, Except Legal, Medical, and Executive",CLOSE,,the described work is administrative assistance
+50,Social Enterprise Consultant,Supply Chain & Operations,False,13-1111.00,Management Analysts,MATCH,,consulting under Management Analysts
