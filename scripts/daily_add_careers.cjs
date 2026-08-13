@@ -15,7 +15,7 @@ if (!SUPABASE_KEY || !AK) {
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const TARGET = 100; // careers to add per run
+const TARGET = 30; // careers to add per run
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
