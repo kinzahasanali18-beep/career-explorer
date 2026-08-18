@@ -1,8 +1,9 @@
 name: Daily Career Generator
 
 on:
-  schedule:
-    - cron: "0 0 * * *" # Every day at midnight UTC
+  # Nightly schedule paused during the careers data audit — re-enable when done.
+  # schedule:
+  #   - cron: "0 0 * * *" # Every day at midnight UTC
   workflow_dispatch: # Allow manual runs from the GitHub Actions UI
 
 jobs:
