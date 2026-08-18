@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 new_at_token.txt
+
+# Cached O*NET occupation pages (regenerable by scripts/phase2_fix_proposals.mjs)
+reports/.onet_cache/
