@@ -146,6 +146,96 @@ rows rather than trusting the status code.
 the title are all genuine: Architectural Renderer, Architectural Technologist, Green
 Building Architect, Landscape Architect.
 
+## Applied: Phase 2 HIGH-confidence industry corrections — 89 rows (2026-08-18)
+
+`supabase/migrations/20260818004500_apply_phase2_high_confidence_industry_fixes.sql`,
+run via the SQL editor. Verified by re-reading all 89 rows: 89 applied, 0 pending, 0
+unexpected, table still 7,391 rows. Re-run `node scripts/phase2_verify_applied.mjs` to
+re-check at any time.
+
+Each row got `primary_industry` set to the O*NET-derived value and the displaced primary
+demoted to the front of `secondary_industries`, so nothing was discarded — e.g. `Aerospace
+Supply Chain Risk Analyst` moved Aviation & Transportation → Supply Chain & Operations
+while keeping Aviation as a secondary.
+
+Reverts: `phase2_high_confidence_revert.sql`. Prior values:
+`phase2_high_confidence_backup_before.csv`.
+
+**Why only 89 of 1,527 flagged rows.** HIGH required two independent signals to agree:
+O*NET's classification of the SOC code in the row's `source_url`, and the Phase 1 title
+keyword. O*NET alone could not carry it — the citation spot-checks in this directory score
+the stored SOC codes at 40% MATCH / 24% CLOSE / 36% MISMATCH, and 21 of 39 MISMATCH rows
+sit in a different SOC major group, which is exactly where a SOC-derived industry comes out
+wrong.
+
+**Known gap: the confidence rule is too strict on unambiguous major groups.** 48 rows were
+rated LOW purely because their SOC mapped at 2-digit major-group level, but several of those
+groups are not actually ambiguous — 29 and 31 are entirely healthcare, 23 entirely legal,
+25 entirely education. 17 of them also have Phase 1 keyword agreement and would qualify as
+HIGH under a corrected rule, including `Prosecutor` → Gaming & Esports, `Elementary School
+Teacher` → Gaming & Esports, `Forensic Nurse` → Cybersecurity, and `Anesthesiologist
+Assistant` → Arts & Performance. Worth a follow-up batch.
+
+**Severity skew.** Of Phase 1's 187 most-severe (HIGH-tier keyword) rows, only 36 were
+fixed in this batch; 106 remain LOW, 64 of them because `source_url` carries no valid SOC
+code at all. That no-SOC rate (34%) is barely above the 32% baseline for the whole flagged
+set, so this is not an adverse correlation — it is just that the HIGH bar excludes rows
+O*NET cannot verify. The worst-looking errors are still outstanding.
+
+## Applied: Phase 3 demotion cleanup — 91 rows (2026-08-18)
+
+`supabase/migrations/20260818020000_demotion_cleanup.sql`. Verified: 91/91 tags removed,
+0 residual, 0 other tags altered or reordered, 0 primaries touched, table still 7,391 rows.
+Re-check with `node scripts/phase3_verify_applied.mjs`.
+
+Batches 1 and 2 demoted each corrected row's old primary into `secondary_industries` so
+nothing was silently dropped. That was right when the old primary was plausible and wrong
+when it was nonsense — `Hospital Chaplain` kept Gaming & Esports, `Magazine Editor-in-Chief`
+kept Science & Research. This pass removes the demoted tag where the career's own title and
+description contain no keyword supporting that industry, reusing the Phase 1 rules via
+`scripts/phase1_keyword_rules.cjs` (extracted this round so both passes share one source of
+truth; verified non-regressive — the audit reports 391 mismatches before and after).
+
+Selection is evidence-based, not a list of bad industry pairs. **7 rows correctly kept**
+their demoted tag because evidence existed (`Aerospace Supply Chain Risk Analyst` keeps
+Aviation & Transportation on "Aerospace"/"Aircraft"). **8 rows were skipped as untestable**
+— Entrepreneurship has zero keyword rules, so evidence for it cannot be evaluated either
+way.
+
+Most-removed tags: Gaming & Esports 39, Science & Research 13, Supply Chain & Operations 9.
+Gaming & Esports being the single most-demoted value is itself a finding — it looks like a
+dumping-ground default in the April migration, same class as the `$30k-$45k` salary and the
+secondary-triple defaults.
+
+Reverts: `phase3_demotion_cleanup_revert.sql`. Prior values:
+`phase3_demotion_cleanup_backup_before.csv`.
+
+**Note on applying long SQL by paste.** The first attempt applied only 17 of 91 rows —
+positions 1-17, a contiguous run from the top. The guards meant the partial run left no
+inconsistent state, just 74 untouched rows. The remainder was re-emitted grouped by shared
+value pair and split into four small files (`phase3_remainder_chunk1-4.sql`) which applied
+cleanly. Paste from the files, not from a chat transcript, and always verify by re-reading
+rows.
+
+**Note on reading the Phase 2 verifiers after this batch.** Phase 3 intentionally changed
+`secondary_industries` on 91 of the 106 Phase 2 rows, which makes the Phase 2 manifests
+stale on that column. `phase2_verify_applied.mjs` now judges primary and secondary
+separately and reports those rows as "applied, secondaries since superseded" rather than
+"partially applied". All 106 Phase 2 primaries remain correct.
+
+## Cumulative state after Phases 1-3
+
+- 106 industry corrections applied and verified (89 + 17)
+- 91 unsupported demoted tags removed
+- Table unchanged at 7,391 rows throughout; every batch has a backup, revert and manifest
+
+Still outstanding: of Phase 1's 187 most-severe rows, 106 remain unfixed because 64 carry no
+valid O*NET SOC code in `source_url` at all — `Community Health Nurse` -> Gaming & Esports,
+`Cost Accountant` -> Arts & Performance, `Gastroenterologist` -> Hospitality & Events. That
+is the ceiling of the O*NET-gated method and needs a different signal, not a looser
+threshold. Also outstanding: 587 of 730 proposed requirements rewrites would be
+byte-identical across more than 3 careers and must not be bulk-applied.
+
 ## Next finding, not yet actioned
 
 Checking precedent for the second batch surfaced a **larger UX tagging inconsistency**.
