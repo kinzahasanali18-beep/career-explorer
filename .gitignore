@@ -26,3 +26,6 @@ new_at_token.txt
 
 # Cached O*NET occupation pages (regenerable by scripts/phase2_fix_proposals.mjs)
 reports/.onet_cache/
+
+# Cached BLS OES API responses (regenerable by scripts/phase4_verify_all_careers.mjs)
+reports/.bls_cache/

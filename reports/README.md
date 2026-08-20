@@ -236,6 +236,80 @@ is the ceiling of the O*NET-gated method and needs a different signal, not a loo
 threshold. Also outstanding: 587 of 730 proposed requirements rewrites would be
 byte-identical across more than 3 careers and must not be bulk-applied.
 
+## Phase 4 — full-table multi-source verification (2026-08-19)
+
+Read-only pass over all 7,391 careers against O*NET, CareerOneStop and BLS.
+`node scripts/phase4_verify_all_careers.mjs`.
+
+| Classification | Careers | % |
+|---|---|---|
+| VERIFIED | 4,249 | 57.5% |
+| VERIFIED BUT FLAGGED | 2,248 | 30.4% |
+| UNVERIFIABLE | 894 | 12.1% |
+
+**UNVERIFIABLE means the citation is broken, not that the career is fake.** The list
+contained Meteorologist, Astrophysicist, Quantum Physicist, Nephrologist and Medical
+Laboratory Scientist. Do not use this classification as a hide list.
+
+**BLS OOH is unreachable.** bls.gov returns 403 to plain curl, browser-UA curl and the
+OOH-SOC crosswalk page alike — the same wall the BLS backfill migration documented. The
+only OOH signal available is the 171-occupation slug->SOC crosswalk that backfill left in
+`backfill_bls_backup_before.csv`. Note OOH publishes ~330 profiles against O*NET's 1,016,
+so "BLS OOH: no" is normal and not a red flag.
+
+**BLS OES does work**, via `api.bls.gov` national employment series keyed by 6-digit SOC,
+batched 25 per POST across 441 codes. Registered Nurses returns 3,379,720, which is right.
+It is a different BLS product from OOH, so it is reported as its own column rather than
+substituted for it.
+
+All 1,709 bls.gov citations in the table are fabricated: their path segments are SOC
+major-group names (`healthcare-practitioners-and-technical-occupations/...`) rather than
+real OOH categories. Only 5 of 1,709 match the crosswalk.
+
+A `visible` column did not exist. `supabase/migrations/20260819000000_add_careers_visible_column.sql`
+adds `visible boolean not null default true` and nothing else. **NOT YET APPLIED** —
+`supabase db push` would apply it. No row's visibility has been set.
+
+## Applied: Phase 4b citation fixes — 72 rows (2026-08-19)
+
+`supabase/migrations/20260819010000_citation_fixes.sql`. Verified 72/72: `source_url`
+updated, every new URL resolves via `socFromSourceUrl` + `isValidSocCode`, all 72 now
+render a citation through `resolveCitation()`, and `primary_industry` moved on none of
+them. Re-check with `node scripts/phase4b_verify_citation_fixes.mjs`.
+
+Of Phase 4's 115 full-coverage name-match candidates, reviewed on meaning rather than
+string similarity:
+
+| Classification | Careers |
+|---|---|
+| CONFIRMED (applied) | 72 |
+| FALSE MATCH (left alone) | 33 |
+| STILL UNCERTAIN (needs a human) | 10 |
+
+**The naive matcher was wrong or unsafe 37% of the time at its strongest tier**, which is
+why the weaker tiers (313 strong, 363 weak) must not be auto-applied. The false matches
+split two ways: teaching level, because O*NET's subject-specific teacher codes are all
+Postsecondary while K-12 teachers sit under 25-2031.00; and single-word collisions —
+Radio DJ -> Radio Frequency Identification Device Specialists, VFX Supervisor ->
+First-Line Supervisors of Correctional Officers, Sports Writer -> Gambling and Sports Book
+Writers, Pathologist -> Speech-Language Pathologists.
+
+Reverts: `phase4b_citation_fixes_revert.sql`. Prior values:
+`phase4b_citation_fixes_backup_before.csv`. Manifest: `phase4b_citation_fixes_manifest.csv`.
+
+**Two failure modes behind broken citations, not one.** 49 of the 72 cited fabricated
+bls.gov URLs; the other 23 cited onetonline.org with codes retired in the 2018 SOC
+revision (Video Editor -> 27-4008.00, Medical Records Specialist -> 29-2071.00). An initial
+guard of `source_url like 'bls.gov/ooh/%'` silently excluded those 23. If the generator was
+working from a pre-2018 SOC list, that would also explain part of the 307 invalid codes
+elsewhere in the table.
+
+**Script coupling.** `phase4b_review_full_candidates.mjs` reads
+`PHASE4_UNVERIFIABLE_2026-08-19.csv` and hard-fails on stale judgments. Re-running Phase 4
+regenerates that file (894 -> ~822 now these 72 are fixed) and will break the 4b script
+until its judgment table is re-keyed. Date-stamp a new Phase 4 run rather than overwriting
+the 2026-08-19 files, which are the record these fixes came from.
+
 ## Next finding, not yet actioned
 
 Checking precedent for the second batch surfaced a **larger UX tagging inconsistency**.
