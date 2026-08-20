@@ -58,11 +58,28 @@ const USER_KEYS = [
   ...Object.values(TOUR_KEYS),
 ];
 
-// Scope a key to a user. Without an id we fall back to the bare key rather
-// than inventing a shared "anonymous" bucket — nothing in the app reads these
-// while signed out, so this only matters as a defensive default.
+// Scope a key to a user. With no usable id — first render before auth resolves,
+// or a signed-out visitor — the key goes to a distinct "anonymous" namespace.
+//
+// The bare key is NOT a safe fallback, which is what this used to do. The bare
+// key is the pre-namespacing slot that migrateLegacyUserStorage() treats as
+// inheritable and copies into the next user who signs in. So anonymous writes
+// landing there are adopted by whoever signs in next on that device. That path
+// is reachable in normal use: the starred-item toggles and tour flags pass
+// `userId` straight through with no guard, and `userId` is `user?.id ?? null`,
+// so it is null on the first render before auth resolves.
+//
+// Anything that is not a usable id — null, undefined, "", whitespace, objects,
+// NaN — collapses to the same anonymous namespace rather than stringifying into
+// "[object Object]" or a bare "key:" suffix. Keys for a real id are unchanged.
+const ANONYMOUS_USER_NS = "anonymous";
+
 export function userKey(key, userId) {
-  return userId ? `${key}:${userId}` : key;
+  const id =
+    typeof userId === "string" ? userId.trim()
+    : typeof userId === "number" && Number.isFinite(userId) ? String(userId)
+    : "";
+  return `${key}:${id || ANONYMOUS_USER_NS}`;
 }
 
 // Per-user equivalents of ls/lsSet.
@@ -73,17 +90,80 @@ export function userLsSet(userId, key, val) {
   lsSet(userKey(key, userId), val);
 }
 
-// Remove everything belonging to `userId`, plus any pre-namespacing leftovers.
-// Called on sign-out so nothing survives for the next person on the device.
-// Idempotent.
+// Remove everything belonging to `userId`, plus the anonymous bucket and any
+// pre-namespacing leftovers. Called on sign-out so nothing survives for the next
+// person on the device. Idempotent.
 export function clearUserStorage(userId) {
   try {
     USER_KEYS.forEach(key => {
       if (userId) localStorage.removeItem(userKey(key, userId));
-      localStorage.removeItem(key); // legacy un-namespaced copy
+      localStorage.removeItem(userKey(key, null)); // anonymous / pre-auth bucket
+      localStorage.removeItem(key);                // legacy un-namespaced copy
     });
   } catch { /* localStorage unavailable — nothing to clear */ }
 }
+
+// ─── Guest (anonymous) session hygiene ───────────────────────────────────────
+// Anonymous data lives under `key:anonymous` (see userKey). Unlike a signed-in
+// user's data there is no sign-out to trigger clearUserStorage(), so on a shared
+// school or library computer the next guest would otherwise inherit the previous
+// guest's saved items.
+//
+// Trigger choice. beforeunload / pagehide were considered and rejected on two
+// counts: they do not fire reliably when a mobile browser discards a background
+// tab, and they DO fire on ordinary refresh and on back/forward-cache
+// navigation — so clearing there would wipe a guest's data mid-session.
+//
+// A plain age check also does not fit the threat: any window long enough not to
+// disrupt a real session (hours) is far longer than the gap between one person
+// closing the browser and the next person opening it (minutes).
+//
+// So the guest bucket is treated as session-scoped and cleared at the START of a
+// new browser session. sessionStorage is the matching primitive — it survives
+// refreshes inside a tab but is gone once the tab or browser closes. The
+// timestamp is only a backstop for browsers that restore tabs, and with them
+// sessionStorage, after being closed.
+//
+// Known trade-off: sessionStorage is per-tab, so opening a second tab reads as a
+// new session and clears the first tab's guest data. Guest data is device-local
+// and low-stakes, and a fresh tab starting clean is defensible, but it is a real
+// cost of getting the shared-computer case right.
+
+const ANON_SESSION_FLAG = "sparq_anon_session";      // sessionStorage
+const ANON_LAST_SEEN = "sparq_anon_last_seen";       // localStorage
+const ANON_MAX_AGE_MS = 4 * 60 * 60 * 1000;          // 4h session-restore backstop
+
+// Drop every anonymous-namespaced key. Safe to call at any time; a signed-in
+// user's data is in a different namespace and is untouched.
+export function clearAnonymousStorage() {
+  try {
+    USER_KEYS.forEach(key => localStorage.removeItem(userKey(key, null)));
+    localStorage.removeItem(ANON_LAST_SEEN);
+  } catch { /* localStorage unavailable — nothing to clear */ }
+}
+
+// Call once on page load. Clears leftover guest data when this is a new browser
+// session (or when the last-seen stamp is older than the backstop), then marks
+// the session active. Returns whether anything was cleared, for tests.
+export function startGuestSession(now = Date.now()) {
+  let cleared = false;
+  try {
+    const newSession = sessionStorage.getItem(ANON_SESSION_FLAG) == null;
+    const lastSeen = Number(localStorage.getItem(ANON_LAST_SEEN));
+    const stale = Number.isFinite(lastSeen) && lastSeen > 0 && now - lastSeen > ANON_MAX_AGE_MS;
+    if (newSession || stale) {
+      clearAnonymousStorage();
+      cleared = true;
+    }
+    sessionStorage.setItem(ANON_SESSION_FLAG, "1");
+    localStorage.setItem(ANON_LAST_SEEN, String(now));
+  } catch { /* storage unavailable — nothing to clear or mark */ }
+  return cleared;
+}
+
+// Run on import so the sweep happens on page load without a call site
+// elsewhere. Guarded above, so a non-browser environment is a no-op.
+startGuestSession();
 
 // One-time move of pre-namespacing data onto the signed-in user, so existing
 // users don't lose their saved deadlines and opportunities on upgrade.
