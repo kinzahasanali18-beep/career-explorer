@@ -1,0 +1,1567 @@
+{
+ "00609ddc-e454-4627-8540-b504d5a269ad": [
+  "FALSE MATCH",
+  "Postsecondary-only code; description does not state teaching level and language need not be English",
+  ""
+ ],
+ "01a01cd2-d74c-4992-be47-9034e3ff8f2c": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "020c46e2-8786-43ad-b05e-4fa90531024a": [
+  "STILL UNCERTAIN",
+  "Generic catch-all manager code; Lodging Managers (11-9081.00) is the resort-specific code",
+  ""
+ ],
+ "025e63dc-5be5-4d65-af31-2d717ef50ead": [
+  "FALSE MATCH",
+  "Tourism front-desk info role matched Computer and Information Systems Managers on 'Information'/'Manager'",
+  ""
+ ],
+ "030c1cf0-2e24-4ce3-b289-175ae319a4c3": [
+  "FALSE MATCH",
+  "Media host matched restaurant/coffee-shop Hosts and Hostesses on 'host'",
+  ""
+ ],
+ "04b72835-4538-4c55-87c0-ddc733ccedce": [
+  "FALSE MATCH",
+  "Requirements note private instruction may need no formal credential; candidate is the Postsecondary code",
+  "25-3021.00"
+ ],
+ "05a1f0e0-58f4-4433-ae46-dade34894c3e": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "05f4bee2-85c3-445c-af41-d7085bd1d365": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "07ff5018-2f4d-4697-a9ef-b3b9d70f593e": [
+  "FALSE MATCH",
+  "Materials-science lab role engineering sustainable fibers matched Pressers, Textile, Garment on 'textile'",
+  ""
+ ],
+ "08cb6860-2041-4cb3-83b9-527110f4214e": [
+  "FALSE MATCH",
+  "Media host matched restaurant/coffee-shop Hosts and Hostesses on 'host'",
+  ""
+ ],
+ "0a514c7a-488b-4b97-8287-bcfcb47edc5c": [
+  "FALSE MATCH",
+  "Tests scientific research protocols, not software; same QA collision Phase 4b already caught",
+  "19-4099.01"
+ ],
+ "0b94ffc1-4b27-47c4-a66e-fdf1e616d464": [
+  "FALSE MATCH",
+  "Building permit/code enforcement matched generic regulatory Compliance Officers; the specific code is Construction and Building Inspectors",
+  "47-4011.00"
+ ],
+ "0ba231ee-0d93-443b-987f-2c16b2589ccc": [
+  "FALSE MATCH",
+  "Field/lab crop research matched Farmers, Ranchers, and Other Agricultural Managers, a farm-operations role",
+  "19-1013.00"
+ ],
+ "0c3d356f-a33b-4bb1-ad4f-c132c3286f36": [
+  "FALSE MATCH",
+  "Bench chemistry research matched Clinical Research Coordinators on 'Research'",
+  "19-2031.00"
+ ],
+ "0d28065c-08a6-418d-b0a8-a5189b472cbe": [
+  "FALSE MATCH",
+  "Chemistry research role matched Environmental Compliance Inspectors, a regulatory inspection job",
+  "19-2031.00"
+ ],
+ "0d66f43b-3a92-4980-ab00-1c6d437f15e0": [
+  "FALSE MATCH",
+  "Business owner matched the entry-level Hosts and Hostesses occupation on 'coffee shop'",
+  ""
+ ],
+ "0e42bfb9-1eca-430a-8175-027735879d42": [
+  "FALSE MATCH",
+  "Cosmetology instruction matched Farm and Home Management Educators on 'Educator'",
+  "25-1194.00"
+ ],
+ "0fa5ce48-8833-486b-965f-e179833cca73": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "0fbcacdc-c297-4fa6-8ff2-e514c0c30ff7": [
+  "FALSE MATCH",
+  "Director is a management role over the lab, not a bench technologist",
+  "11-9111.00"
+ ],
+ "100b14dc-4661-4434-8525-b3c0695c591d": [
+  "FALSE MATCH",
+  "App-building tech founder matched Fitness and Wellness Coordinators on 'Wellness'",
+  "15-1252.00"
+ ],
+ "100e52b4-df60-48d7-bc8d-445df9f6b7df": [
+  "FALSE MATCH",
+  "Delivery business owner matched Switchboard Operators on 'Operator'",
+  ""
+ ],
+ "10fa0bd8-8fc9-4995-a94f-417623b6b592": [
+  "FALSE MATCH",
+  "Government-relations lobbying matched Labor Relations Specialists on 'Relations'",
+  ""
+ ],
+ "1174f284-9985-48de-9df1-8b74879ffc92": [
+  "FALSE MATCH",
+  "Sports data analysis matched Logistics Analysts on 'Analyst'",
+  ""
+ ],
+ "1257e7af-4351-4465-8ad3-caea767aaa72": [
+  "FALSE MATCH",
+  "On-air media host matched Radio Frequency Identification Device Specialists on 'Radio'",
+  "27-3011.00"
+ ],
+ "12ddf53d-cb64-41c2-bffc-91d2b37fa220": [
+  "FALSE MATCH",
+  "Robotics teaching/coaching matched Robotics Engineers on 'Robotics'",
+  "27-2022.00"
+ ],
+ "13195332-20ce-46d0-89df-01631c538869": [
+  "FALSE MATCH",
+  "English-language teaching matched the Postsecondary code; level not stated",
+  "25-3011.00"
+ ],
+ "13293349-5e2c-480f-8e44-740154b49662": [
+  "FALSE MATCH",
+  "Mental/behavioral health support matched Environmental Science and Protection Technicians on 'Health'",
+  ""
+ ],
+ "138e08c1-f5a3-44e4-b2fd-fd7937c1f8b6": [
+  "FALSE MATCH",
+  "Insurance sales/brokerage matched Insurance Appraisers, Auto Damage, a claims-inspection role",
+  "41-3021.00"
+ ],
+ "13ce55ad-ca4d-4143-a010-0aecbdd3e563": [
+  "FALSE MATCH",
+  "Ballet instruction matched Nursing Instructors and Teachers, Postsecondary on 'Instructor'",
+  "25-3021.00"
+ ],
+ "13ebd229-b98d-4bf2-a9a8-549fc3a807b7": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "14fa81b7-ed94-4dcb-b3b6-9802f800393e": [
+  "FALSE MATCH",
+  "Nonprofit program coordination matched the generic manager catch-all; Social and Community Service Managers fits the domain",
+  "11-9151.00"
+ ],
+ "16a97f8b-0dc9-486e-80b8-9a9bef3a86f2": [
+  "FALSE MATCH",
+  "API software business matched Administrative Services Managers on 'Administrative'/'Services'",
+  "15-1252.00"
+ ],
+ "187909e5-26a5-4c76-a5d6-f9c63e4dab2f": [
+  "FALSE MATCH",
+  "Museum science education matched Natural Sciences Managers on 'Science'",
+  "25-9031.00"
+ ],
+ "188cbd49-26ab-467f-ae1b-fa8a1b242376": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "192e7620-0820-4a63-a5e4-38917d8c112c": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "1aff9aca-7b4f-449b-b063-51b61b22ca71": [
+  "FALSE MATCH",
+  "Clinical microbiology lab work matched Geographic Information Systems Technologists on 'technician'",
+  "19-4021.00"
+ ],
+ "1b5fa13d-133b-41ef-8249-3d5af8242a68": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "1ba53bb6-7c7c-4ba7-bb39-122aa92f5f98": [
+  "FALSE MATCH",
+  "Photo/video editor matched Editors, which O*NET scopes to text/publication editing",
+  "27-4032.00"
+ ],
+ "1c4675c2-0c81-41de-bb0c-9e6d1ffc48c4": [
+  "FALSE MATCH",
+  "Media fact-checking matched Credit Authorizers, Checkers, and Clerks on 'checker'",
+  "27-3099.00"
+ ],
+ "1c5cdf49-0212-45f1-bc94-c3f486074154": [
+  "FALSE MATCH",
+  "Media fact-checking matched Credit Authorizers, Checkers, and Clerks on 'checker'",
+  "27-3099.00"
+ ],
+ "1d51a567-ac74-4a0a-bacd-a331a4cbc607": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "1e61b744-3ed3-4155-b81d-a4a3f2d344cc": [
+  "FALSE MATCH",
+  "Candidate title explicitly excludes solar (Energy Engineers, Except Wind and Solar)",
+  "17-2199.11"
+ ],
+ "1f63f0f8-b185-4aa0-a5b3-e7bb549f85a1": [
+  "FALSE MATCH",
+  "Fiber/textile artist matched Agents and Business Managers of Artists on 'Artist'",
+  "27-1012.00"
+ ],
+ "209e4f3f-95f4-44fd-b3d1-ee6a96d32625": [
+  "FALSE MATCH",
+  "Explicitly high school; candidate is the Postsecondary Computer Science code",
+  "25-2031.00"
+ ],
+ "22a85874-12d2-4c58-a37b-5d0665a058bc": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "22ae346a-0942-4450-9a8c-317384ea61c3": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "2350aa25-566a-4252-9448-c7b11fa40fd9": [
+  "FALSE MATCH",
+  "Trade-skills instruction matched Nursing Instructors and Teachers, Postsecondary on 'Instructor'",
+  "25-1194.00"
+ ],
+ "23b6e158-4e24-4243-9d8b-5d1666341031": [
+  "FALSE MATCH",
+  "Content-creator/blogger matched Food Service Managers on 'Food'",
+  "27-3099.00"
+ ],
+ "243a90f3-43ed-4a1e-8f2b-69916814f830": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "24882b55-0541-473d-bf69-bedbc4139136": [
+  "FALSE MATCH",
+  "App-building tech founder matched Mental Health Counselors, a licensed-therapy occupation",
+  ""
+ ],
+ "24d81937-881f-478d-b6d3-0e15c757ca31": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "2670ee81-3613-41da-bf47-2031972bc70a": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "2678f49f-6778-4150-84f3-a82f684b1bea": [
+  "FALSE MATCH",
+  "Film/video production matched Video Game Designers on 'Video'",
+  "27-2012.00"
+ ],
+ "26bfe83b-6744-4df4-b885-e452f908d6ec": [
+  "FALSE MATCH",
+  "Film editing matched Motion Picture Projectionists (movie-theater equipment operators) on 'Motion Picture'",
+  "27-4032.00"
+ ],
+ "27e334c1-43db-4650-8068-fe49bde58b6b": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "29df0e82-ff26-4895-97ca-5a7e9eb7d2ce": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "2a4ddd63-f191-4fba-a2bc-0bc3f635248d": [
+  "FALSE MATCH",
+  "Director is a management role over the lab, not a bench coordinator",
+  "11-9111.00"
+ ],
+ "2ab6f41e-93df-4a28-9840-ebeeef84ef54": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "2b12925f-8992-47cd-ba53-39e8cbc35d68": [
+  "STILL UNCERTAIN",
+  "Publishing-house executive matched the generic Chief Executives code; plausible but not specific",
+  ""
+ ],
+ "2c74823c-608e-4ae7-8982-a59c1fcad0f9": [
+  "STILL UNCERTAIN",
+  "Payroll-specific management has no exact O*NET code; GenOps catch-all is unconfirmed",
+  ""
+ ],
+ "2c8a3f2d-036e-4fff-b8e0-db98464fd371": [
+  "FALSE MATCH",
+  "English-language teaching matched the Postsecondary code; level not stated",
+  "25-3011.00"
+ ],
+ "2c8ba597-96d5-4ba8-a1f6-2b257859ca84": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "2cab1e72-c8b9-4a40-991c-1a8af6f78861": [
+  "FALSE MATCH",
+  "Broadcast transmission equipment matched Geographic Information Systems Technologists on 'Technician'",
+  "27-4012.00"
+ ],
+ "2d84198e-d113-4f2d-843a-f055d3e6d062": [
+  "STILL UNCERTAIN",
+  "Generic catch-all manager code; Lodging Managers (11-9081.00) is the resort-specific code",
+  ""
+ ],
+ "2e2c3006-782b-455a-a2dd-fbac264fca98": [
+  "FALSE MATCH",
+  "Cardiac/heart surgery matched Oral and Maxillofacial Surgeons, a different specialty",
+  ""
+ ],
+ "2ebdc668-abc6-43b2-8ebb-98bac2f773bb": [
+  "FALSE MATCH",
+  "Illustration instruction matched Nursing Instructors and Teachers, Postsecondary on 'Instructor'",
+  "25-1121.00"
+ ],
+ "2ef66e04-1bbf-4b41-9b14-dac36340c769": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "315e726f-5656-4f7f-a052-c9ca084efd71": [
+  "FALSE MATCH",
+  "Physician diagnosing brain/nervous-system disorders matched Clinical Research Coordinators on 'Clinical'",
+  "29-1217.00"
+ ],
+ "31b84804-c9d2-4a3b-805b-05b936a9555b": [
+  "FALSE MATCH",
+  "General supplier negotiation/procurement matched Water Resource Specialists on 'Specialist'",
+  "13-1023.00"
+ ],
+ "32160937-2538-4ac6-92c0-eb6eb3cec84c": [
+  "FALSE MATCH",
+  "App-building tech founder matched Mental Health Counselors, a licensed-therapy occupation",
+  ""
+ ],
+ "3289f063-f03c-496c-8eb8-dcc37877aa29": [
+  "FALSE MATCH",
+  "AI/ML infrastructure engineering matched General and Operations Managers on 'Operations'",
+  "15-1299.09"
+ ],
+ "32a39b86-e5ee-479e-8e7f-2e51023327fc": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "32cd69c5-f73f-45ab-b25d-30ce1ebe09b9": [
+  "FALSE MATCH",
+  "IT/security team leadership matched General and Operations Managers on 'Operations'",
+  "11-3021.00"
+ ],
+ "3322b430-dcc3-4c44-b781-74162ea5199f": [
+  "FALSE MATCH",
+  "Sports performance data analysis matched Logistics Analysts on 'Analyst'",
+  ""
+ ],
+ "3433d1ed-7798-4f96-b99b-09fe8598b5a9": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "3741ed20-8b75-408f-be36-942f02bf673e": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "3787dbd9-395b-4f72-b80f-0b6532aeabe0": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "37955160-cf48-4e31-9a42-56aabdedcf82": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "38184007-ba58-47a6-9f70-c9b697847790": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "38a00a0f-2ab3-40b4-add2-43688d59dbc2": [
+  "FALSE MATCH",
+  "Sports data analysis/broadcasting matched Logistics Analysts on 'Analyst'",
+  ""
+ ],
+ "38fcb2e4-e1d6-4949-ada0-010fe96d3624": [
+  "FALSE MATCH",
+  "Description is a supervisory leadership role, not the entry-level desk-clerk occupation it matched",
+  "11-9081.00"
+ ],
+ "39e2c6a8-1cd8-4837-95e7-f268df57e5e6": [
+  "FALSE MATCH",
+  "Dialysis/kidney monitoring matched Geographic Information Systems Technologists on 'technician'",
+  ""
+ ],
+ "3afc6c79-374f-41fa-ad94-06d52c891ae1": [
+  "STILL UNCERTAIN",
+  "Sustainability auditing matched the C-suite Chief Sustainability Officers code, a level mismatch",
+  "13-1199.05"
+ ],
+ "3dfc9fca-13de-4238-8fee-8c6b6bc7c35c": [
+  "FALSE MATCH",
+  "Vending-route business owner matched the machine-repair occupation on 'vending machine'",
+  ""
+ ],
+ "3e561acc-2263-470f-b2b9-3c500b9720c1": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "3e9e6b98-28fd-4472-bbad-fbaf34a5147c": [
+  "FALSE MATCH",
+  "Field interviewing/story-digging is reporting work, not on-air announcing",
+  "27-3023.00"
+ ],
+ "3ef1e70d-53fa-42f5-bdd9-65c9577add14": [
+  "FALSE MATCH",
+  "Candidate explicitly excludes special education; description is explicitly special-ed",
+  "25-2059.00"
+ ],
+ "3f740066-bc7b-44c1-a4b1-0a91efcd582c": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "403f75c4-e0b9-44f6-8743-8a1587b1c628": [
+  "FALSE MATCH",
+  "Eco-tourism guiding matched Camera Operators on 'Operator'",
+  "39-7011.00"
+ ],
+ "40fc3860-e2be-417e-98f6-13f2d102ed62": [
+  "STILL UNCERTAIN",
+  "Theater/venue operations matched the generic manager catch-all; Entertainment and Recreation Managers may fit better",
+  "11-9072.00"
+ ],
+ "418d66dd-8a27-4e20-8a66-c571b5a01dec": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "42cdf183-6446-4537-bf46-c78bb6cfcdb3": [
+  "FALSE MATCH",
+  "Field ecosystem/water sampling matched Nuclear Monitoring Technicians on 'Monitoring'",
+  "19-4042.00"
+ ],
+ "44aad279-7dff-432c-a85d-6cee2fea140e": [
+  "FALSE MATCH",
+  "Dialysis technician matched Geographic Information Systems Technologists on 'technician'",
+  ""
+ ],
+ "46195c3d-c921-4d62-8ea8-06040f2bdb18": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "471f7ffa-d461-4f42-a48a-6975400d91de": [
+  "STILL UNCERTAIN",
+  "Generic catch-all manager code; Lodging Managers (11-9081.00) is the resort-specific code",
+  ""
+ ],
+ "477c6fd2-f01d-4570-9d15-6538b922908f": [
+  "FALSE MATCH",
+  "Urinary/reproductive-system surgery matched Oral and Maxillofacial Surgeons, a different specialty",
+  "29-1229.03"
+ ],
+ "47e016e0-dddd-4cb1-a0bb-f31699cb1a48": [
+  "FALSE MATCH",
+  "Investigative journalism matched Survey Researchers, an academic/market-research role",
+  "27-3023.00"
+ ],
+ "480a7cc0-be60-4699-b87d-bf344bc900d9": [
+  "FALSE MATCH",
+  "DEI strategy/training design matched the generic manager catch-all; Training and Development Managers fits the domain",
+  "11-3131.00"
+ ],
+ "4a290184-dbaf-4e2e-96fe-6ff023b37e9b": [
+  "FALSE MATCH",
+  "Research-lab leadership matched the generic manager catch-all; Natural Sciences Managers is the lab-specific code",
+  "11-9121.00"
+ ],
+ "4a4104db-71bb-4b79-8e81-2a56905bddc6": [
+  "FALSE MATCH",
+  "Diagnostic tissue pathology matched Speech-Language Pathologists on 'pathologist'",
+  "29-1222.00"
+ ],
+ "4b42c163-cc8a-4539-830d-e714ffb99313": [
+  "FALSE MATCH",
+  "General teaching context, not postsecondary; state teaching cert/Praxis implies K-12",
+  "25-2031.00"
+ ],
+ "4c33c8b6-6536-4e90-bad7-11a5bce8691f": [
+  "FALSE MATCH",
+  "Diagnosing learning disabilities is closer to School Psychologists than generic guidance counseling",
+  "19-3034.00"
+ ],
+ "4cf4641b-be3f-4161-8dec-237fb7c85070": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "4d629951-f876-4f7a-a358-8812b95af6de": [
+  "FALSE MATCH",
+  "Puppetry/expressive-arts therapy matched Marriage and Family Therapists on 'Therapist'",
+  "29-1129.01"
+ ],
+ "4ea7b552-585e-4c11-913f-3e87e42e4829": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "4ecdabfa-6034-4bc0-9d6b-66393c57ffe3": [
+  "FALSE MATCH",
+  "Hands-on STEM teaching matched Museum Technicians and Conservators, an artifact-preservation role",
+  "25-9031.00"
+ ],
+ "4f4e989a-d4ba-477f-b161-c97ae81983e2": [
+  "FALSE MATCH",
+  "'Specialist' word collision with Water Resource Specialists; unrelated to water",
+  "29-1218.00"
+ ],
+ "4f793c6c-2347-45d8-b7e7-38cb1f364df2": [
+  "STILL UNCERTAIN",
+  "Generic catch-all manager code; Lodging Managers (11-9081.00) is the hotel-specific code",
+  ""
+ ],
+ "4fc2d9da-37c6-4638-a556-41dbd6f51a62": [
+  "FALSE MATCH",
+  "Supplier negotiation/procurement matched the generic manager catch-all; the specific code is Purchasing Managers",
+  "11-3061.00"
+ ],
+ "50696e3e-1b71-4dc8-9288-6d25068a136d": [
+  "FALSE MATCH",
+  "Soil science matched Health Informatics Specialists on 'Specialist'",
+  "19-1013.00"
+ ],
+ "50fb9bd9-76c0-4eb0-8898-05bee93314dd": [
+  "FALSE MATCH",
+  "Media host matched restaurant/coffee-shop Hosts and Hostesses on 'host'",
+  ""
+ ],
+ "5116dd85-3d60-4231-b474-cbde7b288b9b": [
+  "FALSE MATCH",
+  "'Specialist' word collision with Water Resource Specialists; unrelated to water",
+  "29-1218.00"
+ ],
+ "52f26cde-7982-4797-8e0c-abd822bfa6b6": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "5311bf30-fa45-4561-bbcc-414c052140fc": [
+  "FALSE MATCH",
+  "Secular adult/workforce education matched Directors, Religious Activities and Education",
+  "11-9039.00"
+ ],
+ "55038fc1-7ad8-412e-ab8d-b79c1aa9e45c": [
+  "FALSE MATCH",
+  "Cosmetics product testing, not software; same QA collision Phase 4b already caught",
+  "19-4099.01"
+ ],
+ "55048691-54aa-4053-b664-d30d8de7bae4": [
+  "FALSE MATCH",
+  "Builds real-estate software (tech founder), matched Property/Real Estate Managers on 'Real Estate'",
+  "15-1252.00"
+ ],
+ "569ce2bf-403b-4365-805e-a132285e9e40": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "56ef0650-defc-4ef5-90c4-ff23d1902b74": [
+  "FALSE MATCH",
+  "Audio production/broadcast management matched Radio Frequency Identification Device Specialists on 'Radio'",
+  "27-2012.00"
+ ],
+ "5bbf7750-631a-46e3-abd2-b37c568ab8df": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "5c05267b-e782-4671-bce5-0f4e42d94cf6": [
+  "FALSE MATCH",
+  "Video journalism matched Video Game Designers on 'Video'",
+  "27-3023.00"
+ ],
+ "5d2829cc-1b93-4619-a104-16ac5a42c74c": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "5dacd8d9-c201-4d43-9727-7cf22b4fadda": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "5ea1eec0-a56a-4667-94e7-ee3a867f959d": [
+  "FALSE MATCH",
+  "Coaching young athletes matched corporate Training and Development Specialists",
+  "27-2022.00"
+ ],
+ "6062b780-e7a8-4622-9229-be2aaaba1d6a": [
+  "FALSE MATCH",
+  "Medical coding/billing matched Medical and Health Services Managers, a management role",
+  "29-2072.00"
+ ],
+ "610b8982-655d-4aec-92a9-c8f14174d157": [
+  "FALSE MATCH",
+  "Bachelor's-in-chemistry materials research matched Materials Engineers; Materials Scientists fits better",
+  "19-2032.00"
+ ],
+ "61b58425-1520-42db-ac8e-924c53db551f": [
+  "FALSE MATCH",
+  "Beauty-brand product/marketing management matched Agents and Business Managers of Artists on 'Manager'",
+  "11-2021.00"
+ ],
+ "620e306d-d80e-4845-a852-9ab57b369bb2": [
+  "FALSE MATCH",
+  "'Specialist' word collision with Water Resource Specialists; unrelated to water",
+  "29-1218.00"
+ ],
+ "64874d86-edb3-415e-869e-f673008cd8bf": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "64a85153-fe30-4a8a-b2a7-392bab2f8d0c": [
+  "FALSE MATCH",
+  "Oversees cleaning teams; the specific code is First-Line Supervisors of Housekeeping and Janitorial Workers",
+  "37-1011.00"
+ ],
+ "65288c4f-1689-4dd5-8ec1-1ead67a24ede": [
+  "FALSE MATCH",
+  "RN license and clinical duties are a nursing role, not the non-clinical OHS Specialist",
+  "29-1141.00"
+ ],
+ "658bac2b-7c38-41d6-b4a7-ba8b74921dae": [
+  "FALSE MATCH",
+  "Climate modeling/science matched Climate Change Policy Analysts, a policy role",
+  "19-2021.00"
+ ],
+ "6642e935-49e6-49fc-bc84-329feed05f36": [
+  "FALSE MATCH",
+  "Explicitly high school; candidate is the Postsecondary history code",
+  "25-2031.00"
+ ],
+ "664e6bb2-c842-45f4-9a39-4a27a677a790": [
+  "FALSE MATCH",
+  "'Specialist' word collision with Water Resource Specialists; unrelated to water",
+  "27-3031.00"
+ ],
+ "66746713-bd85-4fa7-aaca-de118d4c38b5": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "66d25eaf-c976-43ae-8899-34729042189e": [
+  "FALSE MATCH",
+  "'Device' word collision; role is biomedical engineering, not RFID",
+  "17-2031.00"
+ ],
+ "66e97033-37a3-4a37-842c-f5320b93b5b5": [
+  "FALSE MATCH",
+  "Explicitly high school; candidate is the Elementary School Teachers code",
+  "25-2031.00"
+ ],
+ "67082acb-03e4-4a9b-a2e1-8acf0238ee2e": [
+  "FALSE MATCH",
+  "Individual styling consultant matched Personal Service Managers, a management occupation",
+  ""
+ ],
+ "678268b8-38a0-4a76-9732-717d6d648185": [
+  "FALSE MATCH",
+  "Federal law-enforcement agent matched Agents and Business Managers of Artists, Performers, and Athletes on 'Agent'",
+  "33-3021.00"
+ ],
+ "683b6489-3b61-45bf-9489-68304e239d0f": [
+  "FALSE MATCH",
+  "Arts instruction matched Farm and Home Management Educators on 'Educator'",
+  ""
+ ],
+ "689a4ee7-3d65-44d1-9592-2660df3e209b": [
+  "FALSE MATCH",
+  "Broadcast sound engineering matched Logistics Engineers on 'Engineer'",
+  "27-4014.00"
+ ],
+ "69b5237e-b5f7-4ce7-9b9c-cdb14954645d": [
+  "FALSE MATCH",
+  "Explicitly secondary; candidate is the Postsecondary English code",
+  "25-2031.00"
+ ],
+ "6a200c0f-2cad-4cb4-99a1-05608994c919": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "6a2da00b-e125-4959-9da6-36ba347d7b4e": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "6a8e9d52-bff5-4b52-9d43-fd2bf56f3c70": [
+  "FALSE MATCH",
+  "Cosmetology instruction matched Nursing Instructors and Teachers, Postsecondary on 'Instructor'",
+  "25-1194.00"
+ ],
+ "6d0241be-baee-4b77-b5dd-82e92e604554": [
+  "FALSE MATCH",
+  "Planetarium/astronomy education matched Farm and Home Management Educators on 'Educator'",
+  ""
+ ],
+ "6d7f5747-5e56-4b8c-af12-b01ba344587a": [
+  "FALSE MATCH",
+  "EMT/paramedic (high-school-diploma level) matched Emergency Medicine Physicians (MD-level)",
+  "29-2042.00"
+ ],
+ "6f4e9c3f-4c4b-45ca-8d3b-22410a46acfb": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "6fa373b7-b283-4a99-83dd-6cdeb6680ce2": [
+  "FALSE MATCH",
+  "Athlete mental-performance coaching matched Industrial-Organizational Psychologists, a workplace-focused specialty",
+  ""
+ ],
+ "7186a48b-565c-4869-b08c-abfa4c2c370c": [
+  "FALSE MATCH",
+  "Journalistic staff writer matched Technical Writers, a product/procedure-documentation role",
+  "27-3043.00"
+ ],
+ "728dbbb3-031c-42b9-b503-b8caaa9d2f1b": [
+  "FALSE MATCH",
+  "Software test automation matched Logistics Engineers on 'Engineer'",
+  "15-1253.00"
+ ],
+ "754eca46-ad7d-4010-aca2-29d114e9873d": [
+  "STILL UNCERTAIN",
+  "Concert-hall operations matched the generic manager catch-all; Entertainment and Recreation Managers may fit better",
+  "11-9072.00"
+ ],
+ "75d75950-7262-4558-a64c-106ab93136b6": [
+  "FALSE MATCH",
+  "Fabric quality testing matched Logistics Analysts on 'Analyst'",
+  ""
+ ],
+ "78898092-8d04-4f94-934d-0d238bdaf8eb": [
+  "FALSE MATCH",
+  "Chess instruction matched Nursing Instructors and Teachers, Postsecondary on 'Instructor'",
+  "25-3021.00"
+ ],
+ "795d54fa-9c2c-4eae-9144-5526b9cf91cf": [
+  "STILL UNCERTAIN",
+  "Generic catch-all manager code; Lodging Managers (11-9081.00) is the hotel-specific code",
+  ""
+ ],
+ "79d1b24f-90fd-4838-85d1-40ed7439a7d1": [
+  "FALSE MATCH",
+  "Media fact-checking matched Credit Authorizers, Checkers, and Clerks on 'checker'",
+  "27-3099.00"
+ ],
+ "7aaeb4e3-e00c-4911-a244-31bb2f21965a": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "7bf2c4f3-10dc-4076-bcd1-0f1c69a1bc81": [
+  "FALSE MATCH",
+  "Hospital lab leadership matched the generic manager catch-all; the healthcare-specific code is Medical and Health Services Managers",
+  "11-9111.00"
+ ],
+ "7cde0e21-13dc-45bd-b7d7-d3baae68a38a": [
+  "FALSE MATCH",
+  "Nuclear/radiation-safety physics role matched Medical and Health Services Managers",
+  "17-2111.00"
+ ],
+ "7f728ce0-e860-4cd3-862b-58a151cd9a41": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "8057c561-ba98-4b32-8b7e-1a773d19e8b0": [
+  "FALSE MATCH",
+  "MD/DO board-certified physician matched the non-clinical OHS Specialist occupation",
+  "29-1229.05"
+ ],
+ "80628838-7292-48ee-9482-14c5c86d425d": [
+  "FALSE MATCH",
+  "'Specialist' word collision with Water Resource Specialists; unrelated to water",
+  "19-3091.00"
+ ],
+ "809b1d04-1613-4c45-a228-7bd3bd6ef82d": [
+  "FALSE MATCH",
+  "Enterprise software architecture matched Computer Network Architects, a networking-specific role",
+  "15-1299.08"
+ ],
+ "81dfe359-ab31-4420-9caa-6e9fbc3a7f1f": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "835063b8-6896-424f-9429-b4e095f45899": [
+  "FALSE MATCH",
+  "Tests pharmaceutical products, not software; same QA collision Phase 4b already caught",
+  "19-4099.01"
+ ],
+ "837df378-4b7e-4edb-9667-dfacba71a4fe": [
+  "FALSE MATCH",
+  "Physical Therapist Assistant matched Occupational Therapy Assistants, a different discipline with its own exact code",
+  "31-2021.00"
+ ],
+ "84120952-326b-4ac9-a496-021e10bd506e": [
+  "FALSE MATCH",
+  "Coaching/teaching robotics clubs matched Robotics Engineers on 'Robotics'",
+  "27-2022.00"
+ ],
+ "849addb7-bcb6-41b6-beda-35737768d568": [
+  "FALSE MATCH",
+  "Documentary journalism matched Video Game Designers on 'Video'",
+  "27-3023.00"
+ ],
+ "8568a7b9-1702-4e2b-b8cc-3a439529820c": [
+  "FALSE MATCH",
+  "Editorial/story strategy matched Search Marketing Strategists, an SEO role",
+  "27-3099.00"
+ ],
+ "865e0b28-1f08-4580-b45a-cb46982ff0cf": [
+  "FALSE MATCH",
+  "MD/DO physician matched Physician Assistants on 'Physician'",
+  "29-1229.06"
+ ],
+ "86d0bab2-ea66-482e-be4e-1e35064574b8": [
+  "FALSE MATCH",
+  "Federal criminal investigation matched Claims Adjusters, Examiners, and Investigators, an insurance role",
+  "33-3021.00"
+ ],
+ "87e54e34-064e-40ae-ab29-e6c5ab22ed4b": [
+  "FALSE MATCH",
+  "Wholesale real-estate deal-making matched Property, Real Estate, and Community Association Managers",
+  "41-9022.00"
+ ],
+ "886c6b82-4240-4d42-b386-77496505edcf": [
+  "FALSE MATCH",
+  "Coaches/trains baristas rather than working as one",
+  ""
+ ],
+ "8a8dd900-5968-4186-b913-74e63d066bde": [
+  "FALSE MATCH",
+  "'Specialist' word collision with Water Resource Specialists; unrelated to water",
+  "25-3011.00"
+ ],
+ "8b1f8e8d-eb0b-4d32-b525-8a3754cf74d9": [
+  "FALSE MATCH",
+  "Video/footage editing matched Editors, which O*NET scopes to text/publication editing",
+  "27-4032.00"
+ ],
+ "8c9979d8-6105-4461-af29-0447479ad036": [
+  "FALSE MATCH",
+  "Medical coding/billing matched Medical and Health Services Managers, a management role",
+  "29-2072.00"
+ ],
+ "8e436142-8831-4949-b5f7-dfd7ecad1e1f": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "8f30f380-426b-4684-94eb-4cf03cc9100d": [
+  "FALSE MATCH",
+  "Pharmaceutical/chemistry research matched Computer and Information Research Scientists on 'Scientist'",
+  "19-1042.00"
+ ],
+ "900a4b22-69da-407f-bdb9-d65a2d200ce8": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "9013d1dc-fd12-4fb7-99af-dca18c983f61": [
+  "FALSE MATCH",
+  "One-on-one tutoring matched the Postsecondary lecturer code",
+  "25-3041.00"
+ ],
+ "904d1442-2be8-40ba-8a22-838761c341b1": [
+  "FALSE MATCH",
+  "Early-childhood Montessori teaching matched Business Teachers, Postsecondary",
+  "25-2011.00"
+ ],
+ "918c84bf-487e-483e-b844-8153db1a9233": [
+  "STILL UNCERTAIN",
+  "Requirements list state teaching certification OR research credentials for university roles; level is genuinely ambiguous",
+  ""
+ ],
+ "928466fe-3214-4a18-8874-452d527025ca": [
+  "FALSE MATCH",
+  "Court administration matched Education and Childcare Administrators, Preschool and Daycare on 'Administrator'",
+  ""
+ ],
+ "929c4575-4558-43c5-bf92-2e482123dc97": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "931ec5dc-ee9c-4c4b-b950-cd81de15cbed": [
+  "FALSE MATCH",
+  "Retail business owner matched Wholesale and Retail Buyers, a purchasing-employee role",
+  ""
+ ],
+ "9476bb49-7394-4f34-a6ce-87ad2f22cefd": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "9489852c-6e64-41b5-940d-15aa19dee894": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "95e0633e-3bc1-40ea-bdfc-3a4a304dbd4e": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "95e51c7f-2c8a-4a10-bbd8-465896bd97e9": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "960ced69-816b-480a-a7f5-cd91a06a27e4": [
+  "FALSE MATCH",
+  "Art/artifact conservation matched Conservation Scientists, which O*NET scopes to natural-resource conservation",
+  "25-4013.00"
+ ],
+ "96af6168-f530-4908-bc66-767dd82483c5": [
+  "FALSE MATCH",
+  "'Specialist' word collision with Water Resource Specialists; unrelated to water",
+  "29-9091.00"
+ ],
+ "9969fd3f-26b9-4810-b532-5fc050c7ef4f": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "99f905a3-089d-43da-adaa-52b7958b63cc": [
+  "STILL UNCERTAIN",
+  "Government-contract negotiation matched the generic manager catch-all; Purchasing Managers is a plausible alternative",
+  "11-3061.00"
+ ],
+ "9c96cb69-45b4-4123-a603-2449dbc790f4": [
+  "FALSE MATCH",
+  "Climate/earth science matched Computer and Information Research Scientists on 'Scientist'",
+  "19-2021.00"
+ ],
+ "9cd44ccd-72c1-4211-8741-605a9c088dc1": [
+  "FALSE MATCH",
+  "Bachelor's-level bench lab work matched Medical Scientists, a PhD-level research occupation",
+  "29-2011.00"
+ ],
+ "9f1ff324-cd8f-4bc1-8fc2-3cc1a845b0c4": [
+  "STILL UNCERTAIN",
+  "Core work is data analysis, but candidate title's policy framing may still fit given the stated policy-informing purpose",
+  ""
+ ],
+ "9f2e47e3-9079-434b-8fa6-92dd89f7f53a": [
+  "FALSE MATCH",
+  "MD-level genetics diagnosis matched Clinical Research Coordinators on 'Clinical'",
+  ""
+ ],
+ "9f963181-de1f-4545-9c22-1095ce41d88e": [
+  "FALSE MATCH",
+  "Generic industrial/materials QA, not software; same QA collision Phase 4b already caught",
+  "19-4099.01"
+ ],
+ "9ff5c444-9590-434d-9461-60aaa4a94c13": [
+  "FALSE MATCH",
+  "Digital-platform journalism matched Web and Digital Interface Designers on 'Digital'",
+  "27-3023.00"
+ ],
+ "a0c7c78e-a10f-4afa-bb18-b0173dc2ed78": [
+  "FALSE MATCH",
+  "Drafting technical drawings (associate-degree level) matched Architectural and Engineering Managers, a management role",
+  "17-3011.00"
+ ],
+ "a0e724e9-35aa-4308-87af-d2a1e7d81f66": [
+  "FALSE MATCH",
+  "Health-records management matched generic IT Systems Managers on 'Information Systems'",
+  "29-9021.00"
+ ],
+ "a22bf655-4023-4b02-8844-b190ccf94c83": [
+  "STILL UNCERTAIN",
+  "Recreation-facility management matched the generic manager catch-all; a recreation-specific code may fit better",
+  ""
+ ],
+ "a2480a1f-022b-4bf1-b188-68ca437aeabf": [
+  "FALSE MATCH",
+  "Corporate analyst role matched the C-suite Chief Sustainability Officers code, a level mismatch",
+  "13-1199.05"
+ ],
+ "a30ee8fc-d0ba-41c0-b917-f41e8c2b6b25": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "a53d0a1d-7bcd-4f45-81d4-eec2c7b6a511": [
+  "FALSE MATCH",
+  "Diplomatic cultural-affairs role matched Area, Ethnic, and Cultural Studies Teachers, Postsecondary on 'Cultural'",
+  ""
+ ],
+ "a5dbe805-8e72-4245-bb20-ec1516f294fa": [
+  "FALSE MATCH",
+  "General social-issue advocacy matched Climate Change Policy Analysts, a climate-specific code",
+  "21-1099.00"
+ ],
+ "a6c5d501-acc1-41a9-9257-986891deb762": [
+  "FALSE MATCH",
+  "Hands-on rehab/animal care matched Zoologists and Wildlife Biologists, a research role",
+  "39-2021.00"
+ ],
+ "a76063ab-ebc3-4456-b6ef-b7cc51755cc3": [
+  "FALSE MATCH",
+  "Sports journalism matched Athletes and Sports Competitors on 'Sports'",
+  "27-3023.00"
+ ],
+ "a7d15094-1706-4b3a-86a4-8cf12c0fe93f": [
+  "FALSE MATCH",
+  "General corporate data governance matched Clinical Data Managers, a healthcare-specific code",
+  "11-3021.00"
+ ],
+ "a9b9d9dc-c10b-4c99-969f-fc3f91935ce3": [
+  "FALSE MATCH",
+  "Biological/chemical lab testing matched Logistics Analysts on 'Analyst'",
+  "19-4031.00"
+ ],
+ "ab451db8-3ac2-411c-acc9-a9e20c46e914": [
+  "FALSE MATCH",
+  "Payroll processing matched Education and Childcare Administrators, Preschool and Daycare on 'Administrator'",
+  "43-3051.00"
+ ],
+ "ac023d5e-65d8-4211-bbaf-d3bada1b5ed8": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "ad7ea8ca-6955-48a8-b6a4-d55d1c354bd7": [
+  "FALSE MATCH",
+  "J.D.-level prosecuting attorney matched Court, Municipal, and License Clerks, a clerical role",
+  "23-1011.00"
+ ],
+ "af903556-9dbe-4953-9554-37de39d58a4e": [
+  "FALSE MATCH",
+  "Media fact-checking matched Credit Authorizers, Checkers, and Clerks on 'checker'",
+  "27-3099.00"
+ ],
+ "afd84ea5-ba22-4cd2-9168-701c14bfecd5": [
+  "FALSE MATCH",
+  "Addiction medicine matched Emergency Medicine Physicians, a different specialty",
+  ""
+ ],
+ "b0131114-b9c9-41fc-a955-34ad346ef991": [
+  "FALSE MATCH",
+  "Content-creator/blogger matched Fashion Designers, a garment-design occupation",
+  "27-3099.00"
+ ],
+ "b20c96d6-8178-429d-9295-2e8ed91564d8": [
+  "FALSE MATCH",
+  "'Fitness' word collision; role is mobile-app software development",
+  "15-1252.00"
+ ],
+ "b28a8b95-0a15-4130-b446-d440375334c6": [
+  "FALSE MATCH",
+  "Interactive-exhibit education matched Museum Technicians and Conservators, an artifact-preservation role",
+  "25-9031.00"
+ ],
+ "b328e72d-89a0-4538-b9fb-ae5d5879ea19": [
+  "FALSE MATCH",
+  "Explicitly K-12; candidate is the Postsecondary Business code",
+  "25-2031.00"
+ ],
+ "b3b19529-2f01-45ec-bec4-4cdd19612e07": [
+  "STILL UNCERTAIN",
+  "Legislative/lobbying relationship-building matched Public Relations Managers; overlap is partial",
+  ""
+ ],
+ "b73ce9d0-38a6-4484-a71c-ad3461c1de06": [
+  "FALSE MATCH",
+  "PhD-level drug-mechanism research matched Clinical Research Coordinators on 'Clinical'",
+  "19-1042.00"
+ ],
+ "b792ffb3-2a85-49c9-92a5-3c3698ab6b91": [
+  "FALSE MATCH",
+  "STEM education matched Health Education Specialists on 'Education Specialist'",
+  "25-9031.00"
+ ],
+ "b80585b6-25f1-486a-ac02-af93070416a9": [
+  "FALSE MATCH",
+  "Social-media marketing matched Social and Community Service Managers on 'Social'",
+  "11-2021.00"
+ ],
+ "b8ca7452-8c49-4687-bce1-37f417355430": [
+  "FALSE MATCH",
+  "Editorial/news strategy matched Search Marketing Strategists, an SEO role",
+  "27-3099.00"
+ ],
+ "b9529660-7e6b-4ea3-a26b-a5b1757b70c3": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "b98ef672-8852-45e0-813d-b30fb28e08a6": [
+  "FALSE MATCH",
+  "Montessori teaching matched Farm and Home Management Educators on 'Educator'",
+  "25-2011.00"
+ ],
+ "b9c4b8e7-19ae-4579-8660-1b5a5ab0244f": [
+  "FALSE MATCH",
+  "Wine-sales business relationships matched Power Distributors and Dispatchers, an electrical-grid role, on 'Distributor'",
+  "41-4011.00"
+ ],
+ "b9feef08-8079-48df-8791-6306101b8e0e": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "ba613049-49db-4627-8b93-702086e4e5c5": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "bac095a8-8ca4-448d-96e2-6a36919915e4": [
+  "FALSE MATCH",
+  "Franchise business owner matched the entry-level Hosts and Hostesses occupation on 'coffee shop'",
+  ""
+ ],
+ "bc227fa7-040e-4803-8fe3-978fe5962dae": [
+  "FALSE MATCH",
+  "Museum/zoo education matched Natural Sciences Managers on 'Science'",
+  "25-9031.00"
+ ],
+ "bc335dee-6db5-4ee0-b0df-27b0ca92c75e": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "bcaa1b68-38ec-4c70-8004-7acf9151de39": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "be196e5d-d106-474e-a5a0-5a021992430e": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "c0410a07-dafc-47ec-80bf-6df69518bf46": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "c0818e9e-ebab-4587-9fa3-aae1d9268e1c": [
+  "FALSE MATCH",
+  "Business owner matched the entry-level Hosts and Hostesses occupation on 'coffee shop'",
+  ""
+ ],
+ "c08e1168-b76a-4228-a94b-00db57caf743": [
+  "STILL UNCERTAIN",
+  "Payroll-specific management has no exact O*NET code; Administrative Services Managers catch-all is unconfirmed",
+  ""
+ ],
+ "c271786f-442a-4059-abf1-d8ceb0bac69b": [
+  "FALSE MATCH",
+  "Environmental journalism matched Environmental Compliance Inspectors, a regulatory role",
+  "27-3023.00"
+ ],
+ "c64393bb-0d91-4859-8229-3c8d955a5740": [
+  "FALSE MATCH",
+  "Adventure-tour operating matched Camera Operators on 'Operator'",
+  "39-7011.00"
+ ],
+ "c8502392-2529-4b90-a6e7-e07d8be13842": [
+  "FALSE MATCH",
+  "Lab safety enforcement matched the C-suite Chief Sustainability Officers code on 'Officer'",
+  "19-5011.00"
+ ],
+ "c978c25c-fd07-42e8-84fc-8c5fb5b3e541": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "c97d80e0-d374-47a4-8111-aab29f23de13": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "cb02dae1-720e-42ba-82a2-798c1afa5d67": [
+  "FALSE MATCH",
+  "Sports biomechanics research matched Market Research Analysts and Marketing Specialists on 'Research'",
+  "29-1128.00"
+ ],
+ "cb9fc81f-0cdd-418f-b742-f83e638a32bb": [
+  "STILL UNCERTAIN",
+  "Core work is climate research, but candidate title matches the career name almost exactly except 'Scientist' vs 'Policy Analyst'",
+  ""
+ ],
+ "cbf748b1-95c8-40d0-b5be-2273f16db6ca": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "cc08b2d6-edf8-448c-98c1-a4108fc79c89": [
+  "FALSE MATCH",
+  "'Wellness' word collision; role is app-building tech entrepreneurship",
+  "15-1252.00"
+ ],
+ "cc380a76-8962-49db-9a78-88ad4858f7dd": [
+  "FALSE MATCH",
+  "Tech journalism matched Biofuels/Biodiesel Technology and Product Development Managers on 'Technology'",
+  "27-3023.00"
+ ],
+ "cc836816-a073-4cfd-848b-efec846bb74a": [
+  "STILL UNCERTAIN",
+  "Generic catch-all manager code; Lodging Managers (11-9081.00) is the hotel-specific code",
+  ""
+ ],
+ "cd8d2362-af0a-4ff6-ab76-42345ecba330": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "cdadaf75-79b4-46b4-8205-3ce0f61db3af": [
+  "FALSE MATCH",
+  "Tests chemicals/pharmaceuticals, not software; same QA collision Phase 4b already caught",
+  "19-4031.00"
+ ],
+ "cef58e2d-b748-4830-a6ee-3583d293b95a": [
+  "FALSE MATCH",
+  "Bench-level lab work matched Clinical Research Coordinators on 'Clinical'",
+  "29-2011.00"
+ ],
+ "d0318652-53ab-48ce-ab52-7637ab84940a": [
+  "FALSE MATCH",
+  "Sleep medicine matched Emergency Medicine Physicians, a different specialty",
+  ""
+ ],
+ "d1ecea5f-0843-4f68-b33c-103b7004d88f": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "d227822f-fceb-4e95-bb10-722f0b091e73": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "d22eb87f-3643-476b-9b0a-e5c359364950": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "d3597d9d-59c3-4663-820c-69e50f412f18": [
+  "FALSE MATCH",
+  "'Specialist' word collision with Water Resource Specialists; unrelated to water",
+  "29-1218.00"
+ ],
+ "d3ef55b2-1209-4b65-9461-e642697c937b": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "d4d8e30b-4242-49c6-adb8-6f4630e26daa": [
+  "FALSE MATCH",
+  "Editorial/content strategy matched Search Marketing Strategists, an SEO role",
+  "27-3099.00"
+ ],
+ "d4f04120-d851-4d3e-82c7-1090c0c26c24": [
+  "FALSE MATCH",
+  "English-language teaching matched Business Teachers, Postsecondary",
+  "25-3011.00"
+ ],
+ "d4f1382e-6cdc-469d-bd92-64a68fd47155": [
+  "FALSE MATCH",
+  "Local service-business owner matched Switchboard Operators on 'Operator'",
+  ""
+ ],
+ "d59a3a38-cef6-4488-a65e-faa83880ff30": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "d611e19f-2205-47a3-aeba-41be3cfaf8a6": [
+  "STILL UNCERTAIN",
+  "Social-venture entrepreneurship spans many possible occupations depending on the venture",
+  ""
+ ],
+ "d8cb2c4a-c70d-44c7-a793-63816e5e5186": [
+  "FALSE MATCH",
+  "Business owner matched the entry-level Hosts and Hostesses occupation on 'coffee shop'",
+  ""
+ ],
+ "da5157a8-eca9-426a-b786-396808f70533": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "da807d6c-5815-4ad2-8a0b-942534e32889": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "dabeb9c9-a02d-4aa7-89d7-b547bb78264d": [
+  "FALSE MATCH",
+  "Novel AI-prompting role matched Logistics Engineers on 'Engineer'",
+  ""
+ ],
+ "dbcc38a0-92ed-4254-ac43-5a5aa8f4f014": [
+  "FALSE MATCH",
+  "Physics lab work matched Medical and Clinical Laboratory Technicians, a human-sample-testing role",
+  "19-4099.00"
+ ],
+ "dbceb025-710f-492e-b4f0-b7278d2e5d7a": [
+  "FALSE MATCH",
+  "Medical coding/billing matched Medical and Health Services Managers, a management role",
+  "29-2072.00"
+ ],
+ "dd4cbeb9-615e-46c7-8875-2cf56e4ed814": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "de2f269e-d8d1-43e4-b843-492b8b27868a": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "de3916da-79a2-4cfe-8ea2-33196b1d1062": [
+  "FALSE MATCH",
+  "Delivery-driving business owner matched Switchboard Operators on 'Operator'",
+  ""
+ ],
+ "de7bfe85-416c-4cf8-b5ef-95b17c3dc42c": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "df7c9071-876b-45a5-89c5-0fa1771715aa": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "e045b607-5251-4ab0-b2bf-23973d7166fa": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "e2344d18-99ff-4719-8662-89b4cb242902": [
+  "FALSE MATCH",
+  "Chemistry-lab leadership matched the generic manager catch-all; Natural Sciences Managers is the lab-specific code",
+  "11-9121.00"
+ ],
+ "e45fe45c-e06e-489b-8f1a-a980e9c5cf8f": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "e4dae8ff-4300-4abf-a44b-d1ee8089d7ca": [
+  "FALSE MATCH",
+  "Lobbying/legislative advocacy matched Regulatory Affairs Specialists, a product-approval role",
+  ""
+ ],
+ "e5591c48-e0fa-4a62-bfd1-75dda84e801a": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "e5e0a77b-dab2-4c55-a0de-0c69913e8f90": [
+  "FALSE MATCH",
+  "Sports broadcasting matched Athletes and Sports Competitors on 'Sports'",
+  "27-3011.00"
+ ],
+ "e5ebc79d-f5aa-4f71-a9de-50805be419f1": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "e64de3c9-8f36-4cf3-b31a-3ec7253ec460": [
+  "FALSE MATCH",
+  "Broadcast equipment operation matched Logistics Engineers on 'Engineer'",
+  "27-4012.00"
+ ],
+ "e6675317-35f5-4ce0-b7ec-48b2e8329c76": [
+  "FALSE MATCH",
+  "Physics lab work matched Geographic Information Systems Technologists on 'technician'",
+  "19-4099.00"
+ ],
+ "e6fac05a-1dcd-41f6-bfe2-11872487348f": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "e8b22186-ee59-4e3b-9337-5852a5b42d7e": [
+  "FALSE MATCH",
+  "'Specialist' word collision with Water Resource Specialists; unrelated to water",
+  ""
+ ],
+ "e985178d-2f68-4187-9e74-624dbb57f71d": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "ea921b74-303b-4986-bfaa-30f1525bbfb3": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "eae9cb72-8143-4907-ab49-2d2aaa776104": [
+  "FALSE MATCH",
+  "'Specialist' word collision with Water Resource Specialists; unrelated to water",
+  "25-9031.00"
+ ],
+ "eddf16ff-aa71-4d0b-813e-ba28eb76e92e": [
+  "FALSE MATCH",
+  "Travel narrative writing matched Technical Writers, a product/procedure-documentation role",
+  "27-3043.00"
+ ],
+ "ee27a3b5-f174-4df0-819e-9349ff5a3055": [
+  "FALSE MATCH",
+  "Nature-center/classroom teaching matched Environmental Compliance Inspectors, a regulatory role",
+  "19-1031.03"
+ ],
+ "ef01c0e3-bb9d-4db1-a159-0d6325f9f378": [
+  "FALSE MATCH",
+  "Sustainability project management matched Information Technology Project Managers on 'Project Manager'",
+  "13-1082.00"
+ ],
+ "ef24fb2c-e153-4765-a888-555150d7b4de": [
+  "FALSE MATCH",
+  "Field research/interviewing is reporting work, not on-air announcing",
+  "27-3023.00"
+ ],
+ "ef3e745e-a01f-4b5b-abee-c2a734d4aa5b": [
+  "FALSE MATCH",
+  "Lab director is management, not the bench technologist candidate",
+  "11-9111.00"
+ ],
+ "efe95e2a-8b4d-4c5a-bd24-df6adc6a4257": [
+  "FALSE MATCH",
+  "Social-media content creation matched Social and Community Service Managers on 'Social'",
+  "27-3099.00"
+ ],
+ "f1f49d00-dad3-4b72-a0cb-5a53266dfed6": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "f30281cb-0688-4580-84b7-08f6a038276a": [
+  "FALSE MATCH",
+  "Food & beverage franchise operating matched Camera Operators on 'Operator'",
+  "11-9051.00"
+ ],
+ "f41a2f15-5408-4b19-a2f5-9f9cda16f8b6": [
+  "FALSE MATCH",
+  "Video journalism/commentary matched Video Game Designers on 'Video'",
+  "27-3023.00"
+ ],
+ "f4ebb9b2-8bcf-4dda-851a-51870a3a3688": [
+  "STILL UNCERTAIN",
+  "Generic catch-all manager code; Lodging Managers (11-9081.00) is the hotel-specific code",
+  ""
+ ],
+ "f5b35226-1278-4ce7-bcb7-c73f4c2968c0": [
+  "FALSE MATCH",
+  "Casino floor host matched restaurant/coffee-shop Hosts and Hostesses, which excludes gambling venues",
+  ""
+ ],
+ "f5f07eec-33be-4c1b-a574-2448e6be1c8a": [
+  "FALSE MATCH",
+  "Lab-operations leadership matched the generic manager catch-all; Natural Sciences Managers is the lab-specific code",
+  "11-9121.00"
+ ],
+ "f62523e5-fd2a-4da1-b9cb-f975648cd7a9": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "f6bdceb7-a544-4044-8141-e9ca1c1f58ce": [
+  "FALSE MATCH",
+  "Media fact-checking matched Credit Authorizers, Checkers, and Clerks on 'checker'",
+  "27-3099.00"
+ ],
+ "f7f3fc68-82f6-4897-87bd-dc79069b7c6a": [
+  "FALSE MATCH",
+  "Climate modeling/science matched Climate Change Policy Analysts, a policy role",
+  "19-2021.00"
+ ],
+ "f8a4fd73-73b9-4b69-9ec7-8fbbc255b986": [
+  "STILL UNCERTAIN",
+  "Requirements describe a coaching certification, not the licensed-counselor credential the candidate implies",
+  ""
+ ],
+ "f8e25171-daa6-4238-addb-efec84865979": [
+  "FALSE MATCH",
+  "'Specialist' word collision with Water Resource Specialists; unrelated to water",
+  "25-2059.00"
+ ],
+ "f94e04e4-28c4-4b1d-b4f3-4a2d51b308c4": [
+  "FALSE MATCH",
+  "Science journalism matched Natural Sciences Managers on 'Science'",
+  "27-3023.00"
+ ],
+ "f965b091-436f-4187-aca9-eb8247c3d0d4": [
+  "FALSE MATCH",
+  "Certified Nurse Midwife matched the generic Registered Nurses code; a specific Nurse Midwives code exists",
+  "29-1161.00"
+ ],
+ "f9932587-8489-463d-bac4-09cfb2c48418": [
+  "STILL UNCERTAIN",
+  "No exact 'photo editor' code exists; text-editor code is a stretch but the curation function overlaps",
+  ""
+ ],
+ "fb5b42aa-58aa-4661-a0b9-474991e3c1f5": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "fbfaa27b-92d8-49c0-891d-0cd85b77f475": [
+  "STILL UNCERTAIN",
+  "Research-operations coordination matched the generic manager catch-all; Project Management Specialists is a plausible alternative",
+  "13-1082.00"
+ ],
+ "fc962015-0bc2-4512-a8c7-3352700cb42c": [
+  "FALSE MATCH",
+  "Motion-capture technology matched Makeup Artists, Theatrical and Performance on 'Performance'",
+  "27-1014.00"
+ ],
+ "fd46ce0a-65ca-4df9-b502-db38b2918d77": [
+  "FALSE MATCH",
+  "Resort guest-services role matched Administrative Services Managers, a back-office code",
+  "11-9081.00"
+ ],
+ "fe04d74b-7417-49e6-8d44-f544ccc94e62": [
+  "FALSE MATCH",
+  "Conference/event coordination matched Administrative Services Managers; the specific code is Meeting, Convention, and Event Planners",
+  "13-1121.00"
+ ],
+ "fe31a8bf-cb41-4332-a126-0271f136154a": [
+  "CONFIRMED",
+  "",
+  ""
+ ],
+ "ff8daad8-e29f-4f81-a5e9-9410663587c2": [
+  "FALSE MATCH",
+  "Hands-on wildlife rehab matched Zoologists and Wildlife Biologists, a research role",
+  "39-2021.00"
+ ]
+}
