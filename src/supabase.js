@@ -14,6 +14,10 @@ export async function fetchCareers() {
     const { data, error } = await supabase
       .from("careers")
       .select("*")
+      // visible defaults to true and is only ever set false by an editorial
+      // hide decision (see reports/PHASE4C_DECISIONS_FINAL.csv) -- excluded
+      // at the query level so a hidden row never reaches the client at all.
+      .eq("visible", true)
       .range(from, from + PAGE - 1);
 
     if (error) throw new Error(`Supabase fetch failed: ${error.message}`);
@@ -35,6 +39,10 @@ export async function fetchCareers() {
     degree_required: r.degree_required ? r.degree_required.trim() : "",
     crossover_label: r.crossover_label || "",
     source_url: r.source_url || "",
+    // 'related' | 'emerging' | null — null means the existing citation
+    // behavior (resolveCitation() against source_url) is unchanged.
+    source_type: r.source_type || null,
+    visible: r.visible !== false,
     reviewed: r.reviewed || false,
   }));
 }
