@@ -365,6 +365,7 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
       .from("careers")
       .select("id, name, salary_range, description, primary_industry, keywords, source_url")
       .eq("primary_industry", career.primary_industry)
+      .eq("visible", true)
       .neq("id", career.id)
       .limit(6)
       .then(({ data }) => { if (data) setMoreCareers(data); });
@@ -381,6 +382,7 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
       .from("careers")
       .select("id, name, salary_range, description, primary_industry, keywords, source_url")
       .neq("primary_industry", career.primary_industry)
+      .eq("visible", true)
       .or(orFilter)
       .limit(12)
       .then(({ data }) => {
@@ -489,10 +491,13 @@ export default function CareerTimeline({ career, industryColor, onBack, onViewCa
       </div>
       {salary && <SalaryNote style={{ marginTop: -8, marginBottom: 0 }} />}
 
-      {/* Where this career's data comes from. Renders nothing unless the stored
-          source carries a SOC code that exists in the O*NET taxonomy, so broken
-          and fabricated citations stay hidden rather than being shown as fact. */}
-      <SourceCitation sourceUrl={career.source_url} style={{ marginTop: 10, marginBottom: 14 }} />
+      {/* Where this career's data comes from. source_type === 'related' shows
+          the link as "Related to: <occupation>" rather than an exact source;
+          'emerging' shows a plain-language label with no link; null/undefined
+          is the original behavior -- renders nothing unless the stored source
+          carries a SOC code that exists in the O*NET taxonomy, so broken and
+          fabricated citations stay hidden rather than being shown as fact. */}
+      <SourceCitation sourceUrl={career.source_url} sourceType={career.source_type} style={{ marginTop: 10, marginBottom: 14 }} />
 
       {/* Education bar */}
       <div style={{

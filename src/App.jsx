@@ -2052,6 +2052,7 @@ function AppContent({ signOut }) {
           // has always fetched this field; it was dropped here, which is why it
           // was never displayed anywhere.
           source_url: c.source_url || "",
+          source_type: c.source_type || null,
         })));
         setCareersLoading(false);
       })
@@ -2080,6 +2081,7 @@ function AppContent({ signOut }) {
       primary_industry: career.primary_industry,
       secondary_industries: career.secondary_industries,
       source_url: career.source_url || "",
+      source_type: career.source_type || null,
       keywords: Array.isArray(career.keywords) ? career.keywords
         : (career.keywords || "").split(",").map(k => k.trim()).filter(Boolean),
     };
