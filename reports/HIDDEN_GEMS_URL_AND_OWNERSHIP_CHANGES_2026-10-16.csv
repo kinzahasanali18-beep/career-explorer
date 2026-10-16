@@ -1,0 +1,24 @@
+type,old_url_or_program,new_official_link,note
+dead (DNS),https://economicsolympiad.us/,,No official replacement confirmed (USAEBO portal not verified)
+dead (DNS),https://www.gen-cyber.com/,,No official replacement found; camps are run by host universities
+dead (DNS),https://interactfellowship.com/,,No replacement confirmed; a 2021 third-party post mentions joininteract.com (unverified)
+dead (404),https://doodles.google/contest/,,Search suggests doodles.google/d4g (unverified)
+dead (404),https://www.eaa.org/eaa/youth/eaa-young-eagles,,Search suggests youngeagles.org (unverified)
+dead (404),https://girlswhocode.com/programs/summer-immersion-program,,No replacement found
+dead (404),https://codenext.withgoogle.com/,,Google FAQs list g.co/codenext (unverified)
+dead (404),https://www.newyorkfed.org/education/high-school-fed-challenge,https://www.newyorkfed.org/outreach-and-education/high-school/high-school-fed-challenge,Found via search
+dead (404),https://www.janestreet.com/join-jane-street/amp/,https://www.janestreet.com/amp/,Found via search
+dead (404),https://www.janestreet.com/join-jane-street/programs/first-year-insight-program/,,No replacement found
+dead (404),https://www.nasa.gov/learning-resources/nasa-techrise-student-challenge/,https://www.usa.gov/challenges/nasa-techrise-student-challenge,Found via search (usa.gov listing; no nasa.gov replacement found)
+dead (404),https://www.civiced.org/we-the-people/national-competitions/finals,https://civiced.org/we-the-people/national-competitions/finals,Found via search
+moved (301),https://youthspeaks.org/bravenewvoices/,https://bravenewvoices.youthspeaks.org/,Confirmed by redirect
+moved (301),https://www.citizensandscholars.org/,https://cands.org/,Confirmed by redirect
+moved (301),https://globalcitizenyear.org/,https://tiltingfutures.org/,Confirmed by redirect
+moved (notice),https://www.nationalccdc.org/,https://www.ccdc.io,Page says it moved to ccdc.io
+moved (301),https://www.sparc-camp.org/,https://www.sparc.camp/,Confirmed by redirect
+moved (301),https://www.nyscamp.org/,https://www.nysacademy.org/programs/nyscamp/,Confirmed by redirect
+moved (301),https://www.seo-usa.org/career/,https://career.seo-usa.org/,Confirmed by redirect
+changed hands,Global Citizen Year,https://tiltingfutures.org/,Now run under Tilting Futures (GCY Fellowship / GCY Academy)
+changed hands,picoCTF,https://picoctf.org/,picoctf.org is now CyLab Security Academy (Carnegie Mellon)
+changed hands,MediaWise Teen Fact-Checking Network,https://www.poynter.org/mediawise/programs/tfcn/,Built on by the Teen Creator Network (expanded 2026)
+changed hands,NFTE / BUILD.org,https://nfte.com/,"Merging into one family of brands, fall 2026"
